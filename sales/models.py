@@ -1,5 +1,6 @@
 from django.db import models
-from core.models import User, Product
+from core.models import User, Product, Crate
+from django.core.exceptions import ValidationError
 
 
 # Create your models here.
@@ -62,7 +63,7 @@ class Package(models.Model):
         return str(self.order)
 
 
-class PackageProducts(models.Model):
+class PackageProduct(models.Model):
     GRADES = (
         (1, 1),
         (2, 2),
@@ -116,3 +117,26 @@ class CustomerDiscount(models.Model):
 
     def __str__(self):
         return str(self.customer)
+
+
+class SalesCrate(models.Model):
+    agent = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    crate = models.ForeignKey(Crate, on_delete=models.CASCADE)
+    date_issued = models.DateField()
+    date_returned = models.DateField(null=True)
+    held_by = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return str(self.agent)
+
+    def clean_fields(self, exclude=None):
+        if not self.agent.is_sales_agent:
+            raise ValidationError({'agent': ['agent must be a sales agent']})
+
+
+class PackageProductCrate(models.Model):
+    crate = models.ForeignKey(Crate, on_delete=models.CASCADE)
+    package_product = models.ForeignKey(PackageProduct, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.crate)
