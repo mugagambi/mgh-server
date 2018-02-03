@@ -17,3 +17,14 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Crate(models.Model):
+    TYPE = (
+        (1, 'normal crate'),
+    )
+    number = models.CharField(max_length=10)
+    type = models.PositiveSmallIntegerField(choices=TYPE)
+
+    def __str__(self):
+        return self.number
