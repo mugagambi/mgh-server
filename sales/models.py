@@ -50,3 +50,13 @@ class OrderProducts(models.Model):
 
     def __str__(self):
         return str(self.order)
+
+
+class Package(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    packaged_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.order)
