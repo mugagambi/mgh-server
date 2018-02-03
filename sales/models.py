@@ -60,3 +60,21 @@ class Package(models.Model):
 
     def __str__(self):
         return str(self.order)
+
+
+class PackageProducts(models.Model):
+    GRADES = (
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4)
+    )
+    package = models.ForeignKey(Package, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    qty_order = models.DecimalField(decimal_places=2, max_digits=8)
+    qty_weigh = models.DecimalField(decimal_places=2, max_digits=8)
+    crate_weight = models.DecimalField(decimal_places=2, max_digits=4)
+    grade = models.PositiveSmallIntegerField(choices=GRADES)
+
+    def __str__(self):
+        return str(self.package)
