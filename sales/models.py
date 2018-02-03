@@ -1,6 +1,7 @@
 from django.db import models
 from core.models import User, Product, Crate
 from django.core.exceptions import ValidationError
+from django.utils.timezone import now
 
 
 # Create your models here.
@@ -140,3 +141,55 @@ class PackageProductCrate(models.Model):
 
     def __str__(self):
         return str(self.crate)
+
+
+class Receipt(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=now)
+    served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return str(self.customer)
+
+
+class ReceiptParticular(models.Model):
+    GRADES = (
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4)
+    )
+    qty = models.DecimalField(decimal_places=2, max_digits=8)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
+                                                                          'price for each quantity')
+    grade = models.PositiveSmallIntegerField(choices=GRADES)
+    discount = models.DecimalField(max_digits=5, decimal_places=2,
+                                   help_text='% discount')
+    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.receipt)
+
+
+class ReceiptPayment(models.Model):
+    TYPES = (
+        (1, 'Cheque'),
+        (2, 'Mpesa'),
+        (3, 'Cash'),
+        (4, 'Credit'),
+        (5, 'Bank Transfer')
+    )
+    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    type = models.PositiveSmallIntegerField(choices=TYPES)
+    check_number = models.CharField(max_length=50, null=True)
+    transaction_id = models.CharField(max_length=15, null=True)
+    mobile_number = models.CharField(max_length=15, null=True)
+    date_to_pay = models.DateField(null=True)
+    transfer_code = models.CharField(max_length=50, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.receipt)
