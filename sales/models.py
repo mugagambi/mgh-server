@@ -78,3 +78,22 @@ class PackageProducts(models.Model):
 
     def __str__(self):
         return str(self.package)
+
+
+class CustomerPrice(models.Model):
+    GRADES = (
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4)
+    )
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
+                                                                          'price for each quantity')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    grade = models.PositiveSmallIntegerField(choices=GRADES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.customer)
