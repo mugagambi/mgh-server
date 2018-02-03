@@ -97,3 +97,19 @@ class CustomerPrice(models.Model):
 
     def __str__(self):
         return str(self.customer)
+
+
+class CustomerDiscount(models.Model):
+    GRADES = (
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4)
+    )
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    discount = models.DecimalField(max_digits=5, decimal_places=2,
+                                   help_text='% discount')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    grade = models.PositiveSmallIntegerField(choices=GRADES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
