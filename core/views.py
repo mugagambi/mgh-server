@@ -19,3 +19,20 @@ class AggregationCenterViewSet(viewsets.ModelViewSet):
        """
     queryset = models.AggregationCenter.objects.all()
     serializer_class = serializers.AggregationCenterSerializer
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    """
+           retrieve:
+           Return the given product.
+
+           list:
+           Return a list of all the existing product.
+
+           create:
+           Create a new product instance.
+           update:
+           Update the given product
+           """
+    queryset = models.Product.objects.all()
+    serializer_class = serializers.ProductSerializer
