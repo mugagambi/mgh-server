@@ -52,3 +52,9 @@ class PackageProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PackageProduct
         fields = ('package', 'product', 'qty_order', 'qty_weigh', 'crate_weight', 'grade')
+
+
+class CustomerPriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CustomerPrice
+        fields = ('customer', 'price', 'product', 'grade', 'grade', 'created_at', 'updated_at')
