@@ -7,3 +7,8 @@ from sales import models
 class RegionViewSet(viewsets.ModelViewSet):
     queryset = models.Region.objects.all()
     serializer_class = serializers.RegionSerializer
+
+
+class CustomerViewSet(viewsets.ModelViewSet):
+    queryset = models.Customer.objects.all()
+    serializer_class = serializers.CustomerSerializer

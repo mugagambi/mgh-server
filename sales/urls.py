@@ -4,6 +4,7 @@ from sales import views
 
 router = routers.DefaultRouter()
 router.register(r'regions', views.RegionViewSet)
+router.register(r'customers', views.CustomerViewSet)
 
 urlpatterns = [
     path('', include(router.urls))
