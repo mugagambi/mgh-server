@@ -18,3 +18,14 @@ class CustomerSerializer(serializers.ModelSerializer):
         model = models.Customer
         fields = ('name', 'location', 'country_code', 'phone_number',
                   'region', 'created_at', 'updated_at', 'added_by')
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    received_by = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = models.Order
+        fields = ('customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
