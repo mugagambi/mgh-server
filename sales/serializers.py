@@ -75,3 +75,9 @@ class SalesCrateSerializer(serializers.ModelSerializer):
         if not value.is_sales_agent:
             raise serializers.ValidationError('agent must be a sales agent')
         return value
+
+
+class PackageProductCrateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.PackageProductCrate
+        fields = ('crate', 'package_product')
