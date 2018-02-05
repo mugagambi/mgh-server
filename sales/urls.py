@@ -11,6 +11,7 @@ router.register(r'packages', views.PackageViewSet)
 router.register(r'package-products', views.PackageProductsViewSet)
 router.register(r'customer-prices', views.CustomerPriceViewSet)
 router.register(r'customer-discounts', views.CustomerDiscountsViewSet)
+router.register(r'sales-crates', views.SalesCrateViewSet)
 
 urlpatterns = [
     path('', include(router.urls))

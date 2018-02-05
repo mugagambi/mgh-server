@@ -64,3 +64,14 @@ class CustomerDiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerDiscount
         fields = ('customer', 'discount', 'product', 'grade', 'created_at', 'updated_at')
+
+
+class SalesCrateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.SalesCrate
+        fields = ('agent', 'crate', 'date_issued', 'date_returned', 'held_by')
+
+    def validate_agent(self, value):
+        if not value.is_sales_agent:
+            raise serializers.ValidationError('agent must be a sales agent')
+        return value
