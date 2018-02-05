@@ -46,3 +46,9 @@ class PackageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Package
         fields = ('order', 'packaged_by', 'created_at', 'updated_at')
+
+
+class PackageProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.PackageProduct
+        fields = ('package', 'product', 'qty_order', 'qty_weigh', 'crate_weight', 'grade')

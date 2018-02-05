@@ -27,3 +27,8 @@ class OrderProductsViewSet(viewsets.ModelViewSet):
 class PackageViewSet(viewsets.ModelViewSet):
     queryset = models.Package.objects.all()
     serializer_class = serializers.PackageSerializer
+
+
+class PackageProductsViewSet(viewsets.ModelViewSet):
+    queryset = models.PackageProduct.objects.all()
+    serializer_class = serializers.PackageProductSerializer
