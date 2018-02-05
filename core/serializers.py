@@ -30,3 +30,9 @@ class CrateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Crate
         fields = ('number', 'type')
+
+
+class GradeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Grade
+        fields = ('name',)

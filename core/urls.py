@@ -8,6 +8,7 @@ router.register(r'products', views.ProductViewSet)
 router.register(r'aggregation-centers-products', views.AggregationCenterProductViewSet)
 router.register(r'crate-types', views.CrateTypeViewSet)
 router.register(r'crates', views.CrateViewSet)
+router.register(r'grades', views.GradeViewSet)
 
 urlpatterns = [
     path('', include(router.urls))

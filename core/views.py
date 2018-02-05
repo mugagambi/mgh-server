@@ -63,3 +63,8 @@ class CrateTypeViewSet(viewsets.ModelViewSet):
 class CrateViewSet(viewsets.ModelViewSet):
     queryset = models.Crate.objects.all()
     serializer_class = serializers.CrateSerializer
+
+
+class GradeViewSet(viewsets.ModelViewSet):
+    queryset = models.Grade.objects.all()
+    serializer_class = serializers.GradeSerializer
