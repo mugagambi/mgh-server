@@ -29,3 +29,9 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Order
         fields = ('customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
+
+
+class OrderProductsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.OrderProducts
+        fields = ('order', 'product', 'grade', 'qty', 'price')
