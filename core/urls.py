@@ -7,7 +7,7 @@ router.register(r'aggregation-centers', views.AggregationCenterViewSet)
 router.register(r'products', views.ProductViewSet)
 router.register(r'aggregation-centers-products', views.AggregationCenterProductViewSet)
 router.register(r'crate-types', views.CrateTypeViewSet)
-
+router.register(r'crates', views.CrateViewSet)
 
 urlpatterns = [
     path('', include(router.urls))

@@ -58,3 +58,8 @@ class AggregationCenterProductViewSet(viewsets.ModelViewSet):
 class CrateTypeViewSet(viewsets.ModelViewSet):
     queryset = models.CrateType.objects.all()
     serializer_class = serializers.CrateTypeSerializer
+
+
+class CrateViewSet(viewsets.ModelViewSet):
+    queryset = models.Crate.objects.all()
+    serializer_class = serializers.CrateSerializer

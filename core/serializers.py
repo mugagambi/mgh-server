@@ -24,3 +24,9 @@ class CrateTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CrateType
         fields = ('name', 'weight')
+
+
+class CrateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Crate
+        fields = ('number', 'type')
