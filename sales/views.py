@@ -37,3 +37,8 @@ class PackageProductsViewSet(viewsets.ModelViewSet):
 class CustomerPriceViewSet(viewsets.ModelViewSet):
     queryset = models.CustomerPrice.objects.all()
     serializer_class = serializers.CustomerPriceSerializer
+
+
+class CustomerDiscountsViewSet(viewsets.ModelViewSet):
+    queryset = models.CustomerDiscount.objects.all()
+    serializer_class = serializers.CustomerDiscountSerializer

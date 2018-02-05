@@ -58,3 +58,9 @@ class CustomerPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerPrice
         fields = ('customer', 'price', 'product', 'grade', 'grade', 'created_at', 'updated_at')
+
+
+class CustomerDiscountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CustomerDiscount
+        fields = ('customer', 'discount', 'product', 'grade', 'created_at', 'updated_at')
