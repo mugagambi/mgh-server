@@ -35,3 +35,14 @@ class OrderProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OrderProducts
         fields = ('order', 'product', 'grade', 'qty', 'price')
+
+
+class PackageSerializer(serializers.ModelSerializer):
+    packaged_by = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = models.Package
+        fields = ('order', 'packaged_by', 'created_at', 'updated_at')
