@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import User, Product, Crate, Grade
+from core.models import User, Product, Crate, Grade, AggregationCenter
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
@@ -208,3 +208,44 @@ class CashReceiptPayment(models.Model):
 
     def __str__(self):
         return str(self.cash_receipt)
+
+
+class CreditSettlement(models.Model):
+    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    date = models.DateTimeField(default=now)
+    served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return str(self.receipt)
+
+
+class OverPayOrUnderPay(models.Model):
+    TYPE = (
+        ('o', 'OverPay'),
+        ('u', 'Underpay')
+    )
+    type = models.CharField(max_length=1, choices=TYPE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    date = models.DateTimeField(default=now)
+
+    def __str__(self):
+        return str(self.customer)
+
+
+class ReturnsOrRejects(models.Model):
+    TYPE = (
+        (1, 'Return'),
+        (2, 'Reject')
+    )
+    type = models.PositiveSmallIntegerField(choices=TYPE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    qty = models.DecimalField(decimal_places=2, max_digits=8)
+    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    description = models.TextField()
+    date = models.DateTimeField(now)
+    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
+    date_of_resuplly = models.DateTimeField(null=True)
