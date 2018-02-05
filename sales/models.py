@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import User, Product, Crate
+from core.models import User, Product, Crate, Grade
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
@@ -38,15 +38,9 @@ class Order(models.Model):
 
 
 class OrderProducts(models.Model):
-    GRADES = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4)
-    )
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    grade = models.PositiveSmallIntegerField(choices=GRADES)
+    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     qty = models.DecimalField(decimal_places=2, max_digits=8)
     price = models.DecimalField(max_digits=9, decimal_places=2)
 
@@ -65,35 +59,23 @@ class Package(models.Model):
 
 
 class PackageProduct(models.Model):
-    GRADES = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4)
-    )
     package = models.ForeignKey(Package, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     qty_order = models.DecimalField(decimal_places=2, max_digits=8)
     qty_weigh = models.DecimalField(decimal_places=2, max_digits=8)
     crate_weight = models.DecimalField(decimal_places=2, max_digits=4)
-    grade = models.PositiveSmallIntegerField(choices=GRADES)
+    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return str(self.package)
 
 
 class CustomerPrice(models.Model):
-    GRADES = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4)
-    )
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
                                                                           'price for each quantity')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    grade = models.PositiveSmallIntegerField(choices=GRADES)
+    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -102,17 +84,11 @@ class CustomerPrice(models.Model):
 
 
 class CustomerDiscount(models.Model):
-    GRADES = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4)
-    )
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     discount = models.DecimalField(max_digits=5, decimal_places=2,
                                    help_text='% discount')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    grade = models.PositiveSmallIntegerField(choices=GRADES)
+    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -153,17 +129,11 @@ class Receipt(models.Model):
 
 
 class ReceiptParticular(models.Model):
-    GRADES = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4)
-    )
     qty = models.DecimalField(decimal_places=2, max_digits=8)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
                                                                           'price for each quantity')
-    grade = models.PositiveSmallIntegerField(choices=GRADES)
+    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     discount = models.DecimalField(max_digits=5, decimal_places=2,
                                    help_text='% discount')
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
@@ -193,3 +163,48 @@ class ReceiptPayment(models.Model):
 
     def __str__(self):
         return str(self.receipt)
+
+
+class CashReceipt(models.Model):
+    date = models.DateTimeField(default=now)
+    served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return str(self.date)
+
+
+class CashReceiptParticular(models.Model):
+    qty = models.DecimalField(decimal_places=2, max_digits=8)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
+                                                                          'price for each quantity')
+    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
+    discount = models.DecimalField(max_digits=5, decimal_places=2,
+                                   help_text='% discount')
+    cash_receipt = models.ForeignKey(CashReceipt, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.cash_receipt)
+
+
+class CashReceiptPayment(models.Model):
+    TYPES = (
+        (1, 'Cheque'),
+        (2, 'Mpesa'),
+        (3, 'Cash'),
+        (4, 'Credit'),
+        (5, 'Bank Transfer')
+    )
+    cash_receipt = models.ForeignKey(CashReceipt, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    type = models.PositiveSmallIntegerField(choices=TYPES)
+    check_number = models.CharField(max_length=50, null=True)
+    transaction_id = models.CharField(max_length=15, null=True)
+    mobile_number = models.CharField(max_length=15, null=True)
+    date_to_pay = models.DateField(null=True)
+    transfer_code = models.CharField(max_length=50, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.cash_receipt)
