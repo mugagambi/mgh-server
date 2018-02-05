@@ -18,3 +18,9 @@ class AggregationCenterProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.AggregationCenterProduct
         fields = ('aggregation_center', 'product', 'active')
+
+
+class CrateTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CrateType
+        fields = ('name', 'weight')
