@@ -1,6 +1,8 @@
+import django_filters.rest_framework
 from rest_framework import viewsets
 from core import models
 from core import serializers
+from rest_framework import filters
 
 
 # Create your views here.
@@ -53,6 +55,9 @@ class AggregationCenterProductViewSet(viewsets.ModelViewSet):
                """
     queryset = models.AggregationCenterProduct.objects.all()
     serializer_class = serializers.AggregationCenterProductSerializer
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
+    filter_fields = ('aggregation_center', 'product', 'active')
+    ordering_fields = ('id',)
 
 
 class CrateTypeViewSet(viewsets.ModelViewSet):
