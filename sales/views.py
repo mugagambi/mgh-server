@@ -47,3 +47,8 @@ class CustomerDiscountsViewSet(viewsets.ModelViewSet):
 class SalesCrateViewSet(viewsets.ModelViewSet):
     queryset = models.SalesCrate.objects.all()
     serializer_class = serializers.SalesCrateSerializer
+
+
+class PackageProductCrateViewSet(viewsets.ModelViewSet):
+    queryset = models.PackageProductCrate.objects.all()
+    serializer_class = serializers.PackageProductCrateSerializer
