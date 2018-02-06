@@ -140,3 +140,9 @@ class CreditSettlementSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CreditSettlement
         fields = ('receipt', 'amount', 'date', 'served_by')
+
+
+class OverPayOrUnderPaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.OverPayOrUnderPay
+        fields = ('type', 'customer', 'receipt', 'amount', 'date')
