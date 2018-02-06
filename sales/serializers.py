@@ -105,3 +105,14 @@ class ReceiptPaymentSerializer(serializers.ModelSerializer):
         model = models.ReceiptPayment
         fields = ('receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
                   'transfer_code', 'created_at', 'updated_at')
+
+
+class CashReceiptSerializer(serializers.ModelSerializer):
+    served_by = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = models.CashReceipt
+        fields = ('date', 'served_by')
