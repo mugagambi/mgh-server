@@ -52,3 +52,8 @@ class SalesCrateViewSet(viewsets.ModelViewSet):
 class PackageProductCrateViewSet(viewsets.ModelViewSet):
     queryset = models.PackageProductCrate.objects.all()
     serializer_class = serializers.PackageProductCrateSerializer
+
+
+class ReceiptViewSet(viewsets.ModelViewSet):
+    queryset = models.Receipt.objects.all()
+    serializer_class = serializers.ReceiptSerializer

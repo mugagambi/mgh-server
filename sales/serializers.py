@@ -81,3 +81,14 @@ class PackageProductCrateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PackageProductCrate
         fields = ('crate', 'package_product')
+
+
+class ReceiptSerializer(serializers.ModelSerializer):
+    served_by = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = models.Receipt
+        fields = ('customer', 'date', 'served_by')
