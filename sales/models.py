@@ -135,7 +135,7 @@ class ReceiptParticular(models.Model):
                                                                           'price for each quantity')
     grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     discount = models.DecimalField(max_digits=5, decimal_places=2,
-                                   help_text='% discount')
+                                   help_text='% discount', null=True)
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
 
     def __str__(self):

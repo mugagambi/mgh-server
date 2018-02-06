@@ -92,3 +92,9 @@ class ReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Receipt
         fields = ('customer', 'date', 'served_by')
+
+
+class ReceiptParticularSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ReceiptParticular
+        fields = ('qty', 'product', 'price', 'grade', 'discount', 'receipt')
