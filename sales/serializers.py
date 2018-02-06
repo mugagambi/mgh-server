@@ -98,3 +98,10 @@ class ReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReceiptParticular
         fields = ('qty', 'product', 'price', 'grade', 'discount', 'receipt')
+
+
+class ReceiptPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ReceiptPayment
+        fields = ('receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
+                  'transfer_code', 'created_at', 'updated_at')

@@ -62,3 +62,8 @@ class ReceiptViewSet(viewsets.ModelViewSet):
 class ReceiptParticularsViewSet(viewsets.ModelViewSet):
     queryset = models.ReceiptParticular.objects.all()
     serializer_class = serializers.ReceiptParticularSerializer
+
+
+class ReceiptPaymentViewSet(viewsets.ModelViewSet):
+    queryset = models.ReceiptPayment.objects.all()
+    serializer_class = serializers.ReceiptPaymentSerializer
