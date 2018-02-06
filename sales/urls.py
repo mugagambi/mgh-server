@@ -17,6 +17,7 @@ router.register(r'receipts', views.ReceiptViewSet)
 router.register(r'receipt-particulars', views.ReceiptParticularsViewSet)
 router.register(r'receipt-payments', views.ReceiptPaymentViewSet)
 router.register(r'cash-receipts', views.CashReceiptViewSet)
+router.register(r'cash-receipt-particulars', views.CashReceiptParticularViewSet)
 
 urlpatterns = [
     path('', include(router.urls))

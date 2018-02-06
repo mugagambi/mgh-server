@@ -116,3 +116,9 @@ class CashReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CashReceipt
         fields = ('date', 'served_by')
+
+
+class CashReceiptParticularSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CashReceiptParticular
+        fields = ('qty', 'product', 'price', 'grade', 'discount', 'cash_receipt')

@@ -72,3 +72,8 @@ class ReceiptPaymentViewSet(viewsets.ModelViewSet):
 class CashReceiptViewSet(viewsets.ModelViewSet):
     queryset = models.CashReceipt.objects.all()
     serializer_class = serializers.CashReceiptSerializer
+
+
+class CashReceiptParticularViewSet(viewsets.ModelViewSet):
+    queryset = models.CashReceiptParticular.objects.all()
+    serializer_class = serializers.CashReceiptParticularSerializer
