@@ -21,6 +21,7 @@ router.register(r'cash-receipt-particulars', views.CashReceiptParticularViewSet)
 router.register(r'cash-receipt-payments', views.CashReceiptPaymentViewSet)
 router.register(r'credit-settlement', views.CreditSettlementViewSet)
 router.register(r'overpay-underpay', views.OverPayOrUnderPayViewSet)
+router.register(r'returns-rejects', views.ReturnsRejectsViewSet)
 
 urlpatterns = [
     path('', include(router.urls))

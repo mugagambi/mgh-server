@@ -92,3 +92,8 @@ class CreditSettlementViewSet(viewsets.ModelViewSet):
 class OverPayOrUnderPayViewSet(viewsets.ModelViewSet):
     queryset = models.OverPayOrUnderPay.objects.all()
     serializer_class = serializers.OverPayOrUnderPaySerializer
+
+
+class ReturnsRejectsViewSet(viewsets.ModelViewSet):
+    queryset = models.ReturnsOrRejects.objects.all()
+    serializer_class = serializers.ReturnsOrRejectsSerializer

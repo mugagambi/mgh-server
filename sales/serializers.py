@@ -146,3 +146,9 @@ class OverPayOrUnderPaySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OverPayOrUnderPay
         fields = ('type', 'customer', 'receipt', 'amount', 'date')
+
+
+class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ReturnsOrRejects
+        fields = ('type', 'product', 'qty', 'receipt', 'customer', 'description', 'date', 'grade', 'date_of_resuplly')

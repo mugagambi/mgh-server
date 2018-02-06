@@ -246,6 +246,6 @@ class ReturnsOrRejects(models.Model):
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     description = models.TextField()
-    date = models.DateTimeField(now)
+    date = models.DateTimeField(default=now)
     grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     date_of_resuplly = models.DateTimeField(null=True)
