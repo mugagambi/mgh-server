@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 class User(AbstractUser):
     phone_number = models.PositiveIntegerField(null=True)
-    is_sales_agent = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
