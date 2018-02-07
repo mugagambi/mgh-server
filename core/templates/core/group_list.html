@@ -39,7 +39,8 @@
                     <tr>
                         <td>{{ group.name }}</td>
                         <td><a href="{% url 'core:group-edit' pk=group.id %}" class="btn btn-success btn-flat">Edit</a>
-                            <a href="#" class="btn btn-danger btn-flat">Delete</a></td>
+                            <a href="{% url 'core:group-remove' pk=group.id %}"
+                               class="btn btn-danger btn-flat">Delete</a></td>
                     </tr>
                 {% endfor %}
 

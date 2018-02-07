@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Remove a Group
+{% endblock %}
+{% block page-header %}
+    <section class="content-header">
+        <h1>
+            System Groups
+            <small>Groups according to users permissions</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <li><a href="#"><i class="fa fa-users"></i> Groups</a></li>
+            <li class="active">Remove Group</li>
+        </ol>
+    </section>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Remove Group</h3>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <form class="form-horizontal" method="POST">
+                    {% csrf_token %}
+                    <div class="box-body">
+                        <p>Are you sure you want to remove "{{ object.name }}" group?</p>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <a href="{% url 'core:groups' %}" type="submit" class="btn btn-default btn-flat">Cancel</a>
+                        <button type="submit" class="btn btn-danger pull-right btn-flat">Remove</button>
+                    </div>
+                    <!-- /.box-footer -->
+                </form>
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+{% endblock %}
