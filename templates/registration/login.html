@@ -30,7 +30,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a href="#"><b>Meru Greens Horticulture </b>Ltd</a>
+        <a href="../../index2.html"><b>Meru Greens Horticulture </b>Ltd</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
@@ -46,6 +46,11 @@
                 <input type="password" name="password" class="form-control" placeholder="Password">
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
+            <!-- /.col -->
+                <div class="col-xs-4">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                </div>
+                <!-- /.col -->
         </form>
 
         <a href="#">I forgot my password</a><br>
@@ -59,5 +64,16 @@
 <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="{% static  'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- iCheck -->
+<script src="{% static 'iCheck/icheck.min.js' %}"></script>
+<script>
+    $(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' /* optional */
+        });
+    });
+</script>
 </body>
 </html>

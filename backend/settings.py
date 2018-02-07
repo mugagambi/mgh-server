@@ -124,3 +124,5 @@ STATICFILES_DIRS = [
 ]
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 AUTH_USER_MODEL = 'core.User'
+LOGIN_URL = '/accounts/login/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'

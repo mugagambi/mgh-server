@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Groups
+{% endblock %}
+{% block styles %}
+    <link href="{% static 'datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
+{% endblock %}
+{% block page-header %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            System Groups
+            <small>Groups according to users permissions</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <li class="active">Groups</li>
+        </ol>
+    </section>
+{% endblock %}
+{% block content %}
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">Groups</h3>
+            <a href="#" class="btn btn-flat btn-success pull-right">Add Group</a>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <table id="groups" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>name</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for group in object_list %}
+                    <tr>
+                        <td>{{ group.name }}</td>
+                        <td><a href="#" class="btn btn-success btn-flat">Edit</a>
+                            <a href="#" class="btn btn-danger btn-flat">Delete</a></td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th>name</th>
+                    <th>Action</th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+        $(function () {
+            $('#groups').DataTable({
+                'paging': true,
+                'lengthChange': false,
+                'searching': false,
+                'ordering': true,
+                'info': true,
+                'autoWidth': false
+            });
+        });
+    </script>
+{% endblock %}
