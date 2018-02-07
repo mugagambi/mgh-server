@@ -23,7 +23,7 @@
     <div class="box">
         <div class="box-header">
             <h3 class="box-title">Groups</h3>
-            <a href="#" class="btn btn-flat btn-success pull-right">Add Group</a>
+            <a href="{% url 'core:group-create' %}" class="btn btn-flat btn-success pull-right">Add Group</a>
         </div>
         <!-- /.box-header -->
         <div class="box-body">
@@ -38,7 +38,7 @@
                 {% for group in object_list %}
                     <tr>
                         <td>{{ group.name }}</td>
-                        <td><a href="#" class="btn btn-success btn-flat">Edit</a>
+                        <td><a href="{% url 'core:group-edit' pk=group.id %}" class="btn btn-success btn-flat">Edit</a>
                             <a href="#" class="btn btn-danger btn-flat">Delete</a></td>
                     </tr>
                 {% endfor %}
