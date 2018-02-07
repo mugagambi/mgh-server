@@ -248,4 +248,4 @@ class ReturnsOrRejects(models.Model):
     description = models.TextField()
     date = models.DateTimeField(default=now)
     grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
-    date_of_resuplly = models.DateTimeField(null=True)
+    date_of_resuplly = models.DateField(null=True)
