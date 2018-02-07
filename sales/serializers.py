@@ -5,7 +5,7 @@ from sales import models
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Region
-        fields = ('name',)
+        fields = ('id', 'name',)
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Customer
-        fields = ('name', 'location', 'country_code', 'phone_number',
+        fields = ('id', 'name', 'location', 'country_code', 'phone_number',
                   'region', 'created_at', 'updated_at', 'added_by')
 
 
@@ -28,13 +28,13 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Order
-        fields = ('customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
+        fields = ('id', 'customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
 
 
 class OrderProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OrderProducts
-        fields = ('order', 'product', 'grade', 'qty', 'price')
+        fields = ('id', 'order', 'product', 'grade', 'qty', 'price')
 
 
 class PackageSerializer(serializers.ModelSerializer):
@@ -45,31 +45,31 @@ class PackageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Package
-        fields = ('order', 'packaged_by', 'created_at', 'updated_at')
+        fields = ('id', 'order', 'packaged_by', 'created_at', 'updated_at')
 
 
 class PackageProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PackageProduct
-        fields = ('package', 'product', 'qty_order', 'qty_weigh', 'crate_weight', 'grade')
+        fields = ('id', 'package', 'product', 'qty_order', 'qty_weigh', 'crate_weight', 'grade')
 
 
 class CustomerPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerPrice
-        fields = ('customer', 'price', 'product', 'grade', 'grade', 'created_at', 'updated_at')
+        fields = ('id', 'customer', 'price', 'product', 'grade', 'grade', 'created_at', 'updated_at')
 
 
 class CustomerDiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerDiscount
-        fields = ('customer', 'discount', 'product', 'grade', 'created_at', 'updated_at')
+        fields = ('id', 'customer', 'discount', 'product', 'grade', 'created_at', 'updated_at')
 
 
 class SalesCrateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SalesCrate
-        fields = ('agent', 'crate', 'date_issued', 'date_returned', 'held_by')
+        fields = ('id', 'agent', 'crate', 'date_issued', 'date_returned', 'held_by')
 
     def validate_agent(self, value):
         if not value.is_sales_agent:
@@ -80,7 +80,7 @@ class SalesCrateSerializer(serializers.ModelSerializer):
 class PackageProductCrateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PackageProductCrate
-        fields = ('crate', 'package_product')
+        fields = ('id', 'crate', 'package_product')
 
 
 class ReceiptSerializer(serializers.ModelSerializer):
@@ -91,19 +91,19 @@ class ReceiptSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Receipt
-        fields = ('customer', 'date', 'served_by')
+        fields = ('id', 'customer', 'date', 'served_by')
 
 
 class ReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReceiptParticular
-        fields = ('qty', 'product', 'price', 'grade', 'discount', 'receipt')
+        fields = ('id', 'qty', 'product', 'price', 'grade', 'discount', 'receipt')
 
 
 class ReceiptPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReceiptPayment
-        fields = ('receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
+        fields = ('id', 'receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
                   'transfer_code', 'created_at', 'updated_at')
 
 
@@ -115,20 +115,21 @@ class CashReceiptSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.CashReceipt
-        fields = ('date', 'served_by')
+        fields = ('id', 'date', 'served_by')
 
 
 class CashReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CashReceiptParticular
-        fields = ('qty', 'product', 'price', 'grade', 'discount', 'cash_receipt')
+        fields = ('id', 'qty', 'product', 'price', 'grade', 'discount', 'cash_receipt')
 
 
 class CashReceiptPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CashReceiptPayment
-        fields = ('cash_receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
-                  'transfer_code', 'created_at', 'updated_at')
+        fields = (
+            'id', 'cash_receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
+            'transfer_code', 'created_at', 'updated_at')
 
 
 class CreditSettlementSerializer(serializers.ModelSerializer):
@@ -139,16 +140,17 @@ class CreditSettlementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.CreditSettlement
-        fields = ('receipt', 'amount', 'date', 'served_by')
+        fields = ('id', 'receipt', 'amount', 'date', 'served_by')
 
 
 class OverPayOrUnderPaySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OverPayOrUnderPay
-        fields = ('type', 'customer', 'receipt', 'amount', 'date')
+        fields = ('id', 'type', 'customer', 'receipt', 'amount', 'date')
 
 
 class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReturnsOrRejects
-        fields = ('type', 'product', 'qty', 'receipt', 'customer', 'description', 'date', 'grade', 'date_of_resuplly')
+        fields = (
+            'id', 'type', 'product', 'qty', 'receipt', 'customer', 'description', 'date', 'grade', 'date_of_resuplly')
