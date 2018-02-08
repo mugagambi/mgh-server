@@ -11,14 +11,25 @@ class User(AbstractUser):
 
 
 class AggregationCenter(models.Model):
+    """
+    The place where products are incubated, processed and packaged to be
+    delivered to the customers
+    """
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = 'Aggregation Center'
+        verbose_name_plural = 'Aggregation Center'
 
     def __str__(self):
         return self.name
 
 
 class Product(models.Model):
+    """
+    Items that the company sells
+    """
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -26,12 +37,14 @@ class Product(models.Model):
 
 
 class AggregationCenterProduct(models.Model):
+    """Products in a certain aggregation center"""
     aggregation_center = models.ForeignKey(AggregationCenter, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=True, help_text='If the product is sale '
+                                                         'in this aggregation center')
 
     def __str__(self):
-        return str(self.aggregation_center)
+        return str(self.product) + ' at ' + str(self.aggregation_center)
 
 
 class CrateType(models.Model):
