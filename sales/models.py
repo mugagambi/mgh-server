@@ -16,7 +16,7 @@ class Customer(models.Model):
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
     country_code = models.PositiveSmallIntegerField()
-    phone_number = models.PositiveIntegerField()
+    phone_number = models.PositiveIntegerField(unique=True)
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -29,7 +29,7 @@ class Customer(models.Model):
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     received_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    date_delivery = models.DateField(null=True)
+    date_delivery = models.DateField('date of delivery', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
