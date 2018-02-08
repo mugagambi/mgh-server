@@ -1,8 +1,9 @@
-from core.view import groups
+from core.view import groups, users
 from django.urls import path
 
 app_name = 'core'
 urlpatterns = [
+    path('users', users.UserListView.as_view(), name='users'),
     path('users/groups', groups.GroupListView.as_view(), name='groups'),
     path('users/groups/add', groups.GroupCreateView.as_view(), name='group-create'),
     path('users/groups/<int:pk>/edit', groups.GroupUpdateView.as_view(), name='group-edit'),

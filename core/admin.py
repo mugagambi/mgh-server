@@ -10,3 +10,6 @@ admin.site.register(models.AggregationCenterProduct)
 admin.site.register(models.CrateType)
 admin.site.register(models.Crate)
 admin.site.register(models.Grade)
+admin.site.site_title = 'Meru Greens Horticulture Ltd'
+admin.site.index_title = 'System Administration'
+admin.site.site_header = 'Meru Greens Horticulture Ltd'
