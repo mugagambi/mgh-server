@@ -27,13 +27,31 @@ class ProductAdmin(admin.ModelAdmin):
     list_per_page = 20
 
 
+class CrateTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'weight')
+    list_per_page = 20
+    search_fields = ('name',)
+
+
+class CrateAdmin(admin.ModelAdmin):
+    list_display = ('number', 'type')
+    list_per_page = 20
+    list_filter = ('type',)
+    search_fields = ('number',)
+    autocomplete_fields = ('type',)
+
+
+class GradeAdmin(admin.ModelAdmin):
+    search_fields = ('name',)
+
+
 # Register your models here.
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.AggregationCenter, AggregationCenterAdmin)
 admin.site.register(models.Product, ProductAdmin)
-admin.site.register(models.CrateType)
-admin.site.register(models.Crate)
-admin.site.register(models.Grade)
+admin.site.register(models.CrateType, CrateTypeAdmin)
+admin.site.register(models.Crate, CrateAdmin)
+admin.site.register(models.Grade, GradeAdmin)
 admin.site.site_title = 'Meru Greens Horticulture Ltd'
 admin.site.index_title = 'System Administration'
 admin.site.site_header = 'Meru Greens Horticulture Ltd'
