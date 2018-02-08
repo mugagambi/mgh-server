@@ -1,6 +1,5 @@
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from core import models
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.mixins import LoginRequiredMixin
 from core import forms
@@ -11,12 +10,12 @@ from django.contrib import messages
 
 class GroupListView(LoginRequiredMixin, ListView):
     model = Group
-    template_name = 'core/group_list.html'
+    template_name = 'core/groups/group_list.html'
 
 
 class GroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Group
-    template_name = 'core/group_create_form.html'
+    template_name = 'core/groups/group_create_form.html'
     success_url = reverse_lazy('core:groups')
     form_class = forms.GroupForm
     success_message = 'Group created successfully'
@@ -34,7 +33,7 @@ class GroupCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 class GroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Group
-    template_name = 'core/group_update_form.html'
+    template_name = 'core/groups/group_update_form.html'
     success_url = reverse_lazy('core:groups')
     form_class = forms.GroupForm
     success_message = 'Group updated successfully'
@@ -55,9 +54,8 @@ class GroupUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 class GroupDeleteView(LoginRequiredMixin, DeleteView):
     model = Group
-    template_name = 'core/group_confirm_delete.html'
+    template_name = 'core/groups/group_confirm_delete.html'
     success_url = reverse_lazy('core:groups')
-    success_message = 'Group removed successfully'
 
     def delete(self, request, *args, **kwargs):
         messages.success(request, message='Group removed successfully')
