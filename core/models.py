@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-
 # Create your models here.
+from django.utils.timezone import now
+
+
 class User(AbstractUser):
     phone_number = models.PositiveIntegerField(null=True)
 
@@ -17,6 +19,7 @@ class AggregationCenter(models.Model):
     """
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = 'Aggregation Center'
@@ -40,8 +43,8 @@ class AggregationCenterProduct(models.Model):
     """Products in a certain aggregation center"""
     aggregation_center = models.ForeignKey(AggregationCenter, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    active = models.BooleanField(default=True, help_text='If the product is sale '
-                                                         'in this aggregation center')
+    active = models.BooleanField('Available', default=True, help_text='If the product is sale '
+                                                                      'in this aggregation center')
 
     def __str__(self):
         return str(self.product) + ' at ' + str(self.aggregation_center)
@@ -58,6 +61,7 @@ class CrateType(models.Model):
 class Crate(models.Model):
     number = models.CharField(max_length=10, unique=True)
     type = models.ForeignKey(CrateType, on_delete=models.CASCADE)
+    procurement_date = models.DateField(default=now)
 
     def __str__(self):
         return self.number

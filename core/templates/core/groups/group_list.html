@@ -3,71 +3,56 @@
 {% block title %}
     Groups
 {% endblock %}
-{% block styles %}
-    <link href="{% static 'datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
+{% block stylesheet %}
+    <link href="{% static 'DataTables/datatables.min.css' %}">
 {% endblock %}
-{% block page-header %}
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            System Groups
-            <small>Groups according to users permissions</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-            <li class="active">Groups</li>
-        </ol>
-    </section>
+{% block page_title %}
+    <div class="page-title">
+        <div class="title_left">
+            <h3>System User Groups
+            </h3>
+        </div>
+    </div>
 {% endblock %}
 {% block content %}
-    <div class="box">
-        <div class="box-header">
-            <h3 class="box-title">Groups</h3>
-            <a href="{% url 'core:group-create' %}" class="btn btn-flat btn-success pull-right">Add Group</a>
-        </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-            <table id="groups" class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                    <th>name</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for group in object_list %}
-                    <tr>
-                        <td>{{ group.name }}</td>
-                        <td><a href="{% url 'core:group-edit' pk=group.id %}" class="btn btn-success btn-flat">Edit</a>
-                            <a href="{% url 'core:group-remove' pk=group.id %}"
-                               class="btn btn-danger btn-flat">Remove</a></td>
-                    </tr>
-                {% endfor %}
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Groups
+                        <small>Permission groupings for system users</small>
+                    </h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <a href="{% url 'core:group-create' %}" class="btn btn-success pull-right">Add Group</a>
+                    <table id="datatable" class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
 
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th>name</th>
-                    <th>Action</th>
-                </tr>
-                </tfoot>
-            </table>
+
+                        <tbody>
+                        {% for group in object_list %}
+                            <tr>
+                                <td>{{ group.name }}</td>
+                                <td><a class="btn btn-success" href="#">Edit </a><a class="btn btn-danger">Remove</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
 {% block scripts %}
-    <script src="{% static 'datatables.net/js/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
-    <script>
-        $(function () {
-            $('#groups').DataTable({
-                'paging': true,
-                'lengthChange': false,
-                'searching': false,
-                'ordering': true,
-                'info': true,
-                'autoWidth': false
-            });
-        });
-    </script>
+    <script src="{% static 'DataTables/datatables.min.js' %}"></script>
 {% endblock %}

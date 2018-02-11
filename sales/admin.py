@@ -46,15 +46,38 @@ class OrderAdmin(admin.ModelAdmin):
         super(OrderAdmin, self).save_model(request, obj, form, change)
 
 
+class CustomerPriceAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'price', 'product', 'grade', 'created_at', 'updated_at')
+    fields = ('customer', 'price', 'product', 'grade')
+    list_filter = ('customer', 'product', 'grade', 'created_at', 'updated_at')
+    autocomplete_fields = ('customer', 'product', 'grade')
+    date_hierarchy = 'created_at'
+    list_per_page = 20
+    list_select_related = True
+
+
+class SalesCrateAdmin(admin.ModelAdmin):
+    list_display = ('agent', 'crate', 'date_issued', 'date_returned', 'held_by')
+    list_filter = ('agent', 'crate', 'date_issued', 'date_returned', 'held_by')
+    list_per_page = 20
+
+
+class CustomerDiscountAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'discount', 'product', 'grade', 'created_at', 'updated_at')
+    fields = ('customer', 'discount', 'product', 'grade')
+    list_filter = ('customer', 'product', 'grade', 'created_at', 'updated_at')
+    autocomplete_fields = ('customer', 'product', 'grade')
+    date_hierarchy = 'created_at'
+    list_per_page = 20
+    list_select_related = True
+
+
 # Register your models here.
 admin.site.register(models.Region, RegionAdmin)
 admin.site.register(models.Customer, CustomerAdmin)
 admin.site.register(models.Order, OrderAdmin)
-admin.site.register(models.OrderProducts)
-admin.site.register(models.Package)
-admin.site.register(models.PackageProduct)
-admin.site.register(models.CustomerPrice)
-admin.site.register(models.CustomerDiscount)
+admin.site.register(models.CustomerPrice, CustomerPriceAdmin)
+admin.site.register(models.CustomerDiscount, CustomerDiscountAdmin)
 admin.site.register(models.SalesCrate)
 admin.site.register(models.PackageProductCrate)
 admin.site.register(models.Receipt)

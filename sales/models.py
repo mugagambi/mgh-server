@@ -47,6 +47,10 @@ class OrderProducts(models.Model):
     def __str__(self):
         return str(self.order)
 
+    class Meta:
+        verbose_name = 'Order Report'
+        verbose_name_plural = 'Order Reports'
+
 
 class Package(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -68,6 +72,9 @@ class PackageProduct(models.Model):
 
     def __str__(self):
         return str(self.package)
+
+    class Meta:
+        verbose_name_plural = 'Packed Products'
 
 
 class CustomerPrice(models.Model):
@@ -105,10 +112,6 @@ class SalesCrate(models.Model):
 
     def __str__(self):
         return str(self.agent)
-
-    def clean_fields(self, exclude=None):
-        if not self.agent.is_sales_agent:
-            raise ValidationError({'agent': ['agent must be a sales agent']})
 
 
 class PackageProductCrate(models.Model):

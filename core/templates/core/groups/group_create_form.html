@@ -1,74 +1,60 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-    Create a Group
+    Create Group
 {% endblock %}
-{% block styles %}
-    <link href="{% static 'select2/dist/css/select2.min.css' %}" rel="stylesheet">
+{% block stylesheet %}
+    <link href="{% static 'DataTables/datatables.min.css' %}">
 {% endblock %}
-{% block page-header %}
-    <section class="content-header">
-        <h1>
-            System Groups
-            <small>Groups according to users permissions</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-            <li><a href="#"><i class="fa fa-users"></i> Groups</a></li>
-            <li class="active">Add Group</li>
-        </ol>
-    </section>
+{% block page_title %}
+    <div class="page-title">
+        <div class="title_left">
+            <h3>System User Groups
+            </h3>
+        </div>
+    </div>
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Add Group</h3>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Create A Group
+                        <small>Permission groupings for system users</small>
+                    </h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
                 </div>
-                <!-- /.box-header -->
-                <!-- form start -->
-                <form class="form-horizontal" method="POST" action="{% url 'core:group-create' %}">
-                    {% csrf_token %}
-                    <div class="box-body">
+                <div class="x_content">
+                    <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
                         <div class="form-group">
-                            <label for="name" class="col-sm-2 control-label">Name</label>
-
-                            <div class="col-sm-10">
-                                <input type="text" name="name" class="form-control" id="name" placeholder="Group Name">
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">First Name <span
+                                    class="required">*</span>
+                            </label>
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <input type="text" id="first-name" required="required"
+                                       class="form-control col-md-7 col-xs-12">
                             </div>
                         </div>
+                        <div class="ln_solid"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Permissions</label>
-                            <div class="col-sm-10">
-                                <select class="form-control select2" multiple="multiple"
-                                        data-placeholder="Select Permissions" name="permissions"
-                                        style="width: 100%;">
-                                    {% for permission in permissions %}
-                                        <option value="{{ permission.id }}">{{ permission.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <p class="help-block">Permission for this group</p>
+                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                <a class="btn btn-primary" href="{% url 'core:groups' %}" type="button">Cancel</a>
+                                <button class="btn btn-primary" type="reset">Reset</button>
+                                <button type="submit" class="btn btn-success">Submit</button>
                             </div>
                         </div>
-                    </div>
-                    <!-- /.box-body -->
-                    <div class="box-footer">
-                        <a href="{% url 'core:groups' %}" type="submit" class="btn btn-danger btn-flat">Cancel</a>
-                        <button type="submit" class="btn btn-info pull-right btn-flat">Save</button>
-                    </div>
-                    <!-- /.box-footer -->
-                </form>
+                    </form>
+                </div>
             </div>
-            <!-- /.box -->
         </div>
     </div>
 {% endblock %}
 {% block scripts %}
-    <script src="{% static 'select2/dist/js/select2.min.js' %}"></script>
-    <script>
-        $(function () {
-            $('.select2').select2();
-        });
-    </script>
+    <script src="{% static 'vendors/parsleyjs/dist/parsley.min.js' %}"></script>
+    <script src="{% static 'vendors/select2/dist/js/select2.full.min.js' %}"></script>
+    <script></script>
 {% endblock %}

@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin
 class ProductInline(admin.TabularInline):
     model = models.AggregationCenterProduct
     extra = 1
-    can_delete = True
+    can_delete = False
     verbose_name_plural = 'Products'
     verbose_name = 'Product'
     show_change_link = True
@@ -17,8 +17,16 @@ class ProductInline(admin.TabularInline):
 class AggregationCenterAdmin(admin.ModelAdmin):
     list_display = ('name', 'location')
     search_fields = ('name', 'location')
+    exclude = ('is_active',)
     inlines = [ProductInline]
     list_per_page = 20
+
+    def delete_model(self, request, obj):
+        obj.is_active = False
+        obj.save()
+
+    def get_queryset(self, request):
+        return models.AggregationCenter.objects.filter(is_active=True)
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -34,10 +42,11 @@ class CrateTypeAdmin(admin.ModelAdmin):
 
 
 class CrateAdmin(admin.ModelAdmin):
-    list_display = ('number', 'type')
+    list_display = ('number', 'type', 'procurement_date')
     list_per_page = 20
-    list_filter = ('type',)
+    list_filter = ('type', 'procurement_date')
     search_fields = ('number',)
+    date_hierarchy = 'procurement_date'
     autocomplete_fields = ('type',)
 
 
