@@ -120,7 +120,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-CORS_ORIGIN_ALLOW_ALL = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -132,6 +131,12 @@ STATICFILES_DIRS = [
 ]
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 AUTH_USER_MODEL = 'core.User'
+CORS_ORIGIN_WHITELIST = (
+    'google.com',
+    'hostname.example.com',
+    'localhost:8080',
+    '127.0.0.1:8080'
+)
 if DEBUG:
     INTERNAL_IPS = ('127.0.0.1', 'localhost',)
     MIDDLEWARE += [
