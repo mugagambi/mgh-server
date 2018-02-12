@@ -46,6 +46,7 @@ urlpatterns = [
     path('api/core/', include('core.urls')),
     path('api/sales/', include('sales.urls')),
     path('api/auth/', include('djoser.urls')),
+    path('api/auth/', include('djoser.urls.jwt')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('docs/', include_docs_urls(title='MGH API'))
 ]

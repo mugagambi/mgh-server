@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+
+import datetime
 from decouple import config, Csv
 import dj_database_url
 
@@ -139,11 +141,19 @@ CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:8080',
     'mgh-web.firebaseapp.com'
 )
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+}
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'core.serializers.UserCreateSerializer',
         'user': 'core.serializers.UserSerializer'
     }
+}
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=86400)
 }
 if DEBUG:
     INTERNAL_IPS = ('127.0.0.1', 'localhost',)
