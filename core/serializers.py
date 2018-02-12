@@ -18,7 +18,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields = tuple(User.REQUIRED_FIELDS) + (
             User._meta.pk.name,
             User.USERNAME_FIELD,
-            'phone_number'
+            'phone_number',
+            'first_name',
+            'last_name',
+            'last_login'
         )
         read_only_fields = (User.USERNAME_FIELD,)
 
@@ -45,7 +48,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
-            User.USERNAME_FIELD, User._meta.pk.name, 'password', 'phone_number'
+            User.USERNAME_FIELD, User._meta.pk.name, 'password', 'phone_number',
+            'first_name',
+            'last_name',
         )
 
     def validate(self, attrs):
