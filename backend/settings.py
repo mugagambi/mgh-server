@@ -135,7 +135,8 @@ CORS_ORIGIN_WHITELIST = (
     'google.com',
     'hostname.example.com',
     'localhost:8080',
-    '127.0.0.1:8080'
+    '127.0.0.1:8080',
+    'mgh-web.firebaseapp.com'
 )
 if DEBUG:
     INTERNAL_IPS = ('127.0.0.1', 'localhost',)
