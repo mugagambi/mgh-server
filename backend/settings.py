@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'rest_framework',
+    'djoser',
     'corsheaders',
     'django_filters',
     'crispy_forms',
@@ -66,7 +67,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -138,6 +139,12 @@ CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:8080',
     'mgh-web.firebaseapp.com'
 )
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'core.serializers.UserCreateSerializer',
+        'user': 'core.serializers.UserSerializer'
+    }
+}
 if DEBUG:
     INTERNAL_IPS = ('127.0.0.1', 'localhost',)
     MIDDLEWARE += [

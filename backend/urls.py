@@ -21,7 +21,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', include('core.web_urls')),
+    path('', admin.site.urls),
     path(
         'password_reset/',
         auth_views.PasswordResetView.as_view(),
@@ -45,6 +45,7 @@ urlpatterns = [
     path('doc/', include('django.contrib.admindocs.urls')),
     path('api/core/', include('core.urls')),
     path('api/sales/', include('sales.urls')),
+    path('api/auth/', include('djoser.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('docs/', include_docs_urls(title='MGH API'))
 ]
