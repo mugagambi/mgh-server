@@ -11,7 +11,10 @@ django-cors-headers==2.1.0
 django-crispy-forms==1.7.0
 django-debug-toolbar==1.9.1
 django-filter==1.1.0
+django-templated-mail==1.1.1
 djangorestframework==3.7.7
+djangorestframework-jwt==1.11.0
+djoser==1.1.5
 docutils==0.14
 gunicorn==19.7.1
 idna==2.6
@@ -30,6 +33,7 @@ prompt-toolkit==1.0.15
 psycopg2==2.7.3.2
 ptyprocess==0.5.2
 Pygments==2.2.0
+PyJWT==1.5.3
 python-decouple==3.1
 pytz==2017.3
 rcssmin==1.0.6
