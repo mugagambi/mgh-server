@@ -34,7 +34,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OrderProducts
-        fields = ('id', 'order', 'product', 'grade', 'qty', 'price')
+        fields = ('id', 'order', 'product', 'qty', 'price')
 
 
 class PackageSerializer(serializers.ModelSerializer):
@@ -51,19 +51,19 @@ class PackageSerializer(serializers.ModelSerializer):
 class PackageProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PackageProduct
-        fields = ('id', 'package', 'product', 'qty_order', 'qty_weigh', 'crate_weight', 'grade')
+        fields = ('id', 'package', 'product', 'qty_order', 'qty_weigh', 'crate_weight')
 
 
 class CustomerPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerPrice
-        fields = ('id', 'customer', 'price', 'product', 'grade', 'grade', 'created_at', 'updated_at')
+        fields = ('id', 'customer', 'price', 'product', 'created_at', 'updated_at')
 
 
 class CustomerDiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerDiscount
-        fields = ('id', 'customer', 'discount', 'product', 'grade', 'created_at', 'updated_at')
+        fields = ('id', 'customer', 'discount', 'product', 'created_at', 'updated_at')
 
 
 class SalesCrateSerializer(serializers.ModelSerializer):
@@ -97,7 +97,7 @@ class ReceiptSerializer(serializers.ModelSerializer):
 class ReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReceiptParticular
-        fields = ('id', 'qty', 'product', 'price', 'grade', 'discount', 'receipt')
+        fields = ('id', 'qty', 'product', 'price', 'discount', 'receipt')
 
 
 class ReceiptPaymentSerializer(serializers.ModelSerializer):
@@ -121,7 +121,7 @@ class CashReceiptSerializer(serializers.ModelSerializer):
 class CashReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CashReceiptParticular
-        fields = ('id', 'qty', 'product', 'price', 'grade', 'discount', 'cash_receipt')
+        fields = ('id', 'qty', 'product', 'price', 'discount', 'cash_receipt')
 
 
 class CashReceiptPaymentSerializer(serializers.ModelSerializer):
@@ -153,4 +153,4 @@ class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReturnsOrRejects
         fields = (
-            'id', 'type', 'product', 'qty', 'receipt', 'customer', 'description', 'date', 'grade', 'date_of_resuplly')
+            'id', 'type', 'product', 'qty', 'receipt', 'customer', 'description', 'date', 'date_of_resuplly')

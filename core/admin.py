@@ -50,17 +50,12 @@ class CrateAdmin(admin.ModelAdmin):
     autocomplete_fields = ('type',)
 
 
-class GradeAdmin(admin.ModelAdmin):
-    search_fields = ('name',)
-
-
 # Register your models here.
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.AggregationCenter, AggregationCenterAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.CrateType, CrateTypeAdmin)
 admin.site.register(models.Crate, CrateAdmin)
-admin.site.register(models.Grade, GradeAdmin)
 admin.site.site_title = 'Meru Greens Horticulture Ltd'
 admin.site.index_title = 'System Administration'
 admin.site.site_header = 'Meru Greens Horticulture Ltd'

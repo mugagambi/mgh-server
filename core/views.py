@@ -66,8 +66,3 @@ class CrateViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CrateSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     filter_fields = ('type',)
-
-
-class GradeViewSet(viewsets.ModelViewSet):
-    queryset = models.Grade.objects.all()
-    serializer_class = serializers.GradeSerializer

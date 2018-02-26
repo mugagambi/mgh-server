@@ -25,7 +25,7 @@ class CustomerAdmin(admin.ModelAdmin):
 class OrderProductsInline(admin.TabularInline):
     model = models.OrderProducts
     can_delete = True
-    autocomplete_fields = ('product', 'grade')
+    autocomplete_fields = ('product',)
     extra = 1
     verbose_name = 'Order Product'
     verbose_name_plural = 'Order Products'
@@ -47,10 +47,10 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class CustomerPriceAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'price', 'product', 'grade', 'created_at', 'updated_at')
-    fields = ('customer', 'price', 'product', 'grade')
-    list_filter = ('customer', 'product', 'grade', 'created_at', 'updated_at')
-    autocomplete_fields = ('customer', 'product', 'grade')
+    list_display = ('customer', 'price', 'product', 'created_at', 'updated_at')
+    fields = ('customer', 'price', 'product')
+    list_filter = ('customer', 'product', 'created_at', 'updated_at')
+    autocomplete_fields = ('customer', 'product')
     date_hierarchy = 'created_at'
     list_per_page = 20
     list_select_related = True
@@ -63,10 +63,10 @@ class SalesCrateAdmin(admin.ModelAdmin):
 
 
 class CustomerDiscountAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'discount', 'product', 'grade', 'created_at', 'updated_at')
-    fields = ('customer', 'discount', 'product', 'grade')
-    list_filter = ('customer', 'product', 'grade', 'created_at', 'updated_at')
-    autocomplete_fields = ('customer', 'product', 'grade')
+    list_display = ('customer', 'discount', 'product', 'created_at', 'updated_at')
+    fields = ('customer', 'discount', 'product')
+    list_filter = ('customer', 'product', 'created_at', 'updated_at')
+    autocomplete_fields = ('customer', 'product')
     date_hierarchy = 'created_at'
     list_per_page = 20
     list_select_related = True

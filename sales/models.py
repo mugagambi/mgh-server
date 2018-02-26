@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import User, Product, Crate, Grade, AggregationCenter
+from core.models import User, Product, Crate, AggregationCenter
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
@@ -40,7 +40,6 @@ class Order(models.Model):
 class OrderProducts(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     qty = models.DecimalField(decimal_places=2, max_digits=8)
     price = models.DecimalField(max_digits=9, decimal_places=2)
 
@@ -68,7 +67,6 @@ class PackageProduct(models.Model):
     qty_order = models.DecimalField(decimal_places=2, max_digits=8)
     qty_weigh = models.DecimalField(decimal_places=2, max_digits=8)
     crate_weight = models.DecimalField(decimal_places=2, max_digits=4)
-    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return str(self.package)
@@ -82,7 +80,6 @@ class CustomerPrice(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
                                                                           'price for each quantity')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -95,7 +92,6 @@ class CustomerDiscount(models.Model):
     discount = models.DecimalField(max_digits=5, decimal_places=2,
                                    help_text='% discount')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -136,7 +132,6 @@ class ReceiptParticular(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
                                                                           'price for each quantity')
-    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     discount = models.DecimalField(max_digits=5, decimal_places=2,
                                    help_text='% discount', null=True)
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
@@ -181,7 +176,6 @@ class CashReceiptParticular(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
                                                                           'price for each quantity')
-    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     discount = models.DecimalField(max_digits=5, decimal_places=2,
                                    help_text='% discount')
     cash_receipt = models.ForeignKey(CashReceipt, on_delete=models.CASCADE)
@@ -250,5 +244,4 @@ class ReturnsOrRejects(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     description = models.TextField()
     date = models.DateTimeField(default=now)
-    grade = models.ForeignKey(Grade, null=True, on_delete=models.SET_NULL)
     date_of_resuplly = models.DateField(null=True)

@@ -52,7 +52,7 @@ class OrderProductsViewSet(viewsets.ModelViewSet):
     queryset = models.OrderProducts.objects.all()
     serializer_class = serializers.OrderProductsSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('order', 'product', 'grade')
+    filter_fields = ('order', 'product')
     ordering_fields = ('qty', 'price')
 
 
@@ -77,7 +77,7 @@ class PackageProductsViewSet(viewsets.ModelViewSet):
     queryset = models.PackageProduct.objects.all()
     serializer_class = serializers.PackageProductSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('package', 'product', 'grade')
+    filter_fields = ('package', 'product')
     ordering_fields = ('qty_order', 'qty_weigh', 'crate_weight')
 
 
@@ -85,7 +85,7 @@ class CustomerPriceViewSet(viewsets.ModelViewSet):
     queryset = models.CustomerPrice.objects.all()
     serializer_class = serializers.CustomerPriceSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('customer', 'product', 'grade', 'created_at')
+    filter_fields = ('customer', 'product', 'created_at')
     ordering_fields = ('created_at', 'price', 'updated_at')
 
 
@@ -93,7 +93,7 @@ class CustomerDiscountsViewSet(viewsets.ModelViewSet):
     queryset = models.CustomerDiscount.objects.all()
     serializer_class = serializers.CustomerDiscountSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('customer', 'product', 'grade', 'created_at')
+    filter_fields = ('customer', 'product', 'created_at')
     ordering_fields = ('created_at', 'discount', 'updated_at')
 
 
@@ -105,7 +105,7 @@ class SalesCrateFilter(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = models.SalesCrate
-        fields = ('agent', 'crate', 'date_issued', 'date_returned', 'held_by', 'date_issued_between',
+        fields = ('agent', 'date_issued', 'date_returned', 'held_by', 'date_issued_between',
                   'date_returned_between')
 
 
@@ -145,7 +145,7 @@ class ReceiptParticularsViewSet(viewsets.ModelViewSet):
     queryset = models.ReceiptParticular.objects.all()
     serializer_class = serializers.ReceiptParticularSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('grade', 'product', 'receipt')
+    filter_fields = ('product', 'receipt')
     ordering_fields = ('qty', 'price', 'discount')
 
 
@@ -189,7 +189,7 @@ class CashReceiptParticularViewSet(viewsets.ModelViewSet):
     queryset = models.CashReceiptParticular.objects.all()
     serializer_class = serializers.CashReceiptParticularSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('grade', 'product', 'cash_receipt')
+    filter_fields = ('product', 'cash_receipt')
     ordering_fields = ('qty', 'price', 'discount')
 
 
@@ -254,7 +254,7 @@ class ReturnsRejectsFilterSet(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = models.ReturnsOrRejects
-        fields = ('type', 'product', 'receipt', 'customer', 'date', 'grade', 'date_of_resuplly'
+        fields = ('type', 'product', 'receipt', 'customer', 'date', 'date_of_resuplly'
                   , 'date_between', 'resupply_between')
 
 

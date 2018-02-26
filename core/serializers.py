@@ -109,9 +109,3 @@ class CrateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Crate
         fields = ('id', 'number', 'type')
-
-
-class GradeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Grade
-        fields = ('id', 'name',)

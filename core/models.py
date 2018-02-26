@@ -1,6 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.db import models
 # Create your models here.
 from django.utils.timezone import now
 
@@ -65,10 +64,3 @@ class Crate(models.Model):
 
     def __str__(self):
         return self.number
-
-
-class Grade(models.Model):
-    name = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.name
