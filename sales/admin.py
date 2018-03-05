@@ -2,6 +2,7 @@ from django.contrib import admin
 from sales import models
 from utils import InputFilter
 from django.db.models import Q
+from django.utils.html import format_html
 
 
 class RegionAdmin(admin.ModelAdmin):
@@ -111,7 +112,7 @@ class SalesAdmin(admin.ModelAdmin):
         return False
 
     def get_receipt_url(self, obj):
-        return '<a class="button" href="#">view receipt</a>'
+        return format_html('<a class="button" href="#">view receipt</a>')
 
     def has_delete_permission(self, request, obj=None):
         return False
