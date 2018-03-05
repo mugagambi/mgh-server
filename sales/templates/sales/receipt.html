@@ -1,0 +1,24 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n static %}
+{% block title %}Receipt | Meru Greens Horticulture Ltd.{% endblock %}
+{% block branding %}
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">Meru Greens Horticulture Ltd.</a></h1>
+{% endblock %}
+{% block extrastyle %}{{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}"/>{% endblock %}
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        &rsaquo;
+    <a href="{% url 'admin:app_list' app_label='sales' %}">Sales</a>
+    &rsaquo;
+    <a href="/sales/receipt/">Sales</a>
+        &rsaquo;
+    Receipt
+    </div>
+{% endblock %}
+{% block content %}
+    <div id="content-main">
+        <h1>Receipt</h1>
+    </div>
+{% endblock %}

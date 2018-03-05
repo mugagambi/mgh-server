@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import viewsets
 from sales import serializers
 from sales import models
@@ -6,6 +7,10 @@ from rest_framework import filters
 
 
 # Create your views here.
+def receipt(request, pk):
+    return render(request, 'sales/receipt.html')
+
+
 class RegionViewSet(viewsets.ModelViewSet):
     queryset = models.Region.objects.all()
     serializer_class = serializers.RegionSerializer

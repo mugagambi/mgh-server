@@ -3,6 +3,7 @@ from sales import models
 from utils import InputFilter
 from django.db.models import Q
 from django.utils.html import format_html
+from django import urls
 
 
 class RegionAdmin(admin.ModelAdmin):
@@ -112,13 +113,14 @@ class SalesAdmin(admin.ModelAdmin):
         return False
 
     def get_receipt_url(self, obj):
-        return format_html('<a class="button" href="#">view receipt</a>')
+        return format_html('<a class="button" href="{}">view receipt</a>', urls.reverse('receipt', args=obj.pk))
 
     def has_delete_permission(self, request, obj=None):
         return False
 
     get_receipt_url.short_description = 'Receipt'
     get_receipt_url.allow_tags = True
+
 
 # Register your models here.
 admin.site.register(models.Region, RegionAdmin)
