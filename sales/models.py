@@ -2,6 +2,7 @@ from django.db import models
 from core.models import User, Product, Crate, AggregationCenter
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
+from functools import reduce
 
 
 # Create your models here.
@@ -131,6 +132,12 @@ class Receipt(models.Model):
         verbose_name_plural = 'Sales'
         verbose_name = 'Sale'
 
+    def total_qty(self):
+        return reduce((lambda x, y: x + y), [x.qty for x in self.receiptparticular_set.all()])
+
+    def total_amount(self):
+        return reduce((lambda x, y: x + y), [x.total for x in self.receiptparticular_set.all()])
+
 
 class ReceiptParticular(models.Model):
     qty = models.DecimalField(decimal_places=2, max_digits=8)
@@ -143,6 +150,13 @@ class ReceiptParticular(models.Model):
 
     def __str__(self):
         return str(self.receipt)
+
+    def total(self):
+        amount = self.qty * self.price
+        if self.discount:
+            total_discount = amount * self.discount
+            return amount - total_discount
+        return amount
 
 
 class ReceiptPayment(models.Model):

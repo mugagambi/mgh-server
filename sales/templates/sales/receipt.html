@@ -1,16 +1,23 @@
 {% extends 'admin/base_site.html' %}
 {% load i18n static %}
 {% block title %}Receipt | Meru Greens Horticulture Ltd.{% endblock %}
-{% block extrastyle %}{{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}"/>{% endblock %}
 {% block branding %}
-    {{ block.super }}
+    <h1 id="site-name"><a href="{% url 'admin:index' %}">Meru Greens Horticulture Ltd.</a></h1>
 {% endblock %}
-{% block usertools %}
-    {{ block.super }}
-{% endblock %}
-{% block userlinks %}
-    {{ block.super }}
+{% block extrastyle %}{{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css"/>
+    <style>
+        .footer {
+            font-weight: bold;
+            border-top: 2px solid #DDDDDD;
+        }
+
+        td {
+            height: 30px;
+            font-size: 15px;
+        }
+    </style>
 {% endblock %}
 {% block breadcrumbs %}
     <div class="breadcrumbs">
@@ -25,6 +32,77 @@
 {% endblock %}
 {% block content %}
     <div id="content-main">
-        <h1>Receipt</h1>
+        <section class="section">
+            <div class="container">
+                <h1 class="title has-text-centered">Receipt No. {{ receipt.id }}</h1>
+                <div class="columns">
+                    <div class="column">
+                        <p><b>Customer Shop Name : </b>
+                            <a href="/sales/customer/{{ receipt.customer.id }}/change/">
+                                {{ receipt.customer.shop_name }}
+                            </a>
+                        </p>
+                    </div>
+                    <div class="column">
+                        <p><b>Customer Shop Nick Name : </b>{{ receipt.customer.nick_name }}</p>
+                    </div>
+                    <div class="column">
+                        <p><b>Served By : </b>
+                            <a href="/core/user/{{ receipt.served_by.id }}/change/">
+                                {{ receipt.served_by.username }}
+                            </a></p>
+
+                    </div>
+                    <div class="column">
+                        <p><b>Date : </b>{{ receipt.date|date:"D d M Y, h:i A" }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <h2 class=" title has-text-centered is-size-5">Receipt Particulars</h2>
+                <div class="columns">
+                    <div class="column">
+                        <table style="width: 100%;">
+                            <thead>
+                            <tr>
+                                <th>items</th>
+                                <th>Product</th>
+                                <th>Qty</th>
+                                <th>@</th>
+                                <th>Discount (%)</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for particular in receipt.receiptparticular_set.all %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ particular.product.name }}</td>
+                                    <td>{{ particular.qty }} Kg(s)</td>
+                                    <td>Ksh. {{ particular.price }}</td>
+                                    <td>{% if particular.discount %}
+                                        {{ particular.discount }}
+                                    {% else %} - {% endif %}
+                                    </td>
+                                    <td>Ksh. {{ particular.total }}</td>
+                                </tr>
+                            {% endfor %}
+
+                            <tr class="footer">
+                                <td> Total</td>
+                                <td> -</td>
+                                <td> {{ receipt.total_qty }} Kgs</td>
+                                <td> -</td>
+                                <td> -</td>
+                                <td> Ksh. 456789</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 {% endblock %}

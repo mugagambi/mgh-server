@@ -8,7 +8,8 @@ from rest_framework import filters
 
 # Create your views here.
 def receipt(request, pk):
-    return render(request, 'sales/receipt.html')
+    receipt_item = models.Receipt.objects.get(pk=pk)
+    return render(request, 'sales/receipt.html', {'receipt': receipt_item})
 
 
 class RegionViewSet(viewsets.ModelViewSet):
