@@ -73,10 +73,11 @@ class SalesCrateAdmin(admin.ModelAdmin):
 
 class SalesAdmin(admin.ModelAdmin):
     list_per_page = 50
-    list_filter = ('customer', 'served_by', 'date')
+    list_filter = ('served_by', 'date')
     date_hierarchy = 'date'
     list_display = ('customer', 'served_by', 'date')
     exclude = ('customer', 'served_by', 'date')
+    search_fields = ('customer__name',)
 
     def has_add_permission(self, request):
         return False
