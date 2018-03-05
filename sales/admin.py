@@ -103,16 +103,21 @@ class SalesAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_filter = (CustomerShopNameFilter, CustomerNickNameFilter, 'served_by', 'date')
     date_hierarchy = 'date'
-    list_display = ('customer', 'served_by', 'date')
+    list_display = ('customer', 'served_by', 'date', 'get_receipt_url')
     exclude = ('customer', 'served_by', 'date')
     search_fields = ('customer__name',)
 
     def has_add_permission(self, request):
         return False
 
+    def get_receipt_url(self, obj):
+        return '<a class="button" href="%s">view receipt</a>' % '#'
+
     def has_delete_permission(self, request, obj=None):
         return False
 
+    get_receipt_url.short_description = 'Receipt'
+    get_receipt_url.allow_tags = True
 
 # Register your models here.
 admin.site.register(models.Region, RegionAdmin)
