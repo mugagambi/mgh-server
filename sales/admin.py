@@ -78,17 +78,17 @@ class CustomerShopNameFilter(InputFilter):
     title = 'Customer Shop Name'
 
     def queryset(self, request, queryset):
-        name = ''
         if self.value() is not None:
             name = self.value()
-        return queryset.filter(
-            Q(customer__shop_name=name)
-        )
+            return queryset.filter(
+                Q(customer__shop_name=name)
+            )
+        return queryset
 
 
 class SalesAdmin(admin.ModelAdmin):
     list_per_page = 50
-    list_filter = (CustomerShopNameFilter,'served_by', 'date')
+    list_filter = (CustomerShopNameFilter, 'served_by', 'date')
     date_hierarchy = 'date'
     list_display = ('customer', 'served_by', 'date')
     exclude = ('customer', 'served_by', 'date')
