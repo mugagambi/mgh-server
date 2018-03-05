@@ -111,7 +111,7 @@ class SalesAdmin(admin.ModelAdmin):
         return False
 
     def get_receipt_url(self, obj):
-        return '<a class="button" href="%s">view receipt</a>' % '#'
+        return '<a class="button" href="#">view receipt</a>'
 
     def has_delete_permission(self, request, obj=None):
         return False
