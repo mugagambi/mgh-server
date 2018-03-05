@@ -113,7 +113,7 @@ class SalesAdmin(admin.ModelAdmin):
         return False
 
     def get_receipt_url(self, obj):
-        return format_html('<a class="button" href="{}">view receipt</a>', urls.reverse('receipt', args=obj.pk))
+        return format_html('<a class="button" href="{}">view receipt</a>', urls.reverse('receipt', args=[obj.pk]))
 
     def has_delete_permission(self, request, obj=None):
         return False
