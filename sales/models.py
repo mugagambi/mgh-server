@@ -13,7 +13,8 @@ class Region(models.Model):
 
 
 class Customer(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(name='shop_name', max_length=100)
+    nick_name = models.CharField(blank=True, max_length=100)
     location = models.CharField(max_length=100)
     country_code = models.PositiveSmallIntegerField()
     phone_number = models.PositiveIntegerField(unique=True)
@@ -23,7 +24,7 @@ class Customer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return str(self.shop_name)
 
 
 class Order(models.Model):
@@ -125,6 +126,7 @@ class Receipt(models.Model):
 
     def __str__(self):
         return str(self.customer)
+
     class Meta:
         verbose_name_plural = 'Sales'
         verbose_name = 'Sale'

@@ -1,5 +1,7 @@
 from django.contrib import admin
 from sales import models
+from utils import InputFilter
+from django.db.models import Q
 
 
 class RegionAdmin(admin.ModelAdmin):
@@ -27,12 +29,12 @@ class CustomerDiscountInline(admin.TabularInline):
 
 class CustomerAdmin(admin.ModelAdmin):
     inlines = [CustomerPriceInline, CustomerDiscountInline]
-    list_display = ('name', 'location', 'country_code', 'phone_number',
+    list_display = ('shop_name', 'nick_name', 'location', 'country_code', 'phone_number',
                     'added_by', 'region', 'created_at', 'updated_at')
-    fields = ('name', 'location', ('country_code', 'phone_number'), 'region')
+    fields = ('shop_name', 'nick_name', 'location', ('country_code', 'phone_number'), 'region')
     list_filter = ('country_code', 'region', 'added_by', 'created_at')
     autocomplete_fields = ('region',)
-    search_fields = ('name',)
+    search_fields = ('shop_name', 'nick_name')
     date_hierarchy = 'created_at'
     list_select_related = True
 
@@ -71,9 +73,22 @@ class SalesCrateAdmin(admin.ModelAdmin):
     list_per_page = 20
 
 
+class CustomerShopNameFilter(InputFilter):
+    parameter_name = 'customer_shop_name'
+    title = 'Customer Shop Name'
+
+    def queryset(self, request, queryset):
+        name = ''
+        if self.value() is not None:
+            name = self.value()
+        return queryset.filter(
+            Q(customer__shop_name=name)
+        )
+
+
 class SalesAdmin(admin.ModelAdmin):
     list_per_page = 50
-    list_filter = ('served_by', 'date')
+    list_filter = (CustomerShopNameFilter,'served_by', 'date')
     date_hierarchy = 'date'
     list_display = ('customer', 'served_by', 'date')
     exclude = ('customer', 'served_by', 'date')

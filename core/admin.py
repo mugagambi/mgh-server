@@ -1,6 +1,7 @@
 from django.contrib import admin
 from core import models
 from django.contrib.auth.admin import UserAdmin
+from utils import admin_link
 
 
 class ProductInline(admin.TabularInline):
@@ -42,12 +43,17 @@ class CrateTypeAdmin(admin.ModelAdmin):
 
 
 class CrateAdmin(admin.ModelAdmin):
-    list_display = ('number', 'type', 'procurement_date')
+    list_display = ('number', 'type_link', 'procurement_date')
     list_per_page = 20
     list_filter = ('type', 'procurement_date')
     search_fields = ('number',)
     date_hierarchy = 'procurement_date'
     autocomplete_fields = ('type',)
+    list_select_related = True
+
+    @admin_link('type', 'Type')
+    def type_link(self, type):
+        return type
 
 
 # Register your models here.
