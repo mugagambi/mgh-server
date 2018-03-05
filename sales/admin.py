@@ -86,9 +86,22 @@ class CustomerShopNameFilter(InputFilter):
         return queryset
 
 
+class CustomerNickNameFilter(InputFilter):
+    parameter_name = 'customer_nick_name'
+    title = 'Customer Nick Name'
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            name = self.value()
+            return queryset.filter(
+                Q(customer__nick_name=name)
+            )
+        return queryset
+
+
 class SalesAdmin(admin.ModelAdmin):
     list_per_page = 50
-    list_filter = (CustomerShopNameFilter, 'served_by', 'date')
+    list_filter = (CustomerShopNameFilter, CustomerNickNameFilter, 'served_by', 'date')
     date_hierarchy = 'date'
     list_display = ('customer', 'served_by', 'date')
     exclude = ('customer', 'served_by', 'date')
