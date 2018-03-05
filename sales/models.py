@@ -136,7 +136,7 @@ class Receipt(models.Model):
         return reduce((lambda x, y: x + y), [x.qty for x in self.receiptparticular_set.all()])
 
     def total_amount(self):
-        return reduce((lambda x, y: x + y), [x.total for x in self.receiptparticular_set.all()])
+        return reduce((lambda x, y: x + y), [x.total() for x in self.receiptparticular_set.all()])
 
 
 class ReceiptParticular(models.Model):
