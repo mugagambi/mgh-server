@@ -22,7 +22,7 @@ class AggregationCenter(models.Model):
 
     class Meta:
         verbose_name = 'Aggregation Center'
-        verbose_name_plural = 'Aggregation Center'
+        verbose_name_plural = 'Aggregation Centers'
 
     def __str__(self):
         return self.name

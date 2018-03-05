@@ -125,6 +125,9 @@ class Receipt(models.Model):
 
     def __str__(self):
         return str(self.customer)
+    class Meta:
+        verbose_name_plural = 'Sales'
+        verbose_name = 'Sale'
 
 
 class ReceiptParticular(models.Model):

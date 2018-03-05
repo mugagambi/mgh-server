@@ -7,7 +7,26 @@ class RegionAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
 
+class CustomerPriceInline(admin.TabularInline):
+    model = models.CustomerPrice
+    can_delete = True
+    autocomplete_fields = ('product',)
+    extra = 1
+    verbose_name = 'Price'
+    verbose_name_plural = 'Prices'
+
+
+class CustomerDiscountInline(admin.TabularInline):
+    model = models.CustomerDiscount
+    can_delete = True
+    autocomplete_fields = ('product',)
+    extra = 1
+    verbose_name = 'Discount'
+    verbose_name_plural = 'Discounts'
+
+
 class CustomerAdmin(admin.ModelAdmin):
+    inlines = [CustomerPriceInline, CustomerDiscountInline]
     list_display = ('name', 'location', 'country_code', 'phone_number',
                     'added_by', 'region', 'created_at', 'updated_at')
     fields = ('name', 'location', ('country_code', 'phone_number'), 'region')
@@ -27,8 +46,8 @@ class OrderProductsInline(admin.TabularInline):
     can_delete = True
     autocomplete_fields = ('product',)
     extra = 1
-    verbose_name = 'Order Product'
-    verbose_name_plural = 'Order Products'
+    verbose_name = 'Item'
+    verbose_name_plural = 'Items'
 
 
 class OrderAdmin(admin.ModelAdmin):
@@ -46,46 +65,32 @@ class OrderAdmin(admin.ModelAdmin):
         super(OrderAdmin, self).save_model(request, obj, form, change)
 
 
-class CustomerPriceAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'price', 'product', 'created_at', 'updated_at')
-    fields = ('customer', 'price', 'product')
-    list_filter = ('customer', 'product', 'created_at', 'updated_at')
-    autocomplete_fields = ('customer', 'product')
-    date_hierarchy = 'created_at'
-    list_per_page = 20
-    list_select_related = True
-
-
 class SalesCrateAdmin(admin.ModelAdmin):
     list_display = ('agent', 'crate', 'date_issued', 'date_returned', 'held_by')
     list_filter = ('agent', 'crate', 'date_issued', 'date_returned', 'held_by')
     list_per_page = 20
 
 
-class CustomerDiscountAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'discount', 'product', 'created_at', 'updated_at')
-    fields = ('customer', 'discount', 'product')
-    list_filter = ('customer', 'product', 'created_at', 'updated_at')
-    autocomplete_fields = ('customer', 'product')
-    date_hierarchy = 'created_at'
-    list_per_page = 20
-    list_select_related = True
+class SalesAdmin(admin.ModelAdmin):
+    list_per_page = 50
+    list_filter = ('customer', 'served_by', 'date')
+    date_hierarchy = 'date'
+    list_display = ('customer', 'served_by', 'date')
+    exclude = ('customer', 'served_by', 'date')
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # Register your models here.
 admin.site.register(models.Region, RegionAdmin)
 admin.site.register(models.Customer, CustomerAdmin)
 admin.site.register(models.Order, OrderAdmin)
-admin.site.register(models.CustomerPrice, CustomerPriceAdmin)
-admin.site.register(models.CustomerDiscount, CustomerDiscountAdmin)
 admin.site.register(models.SalesCrate)
-admin.site.register(models.PackageProductCrate)
-admin.site.register(models.Receipt)
-admin.site.register(models.ReceiptParticular)
-admin.site.register(models.ReceiptPayment)
-admin.site.register(models.CashReceipt)
-admin.site.register(models.CashReceiptParticular)
-admin.site.register(models.CashReceiptPayment)
 admin.site.register(models.CreditSettlement)
 admin.site.register(models.OverPayOrUnderPay)
 admin.site.register(models.ReturnsOrRejects)
+admin.site.register(models.Receipt, SalesAdmin)
