@@ -1,7 +1,51 @@
+from django.contrib.admin import AdminSite
 from django.contrib import admin
 from core import models
 from django.contrib.auth.admin import UserAdmin
 from utils import admin_link
+
+
+class CustomAdminSite(AdminSite):
+    empty_value_display = '-'
+    site_header = "Meru Greens Horticulture Ltd"
+    site_title = "Meru Greens Horticulture Ltd Admin Portal"
+    index_title = "Welcome to admin portal"
+
+    def get_app_list(self, request):
+        """
+            Return a sorted list of all the installed apps that have been
+            registered in this site.
+        """
+        ordering = {
+            "Users": 1,
+            "Crate types": 2,
+            "Crates": 3,
+            "Products": 4,
+            "Aggregation Centers": 5,
+            "Regions": 6,
+            "Customers": 7,
+            "Customer prices": 8,
+            "Orders": 9,
+            "Sales": 10,
+            "Sales crates": 11,
+            "Credit settlements": 12,
+            "Over pay or under pays": 13,
+            "Returns or rejectss": 14
+
+        }
+        app_dict = self._build_app_dict(request)
+        # a.sort(key=lambda x: b.index(x[0]))
+        # Sort the apps alphabetically.
+        app_list = sorted(app_dict.values(), key=lambda x: x['name'].lower())
+
+        # Sort the models alphabetically within each app.
+        for app in app_list:
+            app['models'].sort(key=lambda x: ordering[x['name']])
+
+        return app_list
+
+
+custom_admin_site = CustomAdminSite(name='custom_admin_site')
 
 
 class ProductInline(admin.TabularInline):
@@ -57,12 +101,8 @@ class CrateAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
-admin.site.register(models.User, UserAdmin)
-admin.site.register(models.AggregationCenter, AggregationCenterAdmin)
-admin.site.register(models.Product, ProductAdmin)
-admin.site.register(models.CrateType, CrateTypeAdmin)
-admin.site.register(models.Crate, CrateAdmin)
-admin.site.site_title = 'Meru Greens Horticulture Ltd'
-admin.site.index_title = 'System Administration'
-admin.site.site_header = 'Meru Greens Horticulture Ltd'
-admin.site.empty_value_display = '-'
+custom_admin_site.register(models.User, UserAdmin)
+custom_admin_site.register(models.AggregationCenter, AggregationCenterAdmin)
+custom_admin_site.register(models.Product, ProductAdmin)
+custom_admin_site.register(models.CrateType, CrateTypeAdmin)
+custom_admin_site.register(models.Crate, CrateAdmin)

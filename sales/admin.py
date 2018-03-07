@@ -5,7 +5,9 @@ from django.db.models import Q
 from django.utils.html import format_html
 from django import urls
 from import_export import resources
-from import_export.admin import ImportExportModelAdmin
+from import_export.admin import ExportMixin
+from import_export.fields import Field
+from core.admin import custom_admin_site
 
 
 class RegionResource(resources.ModelResource):
@@ -13,13 +15,19 @@ class RegionResource(resources.ModelResource):
         model = models.Region
 
 
-class RegionAdmin(ImportExportModelAdmin):
+class RegionAdmin(ExportMixin, admin.ModelAdmin):
     search_fields = ('name',)
     list_display = ('name',)
     resource_class = RegionResource
 
 
-class CustomerPriceInline(admin.TabularInline):
+class CustomerPriceResource(resources.ModelResource):
+    class Meta:
+        model = models.CustomerPrice
+
+
+class CustomerPriceInline(ExportMixin, admin.TabularInline):
+    resource_class = CustomerPriceResource
     model = models.CustomerPrice
     can_delete = True
     autocomplete_fields = ('product',)
@@ -37,7 +45,22 @@ class CustomerDiscountInline(admin.TabularInline):
     verbose_name_plural = 'Discounts'
 
 
-class CustomerAdmin(admin.ModelAdmin):
+class CustomerResource(resources.ModelResource):
+    region = Field()
+    added_by = Field()
+
+    class Meta:
+        model = models.Customer
+
+    def dehydrate_region(self, customer):
+        return customer.region.name
+
+    def dehydrate_added_by(self, customer):
+        return customer.added_by.username
+
+
+class CustomerAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = CustomerResource
     inlines = [CustomerPriceInline, CustomerDiscountInline]
     list_display = ('shop_name', 'nick_name', 'location', 'country_code', 'phone_number',
                     'added_by', 'region', 'created_at', 'updated_at')
@@ -51,6 +74,54 @@ class CustomerAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.added_by = request.user
         super(CustomerAdmin, self).save_model(request, obj, form, change)
+
+
+class CustomerShopNameFilter(InputFilter):
+    parameter_name = 'customer_shop_name'
+    title = 'Customer Shop Name'
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            name = self.value()
+            return queryset.filter(
+                Q(customer__shop_name__icontains=name)
+            )
+        return queryset
+
+
+class CustomerNickNameFilter(InputFilter):
+    parameter_name = 'customer_nick_name'
+    title = 'Customer Nick Name'
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            name = self.value()
+            return queryset.filter(
+                Q(customer__nick_name__icontains=name)
+            )
+        return queryset
+
+
+class ProductNameFilter(InputFilter):
+    parameter_name = 'product_name'
+    title = 'Product Name'
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            name = self.value()
+            return queryset.filter(
+                Q(product__name__icontains=name)
+            )
+        return queryset
+
+
+class CustomerPricesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'customer', 'price', 'product', 'created_at', 'updated_at')
+    fields = ('customer', 'price', 'product')
+    autocomplete_fields = ('customer',)
+    date_hierarchy = 'updated_at'
+    list_per_page = 50
+    list_filter = (CustomerShopNameFilter, CustomerNickNameFilter, ProductNameFilter, 'created_at', 'updated_at')
 
 
 class OrderProductsInline(admin.TabularInline):
@@ -83,7 +154,7 @@ class SalesCrateAdmin(admin.ModelAdmin):
     list_per_page = 20
 
 
-class CustomerShopNameFilter(InputFilter):
+class SalesCustomerShopNameFilter(InputFilter):
     parameter_name = 'customer_shop_name'
     title = 'Customer Shop Name'
 
@@ -96,7 +167,7 @@ class CustomerShopNameFilter(InputFilter):
         return queryset
 
 
-class CustomerNickNameFilter(InputFilter):
+class SalesCustomerNickNameFilter(InputFilter):
     parameter_name = 'customer_nick_name'
     title = 'Customer Nick Name'
 
@@ -111,7 +182,7 @@ class CustomerNickNameFilter(InputFilter):
 
 class SalesAdmin(admin.ModelAdmin):
     list_per_page = 50
-    list_filter = (CustomerShopNameFilter, CustomerNickNameFilter, 'served_by', 'date')
+    list_filter = (SalesCustomerShopNameFilter, SalesCustomerNickNameFilter, 'served_by', 'date')
     date_hierarchy = 'date'
     list_display = ('customer', 'served_by', 'date', 'get_receipt_url')
     exclude = ('customer', 'served_by', 'date')
@@ -131,11 +202,12 @@ class SalesAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
-admin.site.register(models.Region, RegionAdmin)
-admin.site.register(models.Customer, CustomerAdmin)
-admin.site.register(models.Order, OrderAdmin)
-admin.site.register(models.SalesCrate)
-admin.site.register(models.CreditSettlement)
-admin.site.register(models.OverPayOrUnderPay)
-admin.site.register(models.ReturnsOrRejects)
-admin.site.register(models.Receipt, SalesAdmin)
+custom_admin_site.register(models.Region, RegionAdmin)
+custom_admin_site.register(models.Customer, CustomerAdmin)
+custom_admin_site.register(models.CustomerPrice, CustomerPricesAdmin)
+custom_admin_site.register(models.Order, OrderAdmin)
+custom_admin_site.register(models.SalesCrate)
+custom_admin_site.register(models.CreditSettlement)
+custom_admin_site.register(models.OverPayOrUnderPay)
+custom_admin_site.register(models.ReturnsOrRejects)
+custom_admin_site.register(models.Receipt, SalesAdmin)
