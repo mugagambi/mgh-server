@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.admindocs',
     'import_export',
     'core.apps.CoreConfig',
-    'sales.apps.SalesConfig'
+    'sales.apps.SalesConfig',
+    'reports.apps.ReportsConfig'
 ]
 
 MIDDLEWARE = [

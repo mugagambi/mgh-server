@@ -21,13 +21,7 @@ class RegionAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = RegionResource
 
 
-class CustomerPriceResource(resources.ModelResource):
-    class Meta:
-        model = models.CustomerPrice
-
-
-class CustomerPriceInline(ExportMixin, admin.TabularInline):
-    resource_class = CustomerPriceResource
+class CustomerPriceInline(admin.TabularInline):
     model = models.CustomerPrice
     can_delete = True
     autocomplete_fields = ('product',)
@@ -115,7 +109,15 @@ class ProductNameFilter(InputFilter):
         return queryset
 
 
-class CustomerPricesAdmin(admin.ModelAdmin):
+class CustomerPriceResource(resources.ModelResource):
+    product = Field()
+
+    class Meta:
+        model = models.CustomerPrice
+
+
+class CustomerPricesAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = CustomerPriceResource
     list_display = ('id', 'customer', 'price', 'product', 'created_at', 'updated_at')
     fields = ('customer', 'price', 'product')
     autocomplete_fields = ('customer',)

@@ -1,8 +1,9 @@
 from django.contrib.admin import AdminSite
 from django.contrib import admin
 from core import models
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from utils import admin_link
+from django.contrib.auth.models import Group
 
 
 class CustomAdminSite(AdminSite):
@@ -30,7 +31,9 @@ class CustomAdminSite(AdminSite):
             "Sales crates": 11,
             "Credit settlements": 12,
             "Over pay or under pays": 13,
-            "Returns or rejectss": 14
+            "Returns or rejectss": 14,
+            "Outwards Stocks Summary": 15,
+            "Groups": 16
 
         }
         app_dict = self._build_app_dict(request)
@@ -101,6 +104,7 @@ class CrateAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
+custom_admin_site.register(Group, GroupAdmin)
 custom_admin_site.register(models.User, UserAdmin)
 custom_admin_site.register(models.AggregationCenter, AggregationCenterAdmin)
 custom_admin_site.register(models.Product, ProductAdmin)

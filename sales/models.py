@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from core.models import User, Product, Crate, AggregationCenter
 from django.core.exceptions import ValidationError
@@ -139,7 +140,7 @@ class Receipt(models.Model):
 
     def total_amount(self):
         if self.receiptparticular_set.all().exists():
-            return reduce((lambda x, y: x + y), [x.total() for x in self.receiptparticular_set.all()])
+            return reduce((lambda x, y: x + y), [x.total for x in self.receiptparticular_set.all()])
         return 0
 
 
@@ -151,16 +152,23 @@ class ReceiptParticular(models.Model):
     discount = models.DecimalField(max_digits=5, decimal_places=2,
                                    help_text='% discount', null=True)
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
+    total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
 
     def __str__(self):
         return str(self.receipt)
 
-    def total(self):
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
         amount = self.qty * self.price
         if self.discount:
-            total_discount = amount * self.discount
-            return amount - total_discount
-        return amount
+            total_discount = Decimal(amount) * (Decimal(self.discount) / 100)
+            self.total = amount - total_discount
+            return super(ReceiptParticular, self).save(force_insert=False, force_update=False, using=None,
+                                                       update_fields=None)
+        self.total = amount
+        print(self.total)
+        return super(ReceiptParticular, self).save(force_insert=False, force_update=False, using=None,
+                                                   update_fields=None)
 
 
 class ReceiptPayment(models.Model):
