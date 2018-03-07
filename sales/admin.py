@@ -4,11 +4,19 @@ from utils import InputFilter
 from django.db.models import Q
 from django.utils.html import format_html
 from django import urls
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 
 
-class RegionAdmin(admin.ModelAdmin):
+class RegionResource(resources.ModelResource):
+    class Meta:
+        model = models.Region
+
+
+class RegionAdmin(ImportExportModelAdmin):
     search_fields = ('name',)
     list_display = ('name',)
+    resource_class = RegionResource
 
 
 class CustomerPriceInline(admin.TabularInline):
@@ -83,7 +91,7 @@ class CustomerShopNameFilter(InputFilter):
         if self.value() is not None:
             name = self.value()
             return queryset.filter(
-                Q(customer__shop_name=name)
+                Q(customer__shop_name__icontains=name)
             )
         return queryset
 
@@ -96,7 +104,7 @@ class CustomerNickNameFilter(InputFilter):
         if self.value() is not None:
             name = self.value()
             return queryset.filter(
-                Q(customer__nick_name=name)
+                Q(customer__nick_name__icontains=name)
             )
         return queryset
 

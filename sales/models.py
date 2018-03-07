@@ -133,10 +133,14 @@ class Receipt(models.Model):
         verbose_name = 'Sale'
 
     def total_qty(self):
-        return reduce((lambda x, y: x + y), [x.qty for x in self.receiptparticular_set.all()])
+        if self.receiptparticular_set.all().exists():
+            return reduce((lambda x, y: x + y), [x.qty for x in self.receiptparticular_set.all()])
+        return 0
 
     def total_amount(self):
-        return reduce((lambda x, y: x + y), [x.total() for x in self.receiptparticular_set.all()])
+        if self.receiptparticular_set.all().exists():
+            return reduce((lambda x, y: x + y), [x.total() for x in self.receiptparticular_set.all()])
+        return 0
 
 
 class ReceiptParticular(models.Model):
