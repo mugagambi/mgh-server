@@ -126,6 +126,21 @@ class CustomerPricesAdmin(ExportMixin, admin.ModelAdmin):
     list_filter = (CustomerShopNameFilter, CustomerNickNameFilter, ProductNameFilter, 'created_at', 'updated_at')
 
 
+class CustomerDiscountsResource(resources.ModelResource):
+    class Meta:
+        model = models.CustomerDiscount
+
+
+class CustomerDiscountsAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = CustomerDiscountsResource
+    list_display = ('id', 'customer', 'discount', 'product', 'created_at', 'updated_at')
+    fields = ('customer', 'discount', 'product')
+    autocomplete_fields = ('customer',)
+    date_hierarchy = 'updated_at'
+    list_per_page = 50
+    list_filter = (CustomerShopNameFilter, CustomerNickNameFilter, ProductNameFilter, 'created_at', 'updated_at')
+
+
 class OrderProductsInline(admin.TabularInline):
     model = models.OrderProducts
     can_delete = True
@@ -207,6 +222,7 @@ class SalesAdmin(admin.ModelAdmin):
 custom_admin_site.register(models.Region, RegionAdmin)
 custom_admin_site.register(models.Customer, CustomerAdmin)
 custom_admin_site.register(models.CustomerPrice, CustomerPricesAdmin)
+custom_admin_site.register(models.CustomerDiscount, CustomerDiscountsAdmin)
 custom_admin_site.register(models.Order, OrderAdmin)
 custom_admin_site.register(models.SalesCrate)
 custom_admin_site.register(models.CreditSettlement)
