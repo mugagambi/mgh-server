@@ -105,13 +105,46 @@
                 </div>
             </div>
         </section>
-        <body>
         <section class="section">
             <div class="container">
                 <h2 class="title has-text-centered is-size-5e">Payments</h2>
-                <div></div>
+                {% for payment in receipt.receiptpayment_set.all %}
+                    <div class="columns">
+                        <div class="column is-offset-one-quarter is-half">
+                            <div class="card">
+                                <div class="card-content">
+                                    <p><b>Payment Type : </b>{{ payment.get_type_display }}</p>
+                                    <p><b>Amount : </b>{{ payment.amount }}</p>
+                                    {% if payment.type == 1 %}
+                                        <p><b>Cheque Number : </b> {{ payment.check_number }}</p>
+                                    {% elif payment.type == 2 %}
+                                        <p><b>Mobile No. :</b> {{ payment.mobile_number }}</p>
+                                        <p><b>Transaction Id : </b>{{ payment.transaction_id }}</p>
+                                    {% elif payment.type == 4 %}
+                                        <p><b>Invoice Number: </b>{{ receipt.id }}</p>
+                                        <p><b>Date to Pay : </b> {{ payment.date_to_pay }}</p>
+                                        <a href="#" class="button">View Invoice</a>
+                                    {% elif payment.type == 5 %}
+                                        <p><b>Transfer Code : </b>{{ payment.transfer_code }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <hr>
+                <div class="columns">
+                    <div class="column is-offset-one-quarter is-half">
+                        <div class="card">
+                            <div class="card-content">
+                                <p><b>Total Payed : </b> {{ receipt.total_payment }}</p>
+                                <p><b>Total Cost : </b>{{ receipt.total_amount }}</p>
+                                <p><b>Balance : </b>{{ receipt.balance }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
-        </body>
     </div>
 {% endblock %}

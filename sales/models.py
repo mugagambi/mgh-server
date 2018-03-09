@@ -143,6 +143,14 @@ class Receipt(models.Model):
             return reduce((lambda x, y: x + y), [x.total for x in self.receiptparticular_set.all()])
         return 0
 
+    def total_payment(self):
+        if self.receiptpayment_set.all().exists():
+            return reduce((lambda x, y: x + y), [x.amount for x in self.receiptpayment_set.all()])
+        return 0
+
+    def balance(self):
+        return self.total_payment() - self.total_amount()
+
 
 class ReceiptParticular(models.Model):
     qty = models.DecimalField(decimal_places=2, max_digits=8)

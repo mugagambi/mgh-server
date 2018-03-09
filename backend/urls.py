@@ -45,7 +45,6 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(),
         name='password_reset_complete',
     ),
-    path('doc/', include('django.contrib.admindocs.urls')),
     path('api/core/', include('core.urls')),
     path('api/sales/', include('sales.urls')),
     path('api/auth/', include('djoser.urls')),
