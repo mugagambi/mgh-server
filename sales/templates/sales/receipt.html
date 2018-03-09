@@ -132,18 +132,20 @@
                         </div>
                     </div>
                 {% endfor %}
-                <hr>
-                <div class="columns">
-                    <div class="column is-offset-one-quarter is-half">
-                        <div class="card">
-                            <div class="card-content">
-                                <p><b>Total Payed : </b> {{ receipt.total_payment }}</p>
-                                <p><b>Total Cost : </b>{{ receipt.total_amount }}</p>
-                                <p><b>Balance : </b>{{ receipt.balance }}</p>
+                {% if not receipt.has_credit %}
+                    <div class="columns">
+                        <div class="column is-offset-one-quarter is-half">
+                            <hr>
+                            <div class="card">
+                                <div class="card-content">
+                                    <p><b>Total Payed : </b> {{ receipt.total_payment }}</p>
+                                    <p><b>Total Cost : </b>{{ receipt.total_amount }}</p>
+                                    <p><b>Balance : </b>{{ receipt.balance }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
         </section>
     </div>

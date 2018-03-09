@@ -248,6 +248,43 @@ class InvoiceAdmin(admin.ModelAdmin):
     get_credit_amount.short_description = 'Amount (Ksh.)'
 
 
+class ReceiptNumberFilter(InputFilter):
+    parameter_name = 'receipt_no'
+    title = 'Receipt Number'
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            number = self.value()
+            return queryset.filter(
+                Q(receipt__id=number)
+            )
+        return queryset
+
+
+class CreditSettlementAdmin(admin.ModelAdmin):
+    list_per_page = 50
+    list_display = ('get_receipt_no', 'amount', 'date')
+    exclude = ('served_by',)
+    date_hierarchy = 'date'
+    list_filter = (ReceiptNumberFilter,)
+    autocomplete_fields = ('receipt',)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "receipt":
+            kwargs["queryset"] = models.Receipt.objects.filter(receiptpayment__type=4)
+        return super(CreditSettlementAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        obj.served_by = request.user
+        super(CreditSettlementAdmin, self).save_model(request, obj, form, change)
+
+    def get_receipt_no(self, obj):
+        return obj.receipt.id
+
+    get_receipt_no.short_description = 'Receipt No.'
+    get_receipt_no.admin_order_field = 'receipt__id'
+
+
 # Register your models here.
 custom_admin_site.register(models.Region, RegionAdmin)
 custom_admin_site.register(models.Customer, CustomerAdmin)
@@ -255,8 +292,8 @@ custom_admin_site.register(models.CustomerPrice, CustomerPricesAdmin)
 custom_admin_site.register(models.CustomerDiscount, CustomerDiscountsAdmin)
 custom_admin_site.register(models.Order, OrderAdmin)
 custom_admin_site.register(models.SalesCrate)
-custom_admin_site.register(models.CreditSettlement)
-custom_admin_site.register(models.OverPayOrUnderPay)
+custom_admin_site.register(models.CreditSettlement, CreditSettlementAdmin)
+custom_admin_site.register(models.OverPay)
 custom_admin_site.register(models.ReturnsOrRejects)
 custom_admin_site.register(models.Receipt, SalesAdmin)
 custom_admin_site.register(models.Invoices, InvoiceAdmin)

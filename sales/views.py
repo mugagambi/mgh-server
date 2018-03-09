@@ -240,12 +240,12 @@ class OverPayOrUnderPayFilterSet(django_filters.rest_framework.FilterSet):
                                                             label='Date (Between)')
 
     class Meta:
-        model = models.OverPayOrUnderPay
-        fields = ('type', 'customer', 'receipt', 'date', 'date_between')
+        model = models.OverPay
+        fields = ('customer', 'receipt', 'date', 'date_between')
 
 
 class OverPayOrUnderPayViewSet(viewsets.ModelViewSet):
-    queryset = models.OverPayOrUnderPay.objects.all()
+    queryset = models.OverPay.objects.all()
     serializer_class = serializers.OverPayOrUnderPaySerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = OverPayOrUnderPayFilterSet

@@ -127,7 +127,7 @@ class Receipt(models.Model):
     served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return str(self.customer)
+        return 'Receipt no ' + ' ' + str(self.id) + ' for ' + ' ' + str(self.customer.shop_name)
 
     class Meta:
         verbose_name_plural = 'Sales'
@@ -150,6 +150,9 @@ class Receipt(models.Model):
 
     def balance(self):
         return self.total_payment() - self.total_amount()
+
+    def has_credit(self):
+        return self.receiptpayment_set.filter(type=4).exists()
 
 
 class ReceiptParticular(models.Model):
@@ -256,19 +259,14 @@ class CreditSettlement(models.Model):
         return str(self.receipt)
 
 
-class OverPayOrUnderPay(models.Model):
-    TYPE = (
-        ('o', 'OverPay'),
-        ('u', 'Underpay')
-    )
-    type = models.CharField(max_length=1, choices=TYPE)
+class OverPay(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     date = models.DateTimeField(default=now)
 
     def __str__(self):
-        return str(self.customer)
+        return str(self.customer.shop_name) + ' for receipt no. ' + str(self.receipt.id)
 
 
 class ReturnsOrRejects(models.Model):
