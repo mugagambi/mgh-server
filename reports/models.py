@@ -1,5 +1,5 @@
 from django.db import models
-from sales.models import ReceiptParticular
+from sales.models import ReceiptParticular, Receipt
 
 
 # Create your models here.

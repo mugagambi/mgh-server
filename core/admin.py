@@ -29,12 +29,13 @@ class CustomAdminSite(AdminSite):
             "Customer discounts": 9,
             "Orders": 10,
             "Sales": 11,
-            "Sales crates": 12,
-            "Credit settlements": 13,
-            "Over pay or under pays": 14,
-            "Returns or rejectss": 15,
-            "Outwards Stocks Summary": 16,
-            "Groups": 17
+            "Invoices": 12,
+            "Sales crates": 13,
+            "Credit settlements": 14,
+            "Over pay or under pays": 15,
+            "Returns or rejectss": 16,
+            "Outwards Stocks Summary": 17,
+            "Groups": 18
 
         }
         app_dict = self._build_app_dict(request)

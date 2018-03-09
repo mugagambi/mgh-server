@@ -218,6 +218,36 @@ class SalesAdmin(admin.ModelAdmin):
     get_receipt_url.allow_tags = True
 
 
+class InvoiceAdmin(admin.ModelAdmin):
+    list_per_page = 50
+    list_filter = (SalesCustomerShopNameFilter, SalesCustomerNickNameFilter, 'served_by', 'date')
+    date_hierarchy = 'date'
+    list_display = ('customer', 'get_credit_amount', 'get_due_date', 'served_by', 'date', 'get_invoice_url')
+    exclude = ('customer', 'served_by', 'date')
+    search_fields = ('customer__name',)
+
+    def has_add_permission(self, request):
+        return False
+
+    def get_invoice_url(self, obj):
+        return format_html('<a class="button" href="{}">view invoice</a>', urls.reverse('receipt', args=[obj.pk]))
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_queryset(self, request):
+        return models.Invoices.objects.filter(receiptpayment__type=4)
+
+    def get_credit_amount(self, obj):
+        return obj.receiptpayment_set.first().amount
+
+    def get_due_date(self, obj):
+        return obj.receiptpayment_set.first().date_to_pay
+
+    get_due_date.short_description = 'Due Date'
+    get_credit_amount.short_description = 'Amount (Ksh.)'
+
+
 # Register your models here.
 custom_admin_site.register(models.Region, RegionAdmin)
 custom_admin_site.register(models.Customer, CustomerAdmin)
@@ -229,3 +259,4 @@ custom_admin_site.register(models.CreditSettlement)
 custom_admin_site.register(models.OverPayOrUnderPay)
 custom_admin_site.register(models.ReturnsOrRejects)
 custom_admin_site.register(models.Receipt, SalesAdmin)
+custom_admin_site.register(models.Invoices, InvoiceAdmin)

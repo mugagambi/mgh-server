@@ -190,11 +190,11 @@ class ReceiptPayment(models.Model):
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     type = models.PositiveSmallIntegerField(choices=TYPES)
-    check_number = models.CharField(max_length=50, null=True)
-    transaction_id = models.CharField(max_length=15, null=True)
-    mobile_number = models.CharField(max_length=15, null=True)
+    check_number = models.CharField(max_length=50, blank=True)
+    transaction_id = models.CharField(max_length=15, blank=True)
+    mobile_number = models.CharField(max_length=15, blank=True)
     date_to_pay = models.DateField(null=True)
-    transfer_code = models.CharField(max_length=50, null=True)
+    transfer_code = models.CharField(max_length=50, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -234,11 +234,11 @@ class CashReceiptPayment(models.Model):
     cash_receipt = models.ForeignKey(CashReceipt, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     type = models.PositiveSmallIntegerField(choices=TYPES)
-    check_number = models.CharField(max_length=50, null=True)
-    transaction_id = models.CharField(max_length=15, null=True)
-    mobile_number = models.CharField(max_length=15, null=True)
+    check_number = models.CharField(max_length=50, blank=True)
+    transaction_id = models.CharField(max_length=15, blank=True)
+    mobile_number = models.CharField(max_length=15, blank=True)
     date_to_pay = models.DateField(null=True)
-    transfer_code = models.CharField(max_length=50, null=True)
+    transfer_code = models.CharField(max_length=50, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -284,3 +284,10 @@ class ReturnsOrRejects(models.Model):
     description = models.TextField()
     date = models.DateTimeField(default=now)
     date_of_resuplly = models.DateField(null=True)
+
+
+class Invoices(Receipt):
+    class Meta:
+        proxy = True
+        verbose_name = 'Invoice'
+        verbose_name_plural = 'Invoices'
