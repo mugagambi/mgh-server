@@ -31,6 +31,7 @@ class Customer(models.Model):
 
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    number = models.CharField(max_length=10, unique=True)
     received_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     date_delivery = models.DateField('date of delivery', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -41,7 +42,7 @@ class Order(models.Model):
 
 
 class OrderProducts(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, to_field='number', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     qty = models.DecimalField(decimal_places=2, max_digits=8)
     price = models.DecimalField(max_digits=9, decimal_places=2)
@@ -55,7 +56,7 @@ class OrderProducts(models.Model):
 
 
 class Package(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, to_field='number', on_delete=models.CASCADE)
     packaged_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -128,7 +129,7 @@ class Receipt(models.Model):
     served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return 'Receipt no ' + ' ' + str(self.id) + ' for ' + ' ' + str(self.customer.shop_name)
+        return 'Receipt no ' + ' ' + str(self.number)
 
     class Meta:
         verbose_name_plural = 'Sales'
@@ -268,7 +269,7 @@ class OverPay(models.Model):
     date = models.DateTimeField(default=now)
 
     def __str__(self):
-        return str(self.customer.shop_name) + ' for receipt no. ' + str(self.receipt.id)
+        return str(self.customer.shop_name) + ' for receipt no. ' + str(self.receipt.number)
 
 
 class ReturnsOrRejects(models.Model):

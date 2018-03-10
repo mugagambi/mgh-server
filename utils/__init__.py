@@ -1,8 +1,11 @@
+import datetime
+import random
+from urllib.parse import urlencode
+
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.shortcuts import reverse
 from django.utils.html import format_html
-from urllib.parse import urlencode
-from django.shortcuts import redirect
 
 
 def admin_change_url(obj):
@@ -145,3 +148,13 @@ class InputFilter(admin.SimpleListFilter):
             if k != self.parameter_name
         )
         yield all_choice
+
+
+def generate_unique_id(id):
+    current_time = datetime.datetime.now().time()
+    sqstring = '1234567890AQWERTYUIOPSDFGHJKLZXCVBNM' + str(current_time)
+    sqlist = list(sqstring)
+    random.shuffle(sqlist)
+    sqstring = str(sqlist).replace(':', '').replace('\'', '').replace(',', '').replace(' ', '').replace('.', ''). \
+        replace('[', '').replace(']', '')
+    return sqstring[:6] + str(id)

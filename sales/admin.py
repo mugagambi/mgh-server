@@ -1,6 +1,7 @@
+import time
 from django.contrib import admin
 from sales import models
-from utils import InputFilter
+from utils import InputFilter, generate_unique_id
 from django.db.models import Q
 from django.utils.html import format_html
 from django import urls
@@ -124,6 +125,7 @@ class CustomerPricesAdmin(ExportMixin, admin.ModelAdmin):
     date_hierarchy = 'updated_at'
     list_per_page = 50
     list_filter = (CustomerShopNameFilter, CustomerNickNameFilter, ProductNameFilter, 'created_at', 'updated_at')
+    list_select_related = True
 
 
 class CustomerDiscountsResource(resources.ModelResource):
@@ -152,16 +154,20 @@ class OrderProductsInline(admin.TabularInline):
 
 class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderProductsInline]
-    list_display = ('customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
+    list_display = ('number', 'customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
     fields = ('customer', 'date_delivery')
     autocomplete_fields = ('customer',)
     list_filter = ('customer', 'received_by', 'date_delivery', 'created_at')
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
     list_per_page = 20
+    list_select_related = True
 
     def save_model(self, request, obj, form, change):
         obj.received_by = request.user
+        if obj.id:
+            return super(OrderAdmin, self).save_model(request, obj, form, change)
+        obj.number = generate_unique_id(request.user.id)
         super(OrderAdmin, self).save_model(request, obj, form, change)
 
 
@@ -169,6 +175,7 @@ class SalesCrateAdmin(admin.ModelAdmin):
     list_display = ('agent', 'crate', 'date_issued', 'date_returned', 'held_by')
     list_filter = ('agent', 'crate', 'date_issued', 'date_returned', 'held_by')
     list_per_page = 20
+    list_select_related = True
 
 
 class SalesCustomerShopNameFilter(InputFilter):
@@ -204,6 +211,7 @@ class SalesAdmin(admin.ModelAdmin):
     list_display = ('customer', 'served_by', 'date', 'get_receipt_url')
     exclude = ('customer', 'served_by', 'date')
     search_fields = ('customer__name',)
+    list_select_related = True
 
     def has_add_permission(self, request):
         return False
@@ -225,6 +233,7 @@ class InvoiceAdmin(admin.ModelAdmin):
     list_display = ('customer', 'get_credit_amount', 'get_due_date', 'served_by', 'date', 'get_invoice_url')
     exclude = ('customer', 'served_by', 'date')
     search_fields = ('customer__name',)
+    list_select_related = True
 
     def has_add_permission(self, request):
         return False
@@ -268,6 +277,7 @@ class CreditSettlementAdmin(admin.ModelAdmin):
     date_hierarchy = 'date'
     list_filter = (ReceiptNumberFilter,)
     autocomplete_fields = ('receipt',)
+    list_select_related = True
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "receipt":
@@ -285,6 +295,14 @@ class CreditSettlementAdmin(admin.ModelAdmin):
     get_receipt_no.admin_order_field = 'receipt__id'
 
 
+class OverPayAdmin(admin.ModelAdmin):
+    autocomplete_fields = ('receipt', 'customer')
+    list_filter = (CustomerNickNameFilter, CustomerShopNameFilter, ReceiptNumberFilter, 'date')
+    list_display = ('customer', 'receipt', 'amount', 'date')
+    list_per_page = 50
+    list_select_related = True
+
+
 # Register your models here.
 custom_admin_site.register(models.Region, RegionAdmin)
 custom_admin_site.register(models.Customer, CustomerAdmin)
@@ -293,7 +311,7 @@ custom_admin_site.register(models.CustomerDiscount, CustomerDiscountsAdmin)
 custom_admin_site.register(models.Order, OrderAdmin)
 custom_admin_site.register(models.SalesCrate)
 custom_admin_site.register(models.CreditSettlement, CreditSettlementAdmin)
-custom_admin_site.register(models.OverPay)
+custom_admin_site.register(models.OverPay, OverPayAdmin)
 custom_admin_site.register(models.ReturnsOrRejects)
 custom_admin_site.register(models.Receipt, SalesAdmin)
 custom_admin_site.register(models.Invoices, InvoiceAdmin)
