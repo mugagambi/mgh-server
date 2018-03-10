@@ -122,6 +122,7 @@ class PackageProductCrate(models.Model):
 
 
 class Receipt(models.Model):
+    number = models.CharField(unique=True, max_length=10)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date = models.DateTimeField(default=now)
     served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
@@ -206,6 +207,7 @@ class ReceiptPayment(models.Model):
 
 
 class CashReceipt(models.Model):
+    number = models.CharField(unique=True, max_length=10)
     date = models.DateTimeField(default=now)
     served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
