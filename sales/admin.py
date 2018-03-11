@@ -5,7 +5,7 @@ from django.utils.html import format_html
 from import_export import resources
 from import_export.admin import ExportMixin
 from import_export.fields import Field
-
+from utils import admin_link
 from core.admin import custom_admin_site
 from sales import models
 from utils import InputFilter, generate_unique_id
@@ -112,7 +112,7 @@ class CustomerAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = CustomerResource
     inlines = [CustomerPriceInline, CustomerDiscountInline]
     list_display = ('number', 'shop_name', 'nick_name', 'location', 'get_phone_number',
-                    'added_by', 'region', 'created_at', 'updated_at')
+                    'added_by', 'region_link', 'created_at', 'updated_at')
     fields = ('number', 'shop_name', 'nick_name', 'location', ('country_code', 'phone_number'), 'region')
     readonly_fields = ('number',)
     list_filter = (
@@ -130,6 +130,10 @@ class CustomerAdmin(ExportMixin, admin.ModelAdmin):
         obj.added_by = request.user
         generate_unique_number(obj, CustomerAdmin, self, request, form, change)
         super(CustomerAdmin, self).save_model(request, obj, form, change)
+
+    @admin_link('region', 'Region')
+    def region_link(self, region):
+        return region
 
     get_phone_number.short_description = 'Phone Number'
     get_phone_number.admin_order_field = 'phone_number'
@@ -157,6 +161,19 @@ class ForeignKeyCustomerNickNameFilter(InputFilter):
             name = self.value()
             return queryset.filter(
                 Q(customer__nick_name__icontains=name)
+            )
+        return queryset
+
+
+class ForeignCustomerNumberFilter(InputFilter):
+    parameter_name = 'customer_number'
+    title = 'Customer Number'
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            number = self.value()
+            return queryset.filter(
+                Q(customer__number__iexact=number)
             )
         return queryset
 
@@ -189,9 +206,14 @@ class CustomerPricesAdmin(ExportMixin, admin.ModelAdmin):
     date_hierarchy = 'updated_at'
     list_per_page = 50
     list_filter = (
-        ForeignKeyCustomerShopNameFilter, ForeignKeyCustomerNickNameFilter, ProductNameFilter, 'created_at',
+        ForeignCustomerNumberFilter, ForeignKeyCustomerShopNameFilter, ForeignKeyCustomerNickNameFilter,
+        ProductNameFilter, 'created_at',
         'updated_at')
     list_select_related = True
+
+    @admin_link('product', 'Product')
+    def region_link(self, product):
+        return product
 
 
 class CustomerDiscountsResource(resources.ModelResource):
@@ -218,6 +240,7 @@ class OrderProductsInline(admin.TabularInline):
     extra = 1
     verbose_name = 'Item'
     verbose_name_plural = 'Items'
+    readonly_fields = ('number',)
 
 
 class OrderNumberFilter(NumberFilter):
@@ -227,13 +250,24 @@ class OrderNumberFilter(NumberFilter):
 class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderProductsInline]
     list_display = ('number', 'customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
-    fields = ('customer', 'date_delivery')
+    fields = ('number', 'customer', 'date_delivery')
+    readonly_fields = ('number',)
     autocomplete_fields = ('customer',)
     list_filter = (OrderNumberFilter, 'customer', 'received_by', 'date_delivery', 'created_at')
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
     list_per_page = 20
     list_select_related = True
+
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for instance in instances:
+            if instance.number:
+                instance.save()
+            else:
+                instance.number = generate_unique_id(request.user.id)
+                instance.save()
+        formset.save_m2m()
 
     def save_model(self, request, obj, form, change):
         obj.received_by = request.user
