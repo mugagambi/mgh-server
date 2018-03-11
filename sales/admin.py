@@ -1,14 +1,20 @@
-import time
+from django import urls
 from django.contrib import admin
-from sales import models
-from utils import InputFilter, generate_unique_id
 from django.db.models import Q
 from django.utils.html import format_html
-from django import urls
 from import_export import resources
 from import_export.admin import ExportMixin
 from import_export.fields import Field
+
 from core.admin import custom_admin_site
+from sales import models
+from utils import InputFilter, generate_unique_id
+
+
+def generate_unique_number(obj, cls, context, request, form, change):
+    if obj.number:
+        return super(cls, context).save_model(request, obj, form, change)
+    obj.number = generate_unique_id(request.user.id)
 
 
 class RegionResource(resources.ModelResource):
@@ -43,9 +49,11 @@ class CustomerDiscountInline(admin.TabularInline):
 class CustomerResource(resources.ModelResource):
     region = Field()
     added_by = Field()
+    phone_number = Field()
 
     class Meta:
         model = models.Customer
+        exclude = ('country_code',)
 
     def dehydrate_region(self, customer):
         return customer.region.name
@@ -53,25 +61,81 @@ class CustomerResource(resources.ModelResource):
     def dehydrate_added_by(self, customer):
         return customer.added_by.username
 
+    def dehydrate_phone_number(self, customer):
+        return '+' + str(customer.country_code) + str(customer.phone_number)
+
+
+class NumberFilter(InputFilter):
+    parameter_name = 'number'
+    title = 'Number'
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            number = self.value()
+            return queryset.filter(
+                Q(number__iexact=number)
+            )
+        return queryset
+
+
+class CustomerNumberFilter(NumberFilter):
+    title = 'Customer Number'
+
+
+class CustomerShopNameFilter(InputFilter):
+    parameter_name = 'customer_shop_name'
+    title = 'Customer Shop Name'
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            name = self.value()
+            return queryset.filter(
+                Q(shop_name__icontains=name)
+            )
+        return queryset
+
+
+class CustomerNickNameFilter(InputFilter):
+    parameter_name = 'customer_nick_name'
+    title = 'Customer Nick Name'
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            name = self.value()
+            return queryset.filter(
+                Q(nick_name__icontains=name)
+            )
+        return queryset
+
 
 class CustomerAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = CustomerResource
     inlines = [CustomerPriceInline, CustomerDiscountInline]
-    list_display = ('shop_name', 'nick_name', 'location', 'country_code', 'phone_number',
+    list_display = ('number', 'shop_name', 'nick_name', 'location', 'get_phone_number',
                     'added_by', 'region', 'created_at', 'updated_at')
-    fields = ('shop_name', 'nick_name', 'location', ('country_code', 'phone_number'), 'region')
-    list_filter = ('country_code', 'region', 'added_by', 'created_at')
+    fields = ('number', 'shop_name', 'nick_name', 'location', ('country_code', 'phone_number'), 'region')
+    readonly_fields = ('number',)
+    list_filter = (
+        CustomerNumberFilter, CustomerShopNameFilter, CustomerNickNameFilter, 'country_code', 'region', 'added_by',
+        'created_at')
     autocomplete_fields = ('region',)
-    search_fields = ('shop_name', 'nick_name')
     date_hierarchy = 'created_at'
+    search_fields = ('number',)
     list_select_related = True
+
+    def get_phone_number(self, obj):
+        return '+' + str(obj.country_code) + str(obj.phone_number)
 
     def save_model(self, request, obj, form, change):
         obj.added_by = request.user
+        generate_unique_number(obj, CustomerAdmin, self, request, form, change)
         super(CustomerAdmin, self).save_model(request, obj, form, change)
 
+    get_phone_number.short_description = 'Phone Number'
+    get_phone_number.admin_order_field = 'phone_number'
 
-class CustomerShopNameFilter(InputFilter):
+
+class ForeignKeyCustomerShopNameFilter(InputFilter):
     parameter_name = 'customer_shop_name'
     title = 'Customer Shop Name'
 
@@ -84,7 +148,7 @@ class CustomerShopNameFilter(InputFilter):
         return queryset
 
 
-class CustomerNickNameFilter(InputFilter):
+class ForeignKeyCustomerNickNameFilter(InputFilter):
     parameter_name = 'customer_nick_name'
     title = 'Customer Nick Name'
 
@@ -119,12 +183,14 @@ class CustomerPriceResource(resources.ModelResource):
 
 class CustomerPricesAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = CustomerPriceResource
-    list_display = ('id', 'customer', 'price', 'product', 'created_at', 'updated_at')
+    list_display = ('customer', 'price', 'product', 'created_at', 'updated_at')
     fields = ('customer', 'price', 'product')
-    autocomplete_fields = ('customer',)
+    autocomplete_fields = ('customer', 'product')
     date_hierarchy = 'updated_at'
     list_per_page = 50
-    list_filter = (CustomerShopNameFilter, CustomerNickNameFilter, ProductNameFilter, 'created_at', 'updated_at')
+    list_filter = (
+        ForeignKeyCustomerShopNameFilter, ForeignKeyCustomerNickNameFilter, ProductNameFilter, 'created_at',
+        'updated_at')
     list_select_related = True
 
 
@@ -135,16 +201,18 @@ class CustomerDiscountsResource(resources.ModelResource):
 
 class CustomerDiscountsAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = CustomerDiscountsResource
-    list_display = ('id', 'customer', 'discount', 'product', 'created_at', 'updated_at')
+    list_display = ('customer', 'discount', 'product', 'created_at', 'updated_at')
     fields = ('customer', 'discount', 'product')
     autocomplete_fields = ('customer',)
     date_hierarchy = 'updated_at'
     list_per_page = 50
-    list_filter = (CustomerShopNameFilter, CustomerNickNameFilter, ProductNameFilter, 'created_at', 'updated_at')
+    list_filter = (
+        ForeignKeyCustomerShopNameFilter, ForeignKeyCustomerNickNameFilter, ProductNameFilter, 'created_at',
+        'updated_at')
 
 
 class OrderProductsInline(admin.TabularInline):
-    model = models.OrderProducts
+    model = models.OrderProduct
     can_delete = True
     autocomplete_fields = ('product',)
     extra = 1
@@ -152,12 +220,16 @@ class OrderProductsInline(admin.TabularInline):
     verbose_name_plural = 'Items'
 
 
+class OrderNumberFilter(NumberFilter):
+    title = 'Order Number'
+
+
 class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderProductsInline]
     list_display = ('number', 'customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
     fields = ('customer', 'date_delivery')
     autocomplete_fields = ('customer',)
-    list_filter = ('customer', 'received_by', 'date_delivery', 'created_at')
+    list_filter = (OrderNumberFilter, 'customer', 'received_by', 'date_delivery', 'created_at')
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
     list_per_page = 20
@@ -165,9 +237,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.received_by = request.user
-        if obj.id:
-            return super(OrderAdmin, self).save_model(request, obj, form, change)
-        obj.number = generate_unique_id(request.user.id)
+        generate_unique_number(obj, OrderAdmin, self, request, form, change)
         super(OrderAdmin, self).save_model(request, obj, form, change)
 
 
@@ -257,25 +327,16 @@ class InvoiceAdmin(admin.ModelAdmin):
     get_credit_amount.short_description = 'Amount (Ksh.)'
 
 
-class ReceiptNumberFilter(InputFilter):
-    parameter_name = 'receipt_no'
+class ReceiptNumberFilter(NumberFilter):
     title = 'Receipt Number'
-
-    def queryset(self, request, queryset):
-        if self.value() is not None:
-            number = self.value()
-            return queryset.filter(
-                Q(receipt__id=number)
-            )
-        return queryset
 
 
 class CreditSettlementAdmin(admin.ModelAdmin):
     list_per_page = 50
-    list_display = ('get_receipt_no', 'amount', 'date')
+    list_display = ('get_receipt_no', 'amount', 'served_by', 'date')
     exclude = ('served_by',)
     date_hierarchy = 'date'
-    list_filter = (ReceiptNumberFilter,)
+    list_filter = (ReceiptNumberFilter, 'date', 'served_by')
     autocomplete_fields = ('receipt',)
     list_select_related = True
 
@@ -297,7 +358,7 @@ class CreditSettlementAdmin(admin.ModelAdmin):
 
 class OverPayAdmin(admin.ModelAdmin):
     autocomplete_fields = ('receipt', 'customer')
-    list_filter = (CustomerNickNameFilter, CustomerShopNameFilter, ReceiptNumberFilter, 'date')
+    list_filter = (ForeignKeyCustomerNickNameFilter, ForeignKeyCustomerShopNameFilter, ReceiptNumberFilter, 'date')
     list_display = ('customer', 'receipt', 'amount', 'date')
     list_per_page = 50
     list_select_related = True
@@ -312,6 +373,6 @@ custom_admin_site.register(models.Order, OrderAdmin)
 custom_admin_site.register(models.SalesCrate)
 custom_admin_site.register(models.CreditSettlement, CreditSettlementAdmin)
 custom_admin_site.register(models.OverPay, OverPayAdmin)
-custom_admin_site.register(models.ReturnsOrRejects)
+custom_admin_site.register(models.Return)
 custom_admin_site.register(models.Receipt, SalesAdmin)
 custom_admin_site.register(models.Invoices, InvoiceAdmin)

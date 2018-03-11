@@ -55,7 +55,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 class OrderProductsViewSet(viewsets.ModelViewSet):
-    queryset = models.OrderProducts.objects.all()
+    queryset = models.OrderProduct.objects.all()
     serializer_class = serializers.OrderProductsSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_fields = ('order', 'product')
@@ -255,18 +255,15 @@ class OverPayOrUnderPayViewSet(viewsets.ModelViewSet):
 class ReturnsRejectsFilterSet(django_filters.rest_framework.FilterSet):
     date_between = django_filters.DateTimeFromToRangeFilter(name='date',
                                                             label='Date (Between)')
-    resupply_between = django_filters.DateFromToRangeFilter(name='date_of_resuplly',
-                                                            label='Resupply (Between)')
 
     class Meta:
-        model = models.ReturnsOrRejects
-        fields = ('type', 'product', 'receipt', 'customer', 'date', 'date_of_resuplly'
-                  , 'date_between', 'resupply_between')
+        model = models.Return
+        fields = ('product', 'receipt', 'customer', 'date', 'date_between')
 
 
 class ReturnsRejectsViewSet(viewsets.ModelViewSet):
-    queryset = models.ReturnsOrRejects.objects.all()
+    queryset = models.Return.objects.all()
     serializer_class = serializers.ReturnsOrRejectsSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = ReturnsRejectsFilterSet
-    ordering_fields = ('date', 'qty', 'date_of_resuplly')
+    ordering_fields = ('date', 'qty')

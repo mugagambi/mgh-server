@@ -140,6 +140,7 @@ class InputFilter(admin.SimpleListFilter):
         return ((),)
 
     def choices(self, changelist):
+        print(changelist)
         # Grab only the "all" option.
         all_choice = next(super().choices(changelist))
         all_choice['query_parts'] = (

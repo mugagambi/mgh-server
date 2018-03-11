@@ -5,7 +5,7 @@ from sales import models
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Region
-        fields = ('id', 'name',)
+        fields = ('number', 'name',)
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Customer
-        fields = ('id', 'shop_name', 'nick_name', 'location', 'country_code', 'phone_number',
+        fields = ('number', 'shop_name', 'nick_name', 'location', 'country_code', 'phone_number',
                   'region', 'created_at', 'updated_at', 'added_by')
 
 
@@ -28,13 +28,13 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Order
-        fields = ('id', 'customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
+        fields = ('number', 'customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
 
 
 class OrderProductsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.OrderProducts
-        fields = ('id', 'order', 'product', 'qty', 'price')
+        model = models.OrderProduct
+        fields = ('number', 'order', 'product', 'qty', 'price')
 
 
 class PackageSerializer(serializers.ModelSerializer):
@@ -45,31 +45,31 @@ class PackageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Package
-        fields = ('id', 'order', 'packaged_by', 'created_at', 'updated_at')
+        fields = ('number', 'order', 'packaged_by', 'created_at', 'updated_at')
 
 
 class PackageProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PackageProduct
-        fields = ('id', 'package', 'product', 'qty_order', 'qty_weigh', 'crate_weight')
+        fields = ('number', 'package', 'product', 'qty_order', 'qty_weigh', 'crate_weight')
 
 
 class CustomerPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerPrice
-        fields = ('id', 'customer', 'price', 'product', 'created_at', 'updated_at')
+        fields = ('number', 'customer', 'price', 'product', 'created_at', 'updated_at')
 
 
 class CustomerDiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerDiscount
-        fields = ('id', 'customer', 'discount', 'product', 'created_at', 'updated_at')
+        fields = ('number', 'customer', 'discount', 'product', 'created_at', 'updated_at')
 
 
 class SalesCrateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SalesCrate
-        fields = ('id', 'agent', 'crate', 'date_issued', 'date_returned', 'held_by')
+        fields = ('number', 'agent', 'crate', 'date_issued', 'date_returned', 'held_by')
 
     def validate_agent(self, value):
         if not value.is_sales_agent:
@@ -80,7 +80,7 @@ class SalesCrateSerializer(serializers.ModelSerializer):
 class PackageProductCrateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PackageProductCrate
-        fields = ('id', 'crate', 'package_product')
+        fields = ('number', 'crate', 'package_product')
 
 
 class ReceiptSerializer(serializers.ModelSerializer):
@@ -91,21 +91,22 @@ class ReceiptSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Receipt
-        fields = ('id', 'customer', 'date', 'served_by')
+        fields = ('number', 'customer', 'date', 'served_by')
 
 
 class ReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReceiptParticular
-        fields = ('id', 'qty', 'product', 'price', 'discount', 'receipt', 'total')
-        read_only_fields = ('total',)
+        fields = ('number', 'qty', 'product', 'price', 'discount', 'receipt', 'total')
+        read_only_fields = ('number', 'total',)
 
 
 class ReceiptPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReceiptPayment
-        fields = ('id', 'receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
-                  'transfer_code', 'created_at', 'updated_at')
+        fields = (
+            'number', 'receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
+            'transfer_code', 'created_at', 'updated_at')
 
 
 class CashReceiptSerializer(serializers.ModelSerializer):
@@ -116,21 +117,21 @@ class CashReceiptSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.CashReceipt
-        fields = ('id', 'date', 'served_by')
+        fields = ('number', 'date', 'served_by')
 
 
 class CashReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CashReceiptParticular
-        fields = ('id', 'qty', 'product', 'price', 'discount', 'cash_receipt')
+        fields = ('number', 'qty', 'product', 'price', 'discount', 'cash_receipt')
 
 
 class CashReceiptPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CashReceiptPayment
-        fields = (
-            'id', 'cash_receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
-            'transfer_code', 'created_at', 'updated_at')
+        fields = ('number',
+                  'cash_receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
+                  'transfer_code', 'created_at', 'updated_at')
 
 
 class CreditSettlementSerializer(serializers.ModelSerializer):
@@ -141,17 +142,17 @@ class CreditSettlementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.CreditSettlement
-        fields = ('id', 'receipt', 'amount', 'date', 'served_by')
+        fields = ('number', 'receipt', 'amount', 'date', 'served_by')
 
 
 class OverPayOrUnderPaySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OverPay
-        fields = ('id', 'type', 'customer', 'receipt', 'amount', 'date')
+        fields = ('number', 'type', 'customer', 'receipt', 'amount', 'date')
 
 
 class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.ReturnsOrRejects
-        fields = (
-            'id', 'type', 'product', 'qty', 'receipt', 'customer', 'description', 'date', 'date_of_resuplly')
+        model = models.Return
+        fields = ('number'
+                  , 'type', 'product', 'qty', 'receipt', 'customer', 'description', 'date')

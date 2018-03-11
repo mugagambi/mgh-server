@@ -15,40 +15,43 @@ class Region(models.Model):
 
 
 class Customer(models.Model):
-    name = models.CharField(name='shop_name', max_length=100)
+    number = models.CharField(max_length=10, unique=True, primary_key=True)
+    shop_name = models.CharField(max_length=100)
     nick_name = models.CharField(blank=True, max_length=100)
     location = models.CharField(max_length=100)
     country_code = models.PositiveSmallIntegerField()
     phone_number = models.PositiveIntegerField(unique=True)
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, help_text='search by region name')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.shop_name)
+        return 'Shop name ' + str(self.shop_name) + ' , customer no. ' + str(self.number)
 
 
 class Order(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    number = models.CharField(max_length=10, unique=True)
+    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE,
+                                 help_text='search by customer no. , shop name or nick name')
+    number = models.CharField(max_length=10, unique=True, primary_key=True)
     received_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     date_delivery = models.DateField('date of delivery', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.customer)
+        return 'order no. ' + str(self.number)
 
 
-class OrderProducts(models.Model):
-    order = models.ForeignKey(Order, to_field='number', on_delete=models.CASCADE)
+class OrderProduct(models.Model):
+    number = models.CharField(max_length=10, unique=True, primary_key=True)
+    order = models.ForeignKey(Order, to_field='number', on_delete=models.CASCADE, help_text='search by order no.')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     qty = models.DecimalField(decimal_places=2, max_digits=8)
     price = models.DecimalField(max_digits=9, decimal_places=2)
 
     def __str__(self):
-        return str(self.order)
+        return 'item for order ' + str(self.order)
 
     class Meta:
         verbose_name = 'Order Report'
@@ -57,33 +60,37 @@ class OrderProducts(models.Model):
 
 class Package(models.Model):
     order = models.ForeignKey(Order, to_field='number', on_delete=models.CASCADE)
+    number = models.CharField(max_length=10, unique=True, primary_key=True)
     packaged_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.order)
+        return 'package no. ' + str(self.number)
 
 
 class PackageProduct(models.Model):
-    package = models.ForeignKey(Package, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    number = models.CharField(max_length=10, unique=True, primary_key=True)
+    package = models.ForeignKey(Package, to_field='number', on_delete=models.CASCADE)
+    order_product = models.ForeignKey(OrderProduct, to_field='number', on_delete=models.CASCADE)
     qty_order = models.DecimalField(decimal_places=2, max_digits=8)
     qty_weigh = models.DecimalField(decimal_places=2, max_digits=8)
     crate_weight = models.DecimalField(decimal_places=2, max_digits=4)
 
     def __str__(self):
-        return str(self.package)
+        return 'items for ' + str(self.package)
 
     class Meta:
         verbose_name_plural = 'Packed Products'
 
 
 class CustomerPrice(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, to_field='number',
+                                 help_text='search by customer no. , shop name or nick name',
+                                 on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
                                                                           'price for each quantity')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search by product name')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -92,10 +99,10 @@ class CustomerPrice(models.Model):
 
 
 class CustomerDiscount(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE)
     discount = models.DecimalField(max_digits=5, decimal_places=2,
                                    help_text='% discount')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search by product name')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -105,26 +112,28 @@ class CustomerDiscount(models.Model):
 
 class SalesCrate(models.Model):
     agent = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    crate = models.ForeignKey(Crate, on_delete=models.CASCADE)
+    crate = models.ForeignKey(Crate, to_field='number', on_delete=models.CASCADE, help_text='search by crate number')
     date_issued = models.DateField()
     date_returned = models.DateField(null=True)
-    held_by = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    held_by = models.ForeignKey(Customer, to_field='number', on_delete=models.SET_NULL, null=True,
+                                help_text='search by customer no. , shop name or nick name')
 
     def __str__(self):
-        return str(self.agent)
+        return 'crate no. ' + str(self.crate.number) + ' for  agent ' + str(self.agent)
 
 
 class PackageProductCrate(models.Model):
-    crate = models.ForeignKey(Crate, on_delete=models.CASCADE)
-    package_product = models.ForeignKey(PackageProduct, on_delete=models.CASCADE)
+    crate = models.ForeignKey(Crate, to_field='number', on_delete=models.CASCADE, help_text='search by crate number')
+    package_product = models.ForeignKey(PackageProduct, to_field='number', on_delete=models.CASCADE,
+                                        help_text='search package item')
 
     def __str__(self):
         return str(self.crate)
 
 
 class Receipt(models.Model):
-    number = models.CharField(unique=True, max_length=10)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE)
     date = models.DateTimeField(default=now)
     served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
@@ -159,12 +168,12 @@ class Receipt(models.Model):
 
 class ReceiptParticular(models.Model):
     qty = models.DecimalField(decimal_places=2, max_digits=8)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    package_product = models.ForeignKey(PackageProduct, to_field='number', on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
                                                                           'price for each quantity')
     discount = models.DecimalField(max_digits=5, decimal_places=2,
                                    help_text='% discount', null=True)
-    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
+    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
 
     def __str__(self):
@@ -192,7 +201,7 @@ class ReceiptPayment(models.Model):
         (4, 'Credit'),
         (5, 'Bank Transfer')
     )
-    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
+    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     type = models.PositiveSmallIntegerField(choices=TYPES)
     check_number = models.CharField(max_length=50, blank=True)
@@ -208,12 +217,12 @@ class ReceiptPayment(models.Model):
 
 
 class CashReceipt(models.Model):
-    number = models.CharField(unique=True, max_length=10)
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
     date = models.DateTimeField(default=now)
     served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return str(self.date)
+        return 'cash receipt no. ' + str(self.date)
 
 
 class CashReceiptParticular(models.Model):
@@ -223,7 +232,7 @@ class CashReceiptParticular(models.Model):
                                                                           'price for each quantity')
     discount = models.DecimalField(max_digits=5, decimal_places=2,
                                    help_text='% discount')
-    cash_receipt = models.ForeignKey(CashReceipt, on_delete=models.CASCADE)
+    cash_receipt = models.ForeignKey(CashReceipt, to_field='number', on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.cash_receipt)
@@ -237,7 +246,7 @@ class CashReceiptPayment(models.Model):
         (4, 'Credit'),
         (5, 'Bank Transfer')
     )
-    cash_receipt = models.ForeignKey(CashReceipt, on_delete=models.CASCADE)
+    cash_receipt = models.ForeignKey(CashReceipt, to_field='number', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     type = models.PositiveSmallIntegerField(choices=TYPES)
     check_number = models.CharField(max_length=50, blank=True)
@@ -253,38 +262,57 @@ class CashReceiptPayment(models.Model):
 
 
 class CreditSettlement(models.Model):
-    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE, help_text='search by receipt no.')
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     date = models.DateTimeField(default=now)
     served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return str(self.receipt)
+        return 'credit settlement no. ' + str(self.number)
 
 
 class OverPay(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE,
+                                 help_text='search by customer number, shop name and nick name')
+    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE,
+                                help_text='search by receipt no.')
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     date = models.DateTimeField(default=now)
 
     def __str__(self):
-        return str(self.customer.shop_name) + ' for receipt no. ' + str(self.receipt.number)
+        return 'over pay no. ' + str(self.number)
 
 
-class ReturnsOrRejects(models.Model):
-    TYPE = (
-        (1, 'Return'),
-        (2, 'Reject')
-    )
-    type = models.PositiveSmallIntegerField(choices=TYPE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+class Return(models.Model):
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search product name')
     qty = models.DecimalField(decimal_places=2, max_digits=8)
-    receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE, help_text='search receipt no')
+    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE,
+                                 help_text='search by customer number, shop name and nick name')
     description = models.TextField()
     date = models.DateTimeField(default=now)
-    date_of_resuplly = models.DateField(null=True)
+
+    def __str__(self):
+        return 'return number ' + str(self.number)
+
+
+class Reject(models.Model):
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search by product name')
+    qty = models.DecimalField(decimal_places=2, max_digits=8)
+    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE,
+                                 help_text='search by customer number, shop name and nick name')
+    description = models.TextField()
+    date = models.DateTimeField(default=now)
+    refund_qty = models.DecimalField(decimal_places=2, max_digits=8, null=True)
+    refund_date = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return 'reject number ' + str(self.number)
 
 
 class Invoices(Receipt):
