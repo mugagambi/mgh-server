@@ -57,13 +57,13 @@ class PackageProductSerializer(serializers.ModelSerializer):
 class CustomerPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerPrice
-        fields = ('customer', 'price', 'product', 'created_at', 'updated_at')
+        fields = ('id', 'customer', 'price', 'product', 'created_at', 'updated_at')
 
 
 class CustomerDiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerDiscount
-        fields = ('customer', 'discount', 'product', 'created_at', 'updated_at')
+        fields = ('id', 'customer', 'discount', 'product', 'created_at', 'updated_at')
 
 
 class SalesCrateSerializer(serializers.ModelSerializer):
