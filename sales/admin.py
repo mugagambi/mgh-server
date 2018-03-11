@@ -403,10 +403,12 @@ class CreditSettlementAdmin(admin.ModelAdmin):
 
 class OverPayAdmin(admin.ModelAdmin):
     autocomplete_fields = ('receipt', 'customer')
-    list_filter = (ForeignKeyCustomerNickNameFilter, ForeignKeyCustomerShopNameFilter, ReceiptNumberFilter, 'date')
-    list_display = ('customer', 'receipt', 'amount', 'date')
+    list_filter = (ForeignCustomerNumberFilter, ForeignKeyCustomerNickNameFilter, ForeignKeyCustomerShopNameFilter,
+                   ReceiptNumberFilter, 'date')
+    list_display = ('number', 'customer', 'receipt', 'amount', 'date')
     list_per_page = 50
     list_select_related = True
+    read_only_fields = ("number",)
 
 
 # Register your models here.
