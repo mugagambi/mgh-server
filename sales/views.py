@@ -23,7 +23,7 @@ class CustomerFilterSet(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = models.Customer
-        fields = ('country_code', 'added_by', 'region', 'created_at', 'created_between')
+        fields = ('country_code', 'added_by', 'region', 'number', 'created_at', 'created_between')
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -43,7 +43,7 @@ class OrderFilterSet(django_filters.rest_framework.FilterSet):
     class Meta:
         model = models.Order
         fields = ('customer', 'received_by', 'date_delivery', 'created_at', 'created_between',
-                  'delivered_between')
+                  'delivered_between', 'number')
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -68,7 +68,7 @@ class PackageFilterSet(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = models.Package
-        fields = ('order', 'packaged_by', 'created_at', 'created_between')
+        fields = ('order', 'number', 'packaged_by', 'created_at', 'created_between')
 
 
 class PackageViewSet(viewsets.ModelViewSet):
@@ -83,7 +83,7 @@ class PackageProductsViewSet(viewsets.ModelViewSet):
     queryset = models.PackageProduct.objects.all()
     serializer_class = serializers.PackageProductSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('package', 'product')
+    filter_fields = ('package', 'order_product')
     ordering_fields = ('qty_order', 'qty_weigh', 'crate_weight')
 
 
@@ -136,7 +136,7 @@ class ReceiptFilterSet(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = models.Receipt
-        fields = ('customer', 'date', 'served_by', 'date_between')
+        fields = ('customer', 'number', 'date', 'served_by', 'date_between')
 
 
 class ReceiptViewSet(viewsets.ModelViewSet):

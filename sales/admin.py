@@ -200,7 +200,7 @@ class CustomerPriceResource(resources.ModelResource):
 
 class CustomerPricesAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = CustomerPriceResource
-    list_display = ('customer', 'price', 'product', 'created_at', 'updated_at')
+    list_display = ('customer', 'price', 'product_link', 'created_at', 'updated_at')
     fields = ('customer', 'price', 'product')
     autocomplete_fields = ('customer', 'product')
     date_hierarchy = 'updated_at'
@@ -212,7 +212,7 @@ class CustomerPricesAdmin(ExportMixin, admin.ModelAdmin):
     list_select_related = True
 
     @admin_link('product', 'Product')
-    def region_link(self, product):
+    def product_link(self, product):
         return product
 
 
@@ -223,14 +223,19 @@ class CustomerDiscountsResource(resources.ModelResource):
 
 class CustomerDiscountsAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = CustomerDiscountsResource
-    list_display = ('customer', 'discount', 'product', 'created_at', 'updated_at')
+    list_display = ('customer', 'discount', 'product_link', 'created_at', 'updated_at')
     fields = ('customer', 'discount', 'product')
-    autocomplete_fields = ('customer',)
+    autocomplete_fields = ('customer', 'product')
     date_hierarchy = 'updated_at'
     list_per_page = 50
     list_filter = (
-        ForeignKeyCustomerShopNameFilter, ForeignKeyCustomerNickNameFilter, ProductNameFilter, 'created_at',
+        ForeignCustomerNumberFilter, ForeignKeyCustomerShopNameFilter, ForeignKeyCustomerNickNameFilter,
+        ProductNameFilter, 'created_at',
         'updated_at')
+
+    @admin_link('product', 'Product')
+    def product_link(self, product):
+        return product
 
 
 class OrderProductsInline(admin.TabularInline):
@@ -249,15 +254,21 @@ class OrderNumberFilter(NumberFilter):
 
 class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderProductsInline]
-    list_display = ('number', 'customer', 'received_by', 'date_delivery', 'created_at', 'updated_at')
+    list_display = ('number', 'customer_link', 'received_by', 'date_delivery', 'created_at', 'updated_at')
     fields = ('number', 'customer', 'date_delivery')
     readonly_fields = ('number',)
     autocomplete_fields = ('customer',)
-    list_filter = (OrderNumberFilter, 'customer', 'received_by', 'date_delivery', 'created_at')
+    list_filter = (
+        ForeignCustomerNumberFilter, OrderNumberFilter, ForeignKeyCustomerShopNameFilter,
+        ForeignKeyCustomerNickNameFilter, 'received_by', 'date_delivery', 'created_at')
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
     list_per_page = 20
     list_select_related = True
+
+    @admin_link('customer', 'Customer')
+    def customer_link(self, customer):
+        return customer
 
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
