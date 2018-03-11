@@ -392,6 +392,7 @@ class CreditSettlementAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.served_by = request.user
+        generate_unique_number(obj, CreditSettlementAdmin, self, request, form, change)
         super(CreditSettlementAdmin, self).save_model(request, obj, form, change)
 
     def get_receipt_no(self, obj):
@@ -409,6 +410,14 @@ class OverPayAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_select_related = True
     read_only_fields = ("number",)
+
+    def save_model(self, request, obj, form, change):
+        generate_unique_number(obj, CustomerAdmin, self, request, form, change)
+        super(OverPayAdmin, self).save_model(request, obj, form, change)
+
+
+class ReturnAdmin(admin.ModelAdmin):
+    pass
 
 
 # Register your models here.

@@ -5,7 +5,7 @@ from sales import models
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Region
-        fields = ('number', 'name',)
+        fields = ('name',)
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -63,13 +63,13 @@ class CustomerPriceSerializer(serializers.ModelSerializer):
 class CustomerDiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerDiscount
-        fields = ('number', 'customer', 'discount', 'product', 'created_at', 'updated_at')
+        fields = ('customer', 'discount', 'product', 'created_at', 'updated_at')
 
 
 class SalesCrateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SalesCrate
-        fields = ('number', 'agent', 'crate', 'date_issued', 'date_returned', 'held_by')
+        fields = ('agent', 'crate', 'date_issued', 'date_returned', 'held_by')
 
     def validate_agent(self, value):
         if not value.is_sales_agent:
@@ -97,16 +97,15 @@ class ReceiptSerializer(serializers.ModelSerializer):
 class ReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReceiptParticular
-        fields = ('number', 'qty', 'product', 'price', 'discount', 'receipt', 'total')
+        fields = ('qty', 'product', 'price', 'discount', 'receipt', 'total')
         read_only_fields = ('number', 'total',)
 
 
 class ReceiptPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReceiptPayment
-        fields = (
-            'number', 'receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
-            'transfer_code', 'created_at', 'updated_at')
+        fields = ('receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
+                  'transfer_code', 'created_at', 'updated_at')
 
 
 class CashReceiptSerializer(serializers.ModelSerializer):
@@ -123,15 +122,15 @@ class CashReceiptSerializer(serializers.ModelSerializer):
 class CashReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CashReceiptParticular
-        fields = ('number', 'qty', 'product', 'price', 'discount', 'cash_receipt')
+        fields = ('qty', 'product', 'price', 'discount', 'cash_receipt')
 
 
 class CashReceiptPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CashReceiptPayment
-        fields = ('number',
-                  'cash_receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
-                  'transfer_code', 'created_at', 'updated_at')
+        fields = (
+            'cash_receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
+            'transfer_code', 'created_at', 'updated_at')
 
 
 class CreditSettlementSerializer(serializers.ModelSerializer):
