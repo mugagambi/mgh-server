@@ -35,7 +35,7 @@ class SaleSummaryAdmin(admin.ModelAdmin):
         }
         response.context_data['summary'] = list(
             qs
-                .values('product__name')
+                .values('package_product__order_product__product__name')
                 .annotate(**metrics)
                 .order_by('-value')
         )

@@ -80,7 +80,7 @@
                             {% for particular in receipt.receiptparticular_set.all %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ particular.product.name }}</td>
+                                    <td>{{ particular.package_product.name }}</td>
                                     <td>{{ particular.qty|floatformat }} Kg(s)</td>
                                     <td>Ksh. {{ particular.price|floatformat:2 }}</td>
                                     <td>{% if particular.discount %}
