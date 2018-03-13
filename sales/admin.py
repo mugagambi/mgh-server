@@ -120,7 +120,7 @@ class CustomerAdmin(ExportMixin, admin.ModelAdmin):
         'created_at')
     autocomplete_fields = ('region',)
     date_hierarchy = 'created_at'
-    search_fields = ('number',)
+    search_fields = ('number', 'shop_name', 'nick_name')
     list_select_related = True
 
     def get_phone_number(self, obj):
@@ -245,7 +245,6 @@ class OrderProductsInline(admin.TabularInline):
     extra = 1
     verbose_name = 'Item'
     verbose_name_plural = 'Items'
-    readonly_fields = ('number',)
 
 
 class OrderNumberFilter(NumberFilter):
@@ -265,6 +264,7 @@ class OrderAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     list_per_page = 20
     list_select_related = True
+    search_fields = ('customer__shop_name', 'customer__nick_name', 'number')
 
     @admin_link('customer', 'Customer')
     def customer_link(self, customer):
@@ -274,6 +274,7 @@ class OrderAdmin(admin.ModelAdmin):
         instances = formset.save(commit=False)
         for instance in instances:
             if instance.number:
+                instance.number = instance.number
                 instance.save()
             else:
                 instance.number = generate_unique_id(request.user.id)
@@ -425,6 +426,51 @@ class ReturnAdmin(admin.ModelAdmin):
     pass
 
 
+class PackageProductInline(admin.TabularInline):
+    model = models.PackageProduct
+    can_delete = True
+    autocomplete_fields = ('order_product',)
+    extra = 1
+    verbose_name = 'Item'
+    verbose_name_plural = 'Items'
+    readonly_fields = ('number',)
+
+
+class PackageAdmin(admin.ModelAdmin):
+    inlines = [PackageProductInline]
+    list_display = ('number', 'order', 'packaged_by', 'created_at', 'updated_at')
+    fields = ('order',)
+    list_select_related = True
+    readonly_fields = ('number',)
+    autocomplete_fields = ('order',)
+
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for instance in instances:
+            if instance.number:
+                instance.number = instance.number
+                instance.save()
+            else:
+                instance.number = generate_unique_id(request.user.id)
+                instance.save()
+        formset.save_m2m()
+
+    def save_model(self, request, obj, form, change):
+        obj.packaged_by = request.user
+        generate_unique_number(obj, PackageAdmin, self, request, form, change)
+        super(PackageAdmin, self).save_model(request, obj, form, change)
+
+
+class OrderProductAdmin(admin.ModelAdmin):
+    search_fields = ('order__number', 'product__name')
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 # Register your models here.
 custom_admin_site.register(models.Region, RegionAdmin)
 custom_admin_site.register(models.Customer, CustomerAdmin)
@@ -437,3 +483,5 @@ custom_admin_site.register(models.OverPay, OverPayAdmin)
 custom_admin_site.register(models.Return)
 custom_admin_site.register(models.Receipt, SalesAdmin)
 custom_admin_site.register(models.Invoices, InvoiceAdmin)
+custom_admin_site.register(models.OrderProduct, OrderProductAdmin)
+custom_admin_site.register(models.Package, PackageAdmin)

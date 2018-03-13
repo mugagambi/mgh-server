@@ -40,7 +40,7 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return 'order no. ' + str(self.number)
+        return 'order no. ' + str(self.number) + ' for ' + str(self.customer.shop_name)
 
 
 class OrderProduct(models.Model):
@@ -51,7 +51,7 @@ class OrderProduct(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2)
 
     def __str__(self):
-        return 'item for order ' + str(self.order)
+        return 'item for order ' + str(self.order) + '-> ' + str(self.product.name)
 
     class Meta:
         verbose_name = 'Order Report'
@@ -73,7 +73,6 @@ class PackageProduct(models.Model):
     number = models.CharField(max_length=10, unique=True, primary_key=True)
     package = models.ForeignKey(Package, to_field='number', on_delete=models.CASCADE)
     order_product = models.ForeignKey(OrderProduct, to_field='number', on_delete=models.CASCADE)
-    qty_order = models.DecimalField(decimal_places=2, max_digits=8)
     qty_weigh = models.DecimalField(decimal_places=2, max_digits=8)
     crate_weight = models.DecimalField(decimal_places=2, max_digits=4)
 
