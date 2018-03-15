@@ -16,6 +16,9 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+    {% block styles %}
+
+    {% endblock %}
 </head>
 
 <body>
@@ -29,7 +32,7 @@
             </li>
         {% else %}
             <li class="nav-item text-nowrap">
-                <a class="nav-link" href="#">Sign In</a>
+                <a class="nav-link" href="{% url 'sign-in' %}">Sign In</a>
             </li>
         {% endif %}
     </ul>
@@ -41,7 +44,9 @@
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}
+                        active
+                        {% endif %}" href="#">
                             <span data-feather="home"></span>
                             Dashboard <span class="sr-only">(current)</span>
                         </a>
@@ -59,6 +64,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'regions' %}
+                        active
+                        {% endif %}" href="{% url 'regions' %}">
+                            <span data-feather="tag"></span>
+                            Regions
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#">
                             <span data-feather="users"></span>
                             Customers
@@ -70,22 +83,18 @@
                             Reports
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="layers"></span>
-                            Integrations
-                        </a>
-                    </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{% url 'log-out' %}">
                                 <span data-feather="log-out"></span>
                                 Log Out
                             </a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'sign-in' %}">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'sign-in' %}
+                        active
+                        {% endif %}" href="{% url 'sign-in' %}">
                                 <span data-feather="log-in"></span>
                                 Log In
                             </a>
@@ -156,7 +165,9 @@
 <script>
     feather.replace()
 </script>
+{% block scripts %}
 
+{% endblock %}
 <!-- Graphs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 <script>
