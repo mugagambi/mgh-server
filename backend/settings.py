@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'rest_framework',
+    'widget_tweaks',
     'djoser',
     'corsheaders',
     'django_filters',
@@ -192,3 +193,5 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+LOGIN_URL = '/core/sign-in/'
+LOGIN_REDIRECT_URL = '/sales/orders/'

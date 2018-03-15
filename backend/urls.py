@@ -24,7 +24,7 @@ from sales.views import receipt
 urlpatterns = [
     path('sales/receipt/<int:pk>/', receipt, name='receipt'),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', custom_admin_site.urls),
+    path('admin/', custom_admin_site.urls),
     path(
         'password_reset/',
         auth_views.PasswordResetView.as_view(),
@@ -45,6 +45,8 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(),
         name='password_reset_complete',
     ),
+    path('core/', include('core.web_urls')),
+    path('sales/', include('sales.web_urls')),
     path('api/core/', include('core.urls')),
     path('api/sales/', include('sales.urls')),
     path('api/auth/', include('djoser.urls')),
