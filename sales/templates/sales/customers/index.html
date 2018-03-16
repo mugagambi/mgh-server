@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block styles %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
+    <style>
+        .filter-container {
+            display: none;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <h4 class="text-center">Customers</h4>
+    <p>
+        <a class="btn btn-outline-success" href="{% url 'create-region' %}">
+            <span data-feather="plus"></span>
+            New Customers
+        </a>
+    </p>
+    <div class="row">
+        <div class="col-sm-7 offset-sm-3" id="filter">
+            <a href="#" id="filters" class="float-right">show filters</a>
+            <div class="filter-container">
+                <h5 class="text-center">Filter By</h5>
+                <form action="" method="get">
+                    {{ filter.form | crispy }}
+                    <input type="submit" class="btn btn-primary"/>
+                </form>
+                <a href="#" id="hide-filters" class="float-right">hide filters</a>
+            </div>
+        </div>
+    </div>
+    <table id="customers" class="table table-striped" style="width:100%">
+        <thead>
+        <tr>
+            <th>Shop Name</th>
+            <th>Nick Name</th>
+            <th>Location</th>
+            <th>Phone Number</th>
+            <th>Region</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for customer in filter.qs %}
+            <tr>
+                <td>{{ customer.shop_name }}</td>
+                <td>{{ customer.nick_name }}</td>
+                <td>{{ customer.location }}</td>
+                <td>+{{ customer.country_code }}{{ customer.phone_number }}</td>
+                <td>{{ customer.region }}</td>
+                <td>
+                    <a class="btn btn-outline-success btn-sm" href="">prices</a>
+                    <a class="btn btn-outline-success btn-sm" href="">discounts</a>
+                    <a class="btn btn-outline-success btn-sm" href="">place order</a>
+                    <a class="btn btn-outline-success btn-sm" href="">Edit</a>
+                    <a class="btn btn-outline-danger btn-sm" href="">Remove</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>Shop Name</th>
+            <th>Nick Name</th>
+            <th>Location</th>
+            <th>Phone Number</th>
+            <th>Region</th>
+            <th>Actions</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endblock %}
+{% block scripts %}
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#customers').DataTable({
+                'paging': true,
+                'lengthChange': true,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': true,
+                "columnDefs": [{
+                    "targets": 5,
+                    "orderable": false,
+                    "searchable": false
+                }]
+            });
+        });
+    </script>
+    <script>
+        $('#filters').on('click', function (event) {
+            event.preventDefault();
+            $('.filter-container').show(2000);
+            $('#filters').hide();
+            return false;
+        });
+        $('#hide-filters').on('click', function (e) {
+            e.preventDefault();
+            $('.filter-container').hide("slow");
+            $('#filters').show();
+        });
+    </script>
+{% endblock %}

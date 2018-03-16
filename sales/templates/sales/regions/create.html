@@ -7,20 +7,22 @@
             color: red;
             float: right;
         }
-    .delete-row:hover {
-        color: red;
-    }
+
+        .delete-row:hover {
+            color: red;
+        }
     </style>
 {% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-sm-5 offset-sm-3">
-            <h4 class="text-center">Add New Customer Region</h4>
+            <h4 class="text-center"> New Customer Regions</h4>
             <form method="post" id="formset">
                 {% csrf_token %}
                 {{ formset.management_form }}
                 <div id="form-container">
                     {% for form in formset %}
+                        <h5 class="text-center">New Region</h5>
                         {{ form | crispy }}
                     {% endfor %}
                 </div>

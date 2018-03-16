@@ -2,11 +2,12 @@ from django.shortcuts import redirect, render
 from django.views.generic import TemplateView, ListView
 from sales import models
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import UpdateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.forms import modelformset_factory
+from django_filters.views import FilterView
 
 
 class OrdersView(TemplateView):
@@ -31,14 +32,6 @@ def create_regions(request):
         return render(request, 'sales/regions/create.html', {'formset': formset})
 
 
-class CreateRegion(SuccessMessageMixin, CreateView):
-    model = models.Region
-    fields = ['name']
-    template_name = 'sales/regions/create.html'
-    success_url = reverse_lazy('regions')
-    success_message = 'region created successfully'
-
-
 class UpdateRegion(SuccessMessageMixin, UpdateView):
     model = models.Region
     fields = ['name']
@@ -55,3 +48,9 @@ class DeleteRegion(DeleteView):
     template_name = 'sales/regions/delete.html'
     model = models.Region
     success_url = reverse_lazy('regions')
+
+
+class CustomerList(FilterView):
+    model = models.Customer
+    template_name = 'sales/customers/index.html'
+    filter_fields = ('region', 'added_by')
