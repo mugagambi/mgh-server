@@ -195,3 +195,4 @@ MESSAGE_TAGS = {
 }
 LOGIN_URL = '/core/sign-in/'
 LOGIN_REDIRECT_URL = '/sales/orders/'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

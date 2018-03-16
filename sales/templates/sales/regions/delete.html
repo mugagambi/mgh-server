@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h4 class="text-center">Remove region {{ object.name }}</h4>
+    <form action="" method="post">{% csrf_token %}
+        <p>Are you sure you want to delete "{{ object }}"?</p>
+        <input type="submit" class="btn btn-danger" value="Confirm"/>
+    </form>
+{% endblock %}

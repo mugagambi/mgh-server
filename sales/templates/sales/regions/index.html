@@ -4,7 +4,13 @@
 {% endblock %}
 {% block content %}
     <h4 class="text-center">Customer Regions</h4>
-    <table id="regions" class="table table-striped table-bordered" style="width:100%">
+    <p>
+        <a class="btn btn-outline-success" href="{% url 'create-region' %}">
+            <span data-feather="plus"></span>
+            New regions
+        </a>
+    </p>
+    <table id="regions" class="table table-striped" style="width:100%">
         <thead>
         <tr>
             <th>Name</th>
@@ -16,8 +22,8 @@
             <tr>
                 <td>{{ region.name }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm">Edit</a>
-                    <a class="btn btn-outline-danger btn-sm">Remove</a>
+                    <a class="btn btn-outline-success btn-sm" href="{% url 'update-region' pk=region.id %}">Edit</a>
+                    <a class="btn btn-outline-danger btn-sm" href="{% url 'delete-region' pk=region.id %}">Remove</a>
                 </td>
             </tr>
         {% endfor %}
