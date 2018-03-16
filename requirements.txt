@@ -15,6 +15,7 @@ django-debug-toolbar==1.9.1
 django-filter==1.1.0
 django-import-export==1.0.0
 django-templated-mail==1.1.1
+django-widget-tweaks==1.4.1
 djangorestframework==3.7.7
 djangorestframework-jwt==1.11.0
 djoser==1.1.5
