@@ -1,12 +1,7 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
 {% block styles %}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
-    <style>
-        .filter-container {
-            display: none;
-        }
-    </style>
+    {% include 'includes/filter_css.html' %}
 {% endblock %}
 {% block content %}
     <h4 class="text-center">Customers</h4>
@@ -16,19 +11,7 @@
             New Customers
         </a>
     </p>
-    <div class="row">
-        <div class="col-sm-7 offset-sm-3" id="filter">
-            <a href="#" id="filters" class="float-right">show filters</a>
-            <div class="filter-container">
-                <h5 class="text-center">Filter By</h5>
-                <form action="" method="get">
-                    {{ filter.form | crispy }}
-                    <input type="submit" class="btn btn-primary"/>
-                </form>
-                <a href="#" id="hide-filters" class="float-right">hide filters</a>
-            </div>
-        </div>
-    </div>
+    {% include 'includes/filter_by.html' %}
     <table id="customers" class="table table-striped" style="width:100%">
         <thead>
         <tr>
@@ -90,17 +73,5 @@
             });
         });
     </script>
-    <script>
-        $('#filters').on('click', function (event) {
-            event.preventDefault();
-            $('.filter-container').show(2000);
-            $('#filters').hide();
-            return false;
-        });
-        $('#hide-filters').on('click', function (e) {
-            e.preventDefault();
-            $('.filter-container').hide("slow");
-            $('#filters').show();
-        });
-    </script>
+    {% include 'includes/filter_js.html' %}
 {% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block styles %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
+    {% include 'includes/filter_css.html' %}
+{% endblock %}
+{% block content %}
+    <nav class="nav nav-pills nav-fill">
+        <a class="nav-item nav-link {% if 'all' in request.path %}
+                        active
+                        {% endif %}" href="#">All Sales</a>
+        <a class="nav-item nav-link" href="#">Cash Sales</a>
+        <a class="nav-item nav-link" href="#">Invoice</a>
+        <a class="nav-item nav-link" href="#">Credit Settlement</a>
+        <a class="nav-item nav-link" href="#">OverPays</a>
+        <a class="nav-item nav-link" href="#">UnderPays</a>
+        <a class="nav-item nav-link" href="#">Returns</a>
+        <a class="nav-item nav-link" href="#">Rejects</a>
+    </nav>
+    <h4 class="text-center">Total Sales</h4>
+    {% include 'includes/filter_by.html' %}
+    <table id="customers" class="table table-striped" style="width:100%">
+        <thead>
+        <tr>
+            <th>Receipt No.</th>
+            <th>Shop Name</th>
+            <th>Product</th>
+            <th>qty</th>
+            <th>@ (Ksh)</th>
+            <th>Discount (%)</th>
+            <th>Total (Ksh)</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for particular in filter.qs %}
+            <tr>
+                <td>{{ particular.receipt.number }}</td>
+                <td>{{ particular.receipt.customer.shop_name }}</td>
+                <td>{{ particular.package_product.order_product.product.name }}</td>
+                <td>{{ particular.qty }}</td>
+                <td>{{ particular.price }}</td>
+                <td>{{ particular.discount }}</td>
+                <th>{{ particular.total |floatformat:2| intcomma }}</th>
+                <th>{{ particular.receipt.date }}</th>
+                <td>
+                    <a class="btn btn-outline-success btn-sm" href="">view receipt</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>Receipt No.</th>
+            <th>Shop Name</th>
+            <th>Product</th>
+            <th>qty</th>
+            <th>@ (Ksh)</th>
+            <th>Discount (%)</th>
+            <th>Total (Ksh)</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endblock %}
+{% block scripts %}
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#customers').DataTable({
+                'paging': true,
+                'lengthChange': true,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': true,
+                "columnDefs": [{
+                    "targets": 8,
+                    "orderable": false,
+                    "searchable": false
+                }]
+            });
+        });
+    </script>
+    {% include 'includes/filter_js.html' %}
+{% endblock %}

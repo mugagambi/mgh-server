@@ -187,7 +187,6 @@ class ReceiptParticular(models.Model):
             return super(ReceiptParticular, self).save(force_insert=False, force_update=False, using=None,
                                                        update_fields=None)
         self.total = amount
-        print(self.total)
         return super(ReceiptParticular, self).save(force_insert=False, force_update=False, using=None,
                                                    update_fields=None)
 

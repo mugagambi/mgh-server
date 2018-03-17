@@ -8,4 +8,5 @@ urlpatterns = [
     path('regions/<int:pk>/edit/', web_views.UpdateRegion.as_view(), name='update-region'),
     path('regions/<int:pk>/delete/', web_views.DeleteRegion.as_view(), name='delete-region'),
     path('customers/', web_views.CustomerList.as_view(), name='customers'),
+    path('all/', web_views.SalesList.as_view(), name='total-sales'),
 ]

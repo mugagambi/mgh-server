@@ -1,0 +1,15 @@
+{% load crispy_forms_tags %}
+
+<div class="row">
+    <div class="col-sm-7 offset-sm-3" id="filter">
+        <a href="#" id="filters" class="float-right">show filters</a>
+        <div class="filter-container">
+            <h5 class="text-center">Filter By</h5>
+            <form action="" method="get">
+                {{ filter.form | crispy }}
+                <input type="submit" value="filter" class="btn btn-primary"/>
+            </form>
+            <a href="#" id="hide-filters" class="float-right">hide filters</a>
+        </div>
+    </div>
+</div>

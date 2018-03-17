@@ -1,0 +1,13 @@
+<script>
+    $('#filters').on('click', function (event) {
+        event.preventDefault();
+        $('.filter-container').show(2000);
+        $('#filters').hide();
+        return false;
+    });
+    $('#hide-filters').on('click', function (e) {
+        e.preventDefault();
+        $('.filter-container').hide("slow");
+        $('#filters').show();
+    });
+</script>

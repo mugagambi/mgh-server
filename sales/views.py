@@ -146,6 +146,12 @@ class ReceiptViewSet(viewsets.ModelViewSet):
     filter_class = ReceiptFilterSet
     ordering_fields = ('date',)
 
+    def get_serializer(self, *args, **kwargs):
+        """ if an array is passed, set serializer to many """
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+        return super(ReceiptViewSet, self).get_serializer(*args, **kwargs)
+
 
 class ReceiptParticularsViewSet(viewsets.ModelViewSet):
     queryset = models.ReceiptParticular.objects.all()
@@ -153,6 +159,12 @@ class ReceiptParticularsViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_fields = ('package_product', 'receipt')
     ordering_fields = ('qty', 'price', 'discount')
+
+    def get_serializer(self, *args, **kwargs):
+        """ if an array is passed, set serializer to many """
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+        return super(ReceiptParticularsViewSet, self).get_serializer(*args, **kwargs)
 
 
 class ReceiptPaymentsFilterSet(django_filters.rest_framework.FilterSet):

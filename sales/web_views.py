@@ -50,7 +50,13 @@ class DeleteRegion(DeleteView):
     success_url = reverse_lazy('regions')
 
 
-class CustomerList(FilterView):
+class CustomerList(LoginRequiredMixin, FilterView):
     model = models.Customer
     template_name = 'sales/customers/index.html'
     filter_fields = ('region', 'added_by')
+
+
+class SalesList(LoginRequiredMixin, FilterView):
+    model = models.ReceiptParticular
+    template_name = 'sales/sales/index.html'
+    filter_fields = ('receipt__served_by',)
