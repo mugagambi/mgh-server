@@ -1,16 +1,21 @@
-import django_filters
-from django.shortcuts import redirect, render
-from django.views.generic import TemplateView, ListView
-from sales import models
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import UpdateView, DeleteView
-from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse_lazy
-from django.contrib import messages
-from django.forms import modelformset_factory
-from django_filters.views import FilterView
-from django_filters import FilterSet
 from datetime import datetime, timedelta
+
+import django_filters
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.forms import modelformset_factory
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, ListView
+from django.views.generic.edit import UpdateView, DeleteView
+from django_filters import FilterSet
+from django_filters.views import FilterView
+from django_select2.forms import Select2Widget
+from sales import forms
+
+from sales import models
+from utils import generate_unique_id
 
 
 class OrdersView(TemplateView):
@@ -84,3 +89,36 @@ class SalesList(LoginRequiredMixin, FilterView):
         date_30_days_ago = date_30_days_ago.strftime("%Y-%m-%d")
         data['date_30_days_ago'] = date_30_days_ago
         return data
+
+
+def create_customer(request):
+    if request.method == 'POST':
+        form = forms.CustomerForm(request.POST)
+        if form.is_valid():
+            customer = form.save(commit=False)
+            customer.number = generate_unique_id(request.user.id)
+            customer.added_by = request.user
+            customer.save()
+            messages.success(request, 'Customer added successfully')
+            return redirect('customers')
+    else:
+        form = forms.CustomerForm()
+        return render(request, 'sales/customers/create.html', {'form': form})
+
+
+class DeleteCustomer(DeleteView):
+    def post(self, request, *args, **kwargs):
+        messages.success(request, 'Customer removed successfully!')
+        return super().post(request, *args, **kwargs)
+
+    template_name = 'sales/regions/delete.html'
+    model = models.Customer
+    success_url = reverse_lazy('customers')
+
+
+class UpdateCustomer(SuccessMessageMixin, UpdateView):
+    model = models.Customer
+    fields = ['shop_name', 'nick_name', 'location', 'country_code', 'phone_number', 'region']
+    template_name = 'sales/customers/update.html'
+    success_url = reverse_lazy('customers')
+    success_message = 'Customer updated successfully'

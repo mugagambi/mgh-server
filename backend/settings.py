@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django.contrib.admindocs',
     'import_export',
+    'django_select2',
     'core.apps.CoreConfig',
     'sales.apps.SalesConfig',
     'reports.apps.ReportsConfig'

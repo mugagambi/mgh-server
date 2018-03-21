@@ -6,9 +6,9 @@
 {% block content %}
     <h4 class="text-center">Customers</h4>
     <p>
-        <a class="btn btn-outline-success" href="{% url 'create-region' %}">
+        <a class="btn btn-outline-success" href="{% url 'create-customer' %}">
             <span data-feather="plus"></span>
-            New Customers
+            New Customer
         </a>
     </p>
     {% include 'includes/filter_by.html' %}
@@ -35,8 +35,10 @@
                     <a class="btn btn-outline-success btn-sm" href="">prices</a>
                     <a class="btn btn-outline-success btn-sm" href="">discounts</a>
                     <a class="btn btn-outline-success btn-sm" href="">place order</a>
-                    <a class="btn btn-outline-success btn-sm" href="">Edit</a>
-                    <a class="btn btn-outline-danger btn-sm" href="">Remove</a>
+                    <a class="btn btn-outline-success btn-sm"
+                       href="{% url 'update-customer' pk=customer.number %}">Edit</a>
+                    <a class="btn btn-outline-danger btn-sm"
+                       href="{% url 'delete-customer' pk=customer.number %}">Remove</a>
                 </td>
             </tr>
         {% endfor %}
