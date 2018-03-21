@@ -51,7 +51,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link {% if 'centers' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'centers-list' %}">
                             <span data-feather="list"></span>
                             Centers
                         </a>
@@ -71,7 +73,7 @@
                     <li class="nav-item">
                         <a class="nav-link {% if 'all' in request.path %}
                         active
-                        {% endif %}" href="{% url 'total-sales' %}">
+                        {% endif %}" href="{% url 'total-sales' %}?date_0={{ date_30_days_ago }}">
                             <span data-feather="shopping-bag"></span>
                             Sales
                         </a>

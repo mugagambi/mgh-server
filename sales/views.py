@@ -78,6 +78,12 @@ class PackageViewSet(viewsets.ModelViewSet):
     filter_class = PackageFilterSet
     ordering_fields = ('created_at', 'updated_at')
 
+    def get_serializer(self, *args, **kwargs):
+        """ if an array is passed, set serializer to many """
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+        return super(PackageViewSet, self).get_serializer(*args, **kwargs)
+
 
 class PackageProductsViewSet(viewsets.ModelViewSet):
     queryset = models.PackageProduct.objects.all()
@@ -85,6 +91,12 @@ class PackageProductsViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_fields = ('package', 'order_product')
     ordering_fields = ('qty_order', 'qty_weigh', 'crate_weight')
+
+    def get_serializer(self, *args, **kwargs):
+        """ if an array is passed, set serializer to many """
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+        return super(PackageProductsViewSet, self).get_serializer(*args, **kwargs)
 
 
 class CustomerPriceViewSet(viewsets.ModelViewSet):

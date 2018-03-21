@@ -1,3 +1,4 @@
+import django_filters
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView, ListView
 from sales import models
@@ -8,6 +9,8 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.forms import modelformset_factory
 from django_filters.views import FilterView
+from django_filters import FilterSet
+from datetime import datetime, timedelta
 
 
 class OrdersView(TemplateView):
@@ -56,7 +59,28 @@ class CustomerList(LoginRequiredMixin, FilterView):
     filter_fields = ('region', 'added_by')
 
 
+class SalesFilterSet(FilterSet):
+    date = django_filters.DateFromToRangeFilter(name='receipt__date',
+                                                label='Date (Between)')
+
+    class Meta:
+        model = models.ReceiptParticular
+        fields = ('date',)
+
+
 class SalesList(LoginRequiredMixin, FilterView):
     model = models.ReceiptParticular
     template_name = 'sales/sales/index.html'
-    filter_fields = ('receipt__served_by',)
+    filterset_class = SalesFilterSet
+
+    def get_queryset(self):
+        return models.ReceiptParticular.objects.all().select_related('receipt',
+                                                                     'package_product__order_product__product',
+                                                                     'receipt__customer')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        data = super(SalesList, self).get_context_data(object_list=None, **kwargs)
+        date_30_days_ago = datetime.now() - timedelta(days=30)
+        date_30_days_ago = date_30_days_ago.strftime("%Y-%m-%d")
+        data['date_30_days_ago'] = date_30_days_ago
+        return data
