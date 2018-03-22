@@ -1,9 +1,13 @@
 from django.contrib.admin import AdminSite
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
+
 from core import models
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from utils import admin_link
 from django.contrib.auth.models import Group
+
+from import_export import resources
 
 
 class CustomAdminSite(AdminSite):
@@ -81,7 +85,13 @@ class AggregationCenterAdmin(admin.ModelAdmin):
         return models.AggregationCenter.objects.filter(is_active=True)
 
 
-class ProductAdmin(admin.ModelAdmin):
+class ProductResource(resources.ModelResource):
+    class Meta:
+        model = models.Product
+
+
+class ProductAdmin(ImportExportModelAdmin):
+    resource_class = ProductResource
     list_display = ('name',)
     search_fields = ('name',)
     list_per_page = 20
