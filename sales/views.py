@@ -179,6 +179,20 @@ class ReceiptParticularsViewSet(viewsets.ModelViewSet):
         return super(ReceiptParticularsViewSet, self).get_serializer(*args, **kwargs)
 
 
+class OrderlessParticularsViewSet(viewsets.ModelViewSet):
+    queryset = models.OrderlessParticular.objects.all()
+    serializer_class = serializers.OrderLessParticularSerializer
+    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
+    filter_fields = ('product', 'receipt')
+    ordering_fields = ('qty', 'price', 'discount')
+
+    def get_serializer(self, *args, **kwargs):
+        """ if an array is passed, set serializer to many """
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+        return super(OrderlessParticularsViewSet, self).get_serializer(*args, **kwargs)
+
+
 class ReceiptPaymentsFilterSet(django_filters.rest_framework.FilterSet):
     date_to_pay_between = django_filters.DateFromToRangeFilter(name='date_to_pay',
                                                                label='Date to pay (Between)')
@@ -196,6 +210,12 @@ class ReceiptPaymentViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = ReceiptPaymentsFilterSet
     ordering_fields = ('created_at', 'amount', 'date_to_pay')
+
+    def get_serializer(self, *args, **kwargs):
+        """ if an array is passed, set serializer to many """
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+        return super(ReceiptPaymentViewSet, self).get_serializer(*args, **kwargs)
 
 
 class CashReceiptFilterSet(django_filters.rest_framework.FilterSet):

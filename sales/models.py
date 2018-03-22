@@ -208,6 +208,32 @@ class ReceiptParticular(models.Model):
                                                    update_fields=None)
 
 
+class OrderlessParticular(models.Model):
+    qty = models.DecimalField(decimal_places=2, max_digits=8)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
+                                                                          'price for each quantity')
+    discount = models.DecimalField(max_digits=5, decimal_places=2,
+                                   help_text='% discount', null=True)
+    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE)
+    total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return str(self.receipt)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        amount = self.qty * self.price
+        if self.discount:
+            total_discount = Decimal(amount) * (Decimal(self.discount) / 100)
+            self.total = amount - total_discount
+            return super(OrderlessParticular, self).save(force_insert=False, force_update=False, using=None,
+                                                         update_fields=None)
+        self.total = amount
+        return super(OrderlessParticular, self).save(force_insert=False, force_update=False, using=None,
+                                                     update_fields=None)
+
+
 class ReceiptPayment(models.Model):
     TYPES = (
         (1, 'Cheque'),

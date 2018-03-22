@@ -98,7 +98,14 @@ class ReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReceiptParticular
         fields = ('qty', 'package_product', 'price', 'discount', 'receipt', 'total')
-        read_only_fields = ('number', 'total',)
+        read_only_fields = ('total',)
+
+
+class OrderLessParticularSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.OrderlessParticular
+        fields = ('qty', 'product', 'price', 'discount', 'receipt', 'total')
+        read_only_fields = ('total',)
 
 
 class ReceiptPaymentSerializer(serializers.ModelSerializer):
