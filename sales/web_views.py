@@ -243,3 +243,13 @@ def update_order(request, pk):
             form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=order.customer)
     return render(request, 'crud/formset-create.html', {'formset': formset,
                                                         'create_name': 'Update order ' + order.number})
+
+
+class DeleteOrder(DeleteView):
+    def post(self, request, *args, **kwargs):
+        messages.success(request, 'Customer order successfully!')
+        return super().post(request, *args, **kwargs)
+
+    template_name = 'crud/delete.html'
+    model = models.Order
+    success_url = reverse_lazy('orders')

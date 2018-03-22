@@ -38,7 +38,7 @@
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'update-order' pk=order.number %}">Update</a>
                     <a class="btn btn-outline-danger btn-sm"
-                       href="">Remove</a>
+                       href="{% url 'delete-order' pk=order.number %}">Remove</a>
                 </td>
             </tr>
         {% endfor %}

@@ -17,4 +17,5 @@ urlpatterns = [
     path('customers/<pk>/place-order/', web_views.place_order, name='place-order'),
     path('orders/', web_views.OrdersView.as_view(), name='orders'),
     path('orders/<pk>/place-order/', web_views.update_order, name='update-order'),
+    path('orders/<pk>/delete/', web_views.DeleteOrder.as_view(), name='delete-order'),
 ]
