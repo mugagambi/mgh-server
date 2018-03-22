@@ -125,7 +125,7 @@ class UpdateCustomer(SuccessMessageMixin, UpdateView):
 
 
 def add_prices(request, pk):
-    prices_formset = modelformset_factory(models.CustomerPrice, fields=('price', 'product'),
+    prices_formset = modelformset_factory(models.CustomerPrice, fields=('product', 'price'),
                                           widgets={'product': Select2Widget}, extra=10,
                                           can_delete=True)
     customer = models.Customer.objects.get(pk=pk)
@@ -149,7 +149,7 @@ def add_prices(request, pk):
 
 
 def add_discounts(request, pk):
-    discounts_formset = modelformset_factory(models.CustomerDiscount, fields=('discount', 'product'),
+    discounts_formset = modelformset_factory(models.CustomerDiscount, fields=('product', 'discount'),
                                              widgets={'product': Select2Widget}, extra=10,
                                              can_delete=True)
     customer = models.Customer.objects.get(pk=pk)
@@ -175,7 +175,7 @@ def add_discounts(request, pk):
 
 def place_order(request, pk):
     orders_formset = modelformset_factory(models.OrderProduct,
-                                          fields=('discount', 'price', 'qty', 'product'),
+                                          fields=('product', 'qty', 'price', 'discount'),
                                           widgets={'product': Select2Widget,
                                                    'price': Select2Widget,
                                                    'discount': Select2Widget}, extra=10,
