@@ -13,5 +13,5 @@ class RegionForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = models.Customer
-        fields = ('shop_name', 'nick_name', 'location', 'country_code', 'phone_number', 'region')
+        fields = ('shop_name', 'nick_name', 'location', 'phone_number', 'email', 'region')
         widgets = {'region': Select2Widget}

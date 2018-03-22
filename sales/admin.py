@@ -53,7 +53,6 @@ class CustomerResource(resources.ModelResource):
 
     class Meta:
         model = models.Customer
-        exclude = ('country_code',)
 
     def dehydrate_region(self, customer):
         return customer.region.name
@@ -62,7 +61,7 @@ class CustomerResource(resources.ModelResource):
         return customer.added_by.username
 
     def dehydrate_phone_number(self, customer):
-        return '+' + str(customer.country_code) + str(customer.phone_number)
+        return str(customer.phone_number)
 
 
 class NumberFilter(InputFilter):
@@ -113,10 +112,10 @@ class CustomerAdmin(ExportMixin, admin.ModelAdmin):
     inlines = [CustomerPriceInline, CustomerDiscountInline]
     list_display = ('number', 'shop_name', 'nick_name', 'location', 'get_phone_number',
                     'added_by', 'region_link', 'created_at', 'updated_at')
-    fields = ('number', 'shop_name', 'nick_name', 'location', ('country_code', 'phone_number'), 'region')
+    fields = ('number', 'shop_name', 'nick_name', 'location', 'phone_number', 'region')
     readonly_fields = ('number',)
     list_filter = (
-        CustomerNumberFilter, CustomerShopNameFilter, CustomerNickNameFilter, 'country_code', 'region', 'added_by',
+        CustomerNumberFilter, CustomerShopNameFilter, CustomerNickNameFilter, 'region', 'added_by',
         'created_at')
     autocomplete_fields = ('region',)
     date_hierarchy = 'created_at'
@@ -124,7 +123,7 @@ class CustomerAdmin(ExportMixin, admin.ModelAdmin):
     list_select_related = True
 
     def get_phone_number(self, obj):
-        return '+' + str(obj.country_code) + str(obj.phone_number)
+        return str(obj.phone_number)
 
     def save_model(self, request, obj, form, change):
         obj.added_by = request.user

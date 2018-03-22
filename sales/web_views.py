@@ -118,7 +118,26 @@ class DeleteCustomer(DeleteView):
 
 class UpdateCustomer(SuccessMessageMixin, UpdateView):
     model = models.Customer
-    fields = ['shop_name', 'nick_name', 'location', 'country_code', 'phone_number', 'region']
+    fields = ['shop_name', 'nick_name', 'location', 'phone_number', 'region']
     template_name = 'sales/customers/update.html'
     success_url = reverse_lazy('customers')
     success_message = 'Customer updated successfully'
+
+
+def add_prices(request, pk):
+    prices_formset = modelformset_factory(models.CustomerPrice, fields=('price', 'product'),
+                                          widgets={'product': Select2Widget}, max_num=10)
+    customer = models.Customer.objects.get(pk=pk)
+    if request.method == 'POST':
+        formset = prices_formset(request.POST)
+        if formset.is_valid():
+            prices = formset.save(commit=False)
+            for price in prices:
+                price.customer = customer
+                price.save()
+            messages.success(request, 'regions added successfully!')
+            return redirect(reverse_lazy('customers'))
+    else:
+        formset = prices_formset(queryset=models.CustomerPrice.objects.select_related('product').filter(customer=pk))
+    return render(request, 'sales/customers/add-prices.html', {'formset': formset,
+                                                               "customer": customer})

@@ -15,12 +15,12 @@ class Region(models.Model):
 
 
 class Customer(models.Model):
+    email = models.EmailField(null=True, blank=True)
     number = models.CharField(max_length=10, unique=True, primary_key=True)
     shop_name = models.CharField(max_length=100)
     nick_name = models.CharField(blank=True, max_length=100)
     location = models.CharField(max_length=100)
-    country_code = models.PositiveSmallIntegerField()
-    phone_number = models.PositiveIntegerField(unique=True)
+    phone_number = models.CharField(max_length=15)
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     region = models.ForeignKey(Region, on_delete=models.CASCADE, help_text='search by region name')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -43,12 +43,44 @@ class Order(models.Model):
         return 'order no. ' + str(self.number) + ' for ' + str(self.customer.shop_name)
 
 
+class CustomerPrice(models.Model):
+    customer = models.ForeignKey(Customer, to_field='number',
+                                 help_text='search by customer no. , shop name or nick name',
+                                 on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
+                                                                          'price for each quantity')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search by product name')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.product) + ' for' + str(self.price)
+
+    class Meta:
+        unique_together = ('customer', 'product')
+
+
+class CustomerDiscount(models.Model):
+    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE)
+    discount = models.DecimalField(max_digits=5, decimal_places=2,
+                                   help_text='% discount')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search by product name')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('customer', 'product')
+
+    def __str__(self):
+        return str(self.product) + ' for' + str(self.discount)
+
+
 class OrderProduct(models.Model):
     number = models.CharField(max_length=10, unique=True, primary_key=True)
     order = models.ForeignKey(Order, to_field='number', on_delete=models.CASCADE, help_text='search by order no.')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     qty = models.DecimalField(decimal_places=2, max_digits=8)
-    price = models.DecimalField(max_digits=9, decimal_places=2)
+    price = models.ForeignKey(CustomerPrice, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return 'item for order ' + str(self.order) + '-> ' + str(self.product.name)
@@ -81,32 +113,6 @@ class PackageProduct(models.Model):
 
     class Meta:
         verbose_name_plural = 'Packed Products'
-
-
-class CustomerPrice(models.Model):
-    customer = models.ForeignKey(Customer, to_field='number',
-                                 help_text='search by customer no. , shop name or nick name',
-                                 on_delete=models.CASCADE)
-    price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
-                                                                          'price for each quantity')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search by product name')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return str(self.customer)
-
-
-class CustomerDiscount(models.Model):
-    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE)
-    discount = models.DecimalField(max_digits=5, decimal_places=2,
-                                   help_text='% discount')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search by product name')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return str(self.customer)
 
 
 class SalesCrate(models.Model):

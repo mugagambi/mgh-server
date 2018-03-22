@@ -23,7 +23,7 @@ class CustomerFilterSet(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = models.Customer
-        fields = ('country_code', 'added_by', 'region', 'number', 'created_at', 'created_between')
+        fields = ('added_by', 'region', 'number', 'created_at', 'created_between')
 
 
 class CustomerViewSet(viewsets.ModelViewSet):

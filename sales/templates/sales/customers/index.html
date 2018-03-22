@@ -29,10 +29,11 @@
                 <td>{{ customer.shop_name }}</td>
                 <td>{{ customer.nick_name }}</td>
                 <td>{{ customer.location }}</td>
-                <td>+{{ customer.country_code }}{{ customer.phone_number }}</td>
+                <td>{{ customer.phone_number }}</td>
                 <td>{{ customer.region }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm" href="">prices</a>
+                    <a class="btn btn-outline-success btn-sm"
+                       href="{% url 'add-prices' pk=customer.number %}">prices</a>
                     <a class="btn btn-outline-success btn-sm" href="">discounts</a>
                     <a class="btn btn-outline-success btn-sm" href="">place order</a>
                     <a class="btn btn-outline-success btn-sm"
