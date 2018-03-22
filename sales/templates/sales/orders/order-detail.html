@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+    <h4 class="text-center"><u>Order Number {{ order.number }}</u></h4>
+    <div class="row">
+        <div class="col-sm-8 offset-sm-4">
+            <p><b>Customer: </b>{{ order.customer.shop_name }}</p>
+            <p><b>Received By: </b>{{ order.received_by }}</p>
+            <p><b>Date of Delivery: </b>{{ order.date_delivery }}</p>
+            <p><b>Created At: </b>{{ order.created_at }}</p>
+        </div>
+    </div>
+    <br/>
+    <h5 class="text-center">Items</h5>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">@ (Ksh)</th>
+                    <th scope="col">Discount (%)</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in order.orderproduct_set.all %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.qty }}</td>
+                        <td>{{ item.price.price }}</td>
+                        <td>{{ item.discount.discount }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

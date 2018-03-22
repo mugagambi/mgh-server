@@ -5,9 +5,9 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import modelformset_factory
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, ListView
+from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, DeleteView
 from django_filters import FilterSet
 from django_filters.views import FilterView
@@ -221,7 +221,7 @@ def update_order(request, pk):
                                           fields=('product', 'qty', 'price', 'discount'),
                                           widgets={'product': Select2Widget,
                                                    'price': Select2Widget,
-                                                   'discount': Select2Widget}, extra=0,
+                                                   'discount': Select2Widget}, extra=3,
                                           can_delete=True)
     order = models.Order.objects.get(pk=pk)
     if request.method == 'POST':
@@ -253,3 +253,8 @@ class DeleteOrder(DeleteView):
     template_name = 'crud/delete.html'
     model = models.Order
     success_url = reverse_lazy('orders')
+
+
+def order_detail(request, pk):
+    order = get_object_or_404(models.Order, pk=pk)
+    return render(request, 'sales/orders/order-detail.html', {'order': order})

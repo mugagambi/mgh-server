@@ -34,7 +34,7 @@
                 <td>{{ order.created_at }}</td>
                 <td>
                     <a class="btn btn-outline-success btn-sm"
-                       href="#">Details</a>
+                       href="{% url 'order_detail' pk=order.number %}">Details</a>
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'update-order' pk=order.number %}">Update</a>
                     <a class="btn btn-outline-danger btn-sm"

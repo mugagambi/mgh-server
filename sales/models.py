@@ -42,6 +42,16 @@ class Order(models.Model):
     def __str__(self):
         return 'order no. ' + str(self.number) + ' for ' + str(self.customer.shop_name)
 
+    def total_qty(self):
+        if self.orderproduct_set.all().exists():
+            return reduce((lambda x, y: x + y), [x.qty for x in self.orderproduct_set.all()])
+        return 0
+
+    def total_price(self):
+        if self.orderproduct_set.all().exists():
+            return reduce((lambda x, y: x + y), [x.price.price for x in self.orderproduct_set.all()])
+        return 0
+
 
 class CustomerPrice(models.Model):
     customer = models.ForeignKey(Customer, to_field='number',
