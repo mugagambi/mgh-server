@@ -183,6 +183,9 @@ def place_order(request, pk):
     customer = models.Customer.objects.get(pk=pk)
     if request.method == 'POST':
         formset = orders_formset(request.POST)
+        for form in formset:
+            form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=customer)
+            form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=customer)
         main_order = models.Order()
         main_order.number = generate_unique_id(request.user.id)
         main_order.received_by = request.user
@@ -201,6 +204,9 @@ def place_order(request, pk):
     else:
         formset = orders_formset(
             queryset=models.OrderProduct.objects.none())
+        for form in formset:
+            form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=customer)
+            form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=customer)
     return render(request, 'crud/formset-create.html', {'formset': formset,
                                                         "customer": customer,
                                                         'create_name': customer.shop_name + ' Orders',
