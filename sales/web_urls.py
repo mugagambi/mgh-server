@@ -15,4 +15,5 @@ urlpatterns = [
     path('customers/<pk>/prices/', web_views.add_prices, name='add-prices'),
     path('customers/<pk>/discounts/', web_views.add_discounts, name='add-discounts'),
     path('customers/<pk>/place-order/', web_views.place_order, name='place-order'),
+    path('orders/', web_views.OrdersView.as_view(), name='orders'),
 ]

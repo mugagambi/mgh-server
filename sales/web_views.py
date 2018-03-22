@@ -18,8 +18,9 @@ from sales import models
 from utils import generate_unique_id
 
 
-class OrdersView(TemplateView):
-    template_name = 'sales/orders.html'
+class OrdersView(ListView):
+    template_name = 'sales/orders/index.html'
+    queryset = models.Order.objects.select_related('customer', 'received_by').all()
 
 
 class RegionList(LoginRequiredMixin, ListView):
