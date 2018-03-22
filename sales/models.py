@@ -54,7 +54,7 @@ class CustomerPrice(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.product) + ' for' + str(self.price)
+        return str(self.product) + ' for ksh. ' + str(self.price)
 
     class Meta:
         unique_together = ('customer', 'product')
@@ -72,7 +72,7 @@ class CustomerDiscount(models.Model):
         unique_together = ('customer', 'product')
 
     def __str__(self):
-        return str(self.product) + ' for' + str(self.discount)
+        return str(self.product) + ' for ' + str(self.discount) + '%'
 
 
 class OrderProduct(models.Model):
@@ -81,6 +81,7 @@ class OrderProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     qty = models.DecimalField(decimal_places=2, max_digits=8)
     price = models.ForeignKey(CustomerPrice, on_delete=models.SET_NULL, null=True)
+    discount = models.ForeignKey(CustomerDiscount, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return 'item for order ' + str(self.order) + '-> ' + str(self.product.name)

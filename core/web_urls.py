@@ -9,4 +9,8 @@ urlpatterns = [
     path('centers/create', web_views.create_centers, name='create-center'),
     path('centers/<int:pk>/edit/', web_views.UpdateCenter.as_view(), name='update-center'),
     path('centers/<int:pk>/delete/', web_views.DeleteCenter.as_view(), name='delete-center'),
+    path('products/', web_views.ProductList.as_view(), name='products-list'),
+    path('products/create', web_views.create_product, name='create-product'),
+    path('products/<int:pk>/edit/', web_views.UpdateProduct.as_view(), name='update-product'),
+    path('products/<int:pk>/delete/', web_views.DeleteProduct.as_view(), name='delete-product'),
 ]

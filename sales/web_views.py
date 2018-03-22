@@ -126,7 +126,8 @@ class UpdateCustomer(SuccessMessageMixin, UpdateView):
 
 def add_prices(request, pk):
     prices_formset = modelformset_factory(models.CustomerPrice, fields=('price', 'product'),
-                                          widgets={'product': Select2Widget}, max_num=10)
+                                          widgets={'product': Select2Widget}, extra=10,
+                                          can_delete=True)
     customer = models.Customer.objects.get(pk=pk)
     if request.method == 'POST':
         formset = prices_formset(request.POST)
@@ -135,9 +136,72 @@ def add_prices(request, pk):
             for price in prices:
                 price.customer = customer
                 price.save()
-            messages.success(request, 'regions added successfully!')
+            for obj in formset.deleted_objects:
+                obj.delete()
+            messages.success(request, 'price added successfully!')
             return redirect(reverse_lazy('customers'))
     else:
         formset = prices_formset(queryset=models.CustomerPrice.objects.select_related('product').filter(customer=pk))
-    return render(request, 'sales/customers/add-prices.html', {'formset': formset,
-                                                               "customer": customer})
+    return render(request, 'crud/formset-create.html', {'formset': formset,
+                                                        "customer": customer,
+                                                        'create_name': customer.shop_name + ' Prices',
+                                                        'create_sub_name': 'Price'})
+
+
+def add_discounts(request, pk):
+    discounts_formset = modelformset_factory(models.CustomerDiscount, fields=('discount', 'product'),
+                                             widgets={'product': Select2Widget}, extra=10,
+                                             can_delete=True)
+    customer = models.Customer.objects.get(pk=pk)
+    if request.method == 'POST':
+        formset = discounts_formset(request.POST)
+        if formset.is_valid():
+            discounts = formset.save(commit=False)
+            for discount in discounts:
+                discount.customer = customer
+                discount.save()
+            for obj in formset.deleted_objects:
+                obj.delete()
+            messages.success(request, 'discounts added successfully!')
+            return redirect(reverse_lazy('customers'))
+    else:
+        formset = discounts_formset(
+            queryset=models.CustomerDiscount.objects.select_related('product').filter(customer=pk))
+    return render(request, 'crud/formset-create.html', {'formset': formset,
+                                                        "customer": customer,
+                                                        'create_name': customer.shop_name + ' Discounts',
+                                                        'create_sub_name': 'discount'})
+
+
+def place_order(request, pk):
+    orders_formset = modelformset_factory(models.OrderProduct,
+                                          fields=('discount', 'price', 'qty', 'product'),
+                                          widgets={'product': Select2Widget,
+                                                   'price': Select2Widget,
+                                                   'discount': Select2Widget}, extra=10,
+                                          can_delete=True)
+    customer = models.Customer.objects.get(pk=pk)
+    if request.method == 'POST':
+        formset = orders_formset(request.POST)
+        main_order = models.Order()
+        main_order.number = generate_unique_id(request.user.id)
+        main_order.received_by = request.user
+        main_order.customer = customer
+        main_order.save()
+        if formset.is_valid():
+            orders = formset.save(commit=False)
+            for order in orders:
+                order.number = generate_unique_id(request.user.id)
+                order.order = main_order
+                order.save()
+            for obj in formset.deleted_objects:
+                obj.delete()
+            messages.success(request, 'orders added successfully!')
+            return redirect(reverse_lazy('customers'))
+    else:
+        formset = orders_formset(
+            queryset=models.OrderProduct.objects.none())
+    return render(request, 'crud/formset-create.html', {'formset': formset,
+                                                        "customer": customer,
+                                                        'create_name': customer.shop_name + ' Orders',
+                                                        'create_sub_name': 'order'})

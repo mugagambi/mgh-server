@@ -13,4 +13,6 @@ urlpatterns = [
     path('customers/<pk>/edit/', web_views.UpdateCustomer.as_view(), name='update-customer'),
     path('all/', web_views.SalesList.as_view(), name='total-sales'),
     path('customers/<pk>/prices/', web_views.add_prices, name='add-prices'),
+    path('customers/<pk>/discounts/', web_views.add_discounts, name='add-discounts'),
+    path('customers/<pk>/place-order/', web_views.place_order, name='place-order'),
 ]

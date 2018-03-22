@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block styles %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
+{% endblock %}
+{% block content %}
+    <h4 class="text-center">Products</h4>
+    <p>
+        <a class="btn btn-outline-success" href="{% url 'create-product' %}">
+            <span data-feather="plus"></span>
+            New Product
+        </a>
+    </p>
+    <table id="products" class="table table-striped" style="width:100%">
+        <thead>
+        <tr>
+            <th>name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in object_list %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>
+                    <a class="btn btn-outline-success btn-sm" href="{% url 'update-product' pk=product.id %}">Edit</a>
+                    <a class="btn btn-outline-danger btn-sm" href="{% url 'delete-product' pk=product.id %}">Remove</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endblock %}
+{% block scripts %}
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#products').DataTable({
+                'paging': true,
+                'lengthChange': true,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': true,
+                "columnDefs": [{
+                    "targets": 1,
+                    "orderable": false,
+                    "searchable": false
+                }]
+            });
+        });
+    </script>
+{% endblock %}

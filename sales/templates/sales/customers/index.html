@@ -34,8 +34,11 @@
                 <td>
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'add-prices' pk=customer.number %}">prices</a>
-                    <a class="btn btn-outline-success btn-sm" href="">discounts</a>
-                    <a class="btn btn-outline-success btn-sm" href="">place order</a>
+                    <a class="btn btn-outline-success btn-sm"
+                       href="{% url 'add-discounts' pk=customer.number %}">discounts</a>
+                    <a class="btn btn-outline-success btn-sm"
+                       href="{% url 'place-order' pk=customer.number %}">place
+                        order</a>
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'update-customer' pk=customer.number %}">Edit</a>
                     <a class="btn btn-outline-danger btn-sm"

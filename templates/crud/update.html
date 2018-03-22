@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <h4 class="text-center">Update {{ item_name }}</h4>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% include 'includes/form_include.html' with form=form %}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -2,27 +2,17 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% block styles %}
-    <style>
-        .delete-row {
-            color: red;
-            float: right;
-        }
-
-        .delete-row:hover {
-            color: red;
-        }
-    </style>
     {{ formset.media.css }}
 {% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-sm-5 offset-sm-3">
-            <h4 class="text-center">{{ customer.shop_name }} Prices</h4>
+            <h4 class="text-center">{{ create_name }}</h4>
             <form method="post" id="formset">
                 {% csrf_token %}
                 {{ formset.management_form }}
                 {% for form in formset %}
-                    <h5 class="text-center">Add new price</h5>
+                    <h5 class="text-center">Add new {{ create_sub_name }}</h5>
                     {{ form | crispy }}
                 {% endfor %}
                 <div>
@@ -33,13 +23,5 @@
     </div>
 {% endblock %}
 {% block scripts %}
-    <script src="{% static 'js/jquery.formset.js' %}"></script>
     {{ formset.media.js }}
-    <script type="text/javascript">
-        $(function () {
-            $('#form-container').formset({
-                prefix: '{{ formset.prefix }}'
-            });
-        })
-    </script>
 {% endblock %}
