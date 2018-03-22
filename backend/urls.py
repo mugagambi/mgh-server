@@ -20,8 +20,10 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from django.contrib.auth import views as auth_views
 from sales.views import receipt
+from django.views.generic import RedirectView
 
 urlpatterns = [
+    path('', RedirectView.as_view(pattern_name='customers')),
     path('sales/receipt/<int:pk>/', receipt, name='receipt'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', custom_admin_site.urls),
