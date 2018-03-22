@@ -242,7 +242,7 @@ def update_order(request, pk):
             form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=order.customer)
             form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=order.customer)
     return render(request, 'crud/formset-create.html', {'formset': formset,
-                                                        'create_name': 'Update order ' + order.number + ' for ' + order.customer.name})
+                                                        'create_name': 'Update order ' + order.number + ' for ' + order.customer.shop_name})
 
 
 class DeleteOrder(DeleteView):
