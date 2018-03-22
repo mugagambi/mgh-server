@@ -12,7 +12,9 @@
                 {% csrf_token %}
                 {{ formset.management_form }}
                 {% for form in formset %}
-                    <h5 class="text-center">Add new {{ create_sub_name }}</h5>
+                    {% if create_sub_name %}
+                        <h5 class="text-center">Add new {{ create_sub_name }}</h5>
+                    {% endif %}
                     {{ form | crispy }}
                 {% endfor %}
                 <div>

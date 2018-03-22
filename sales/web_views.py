@@ -214,3 +214,32 @@ def place_order(request, pk):
                                                         "customer": customer,
                                                         'create_name': customer.shop_name + ' Orders',
                                                         'create_sub_name': 'order'})
+
+
+def update_order(request, pk):
+    orders_formset = modelformset_factory(models.OrderProduct,
+                                          fields=('product', 'qty', 'price', 'discount'),
+                                          widgets={'product': Select2Widget,
+                                                   'price': Select2Widget,
+                                                   'discount': Select2Widget}, extra=0,
+                                          can_delete=True)
+    order = models.Order.objects.get(pk=pk)
+    if request.method == 'POST':
+        formset = orders_formset(request.POST)
+        for form in formset:
+            form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=order.customer)
+            form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=order.customer)
+        if formset.is_valid():
+            formset.save()
+            for obj in formset.deleted_objects:
+                obj.delete()
+            messages.success(request, 'orders updated successfully!')
+            return redirect(reverse_lazy('orders'))
+    else:
+        formset = orders_formset(
+            queryset=models.OrderProduct.objects.filter(order=order))
+        for form in formset:
+            form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=order.customer)
+            form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=order.customer)
+    return render(request, 'crud/formset-create.html', {'formset': formset,
+                                                        'create_name': 'Update order ' + order.number})
