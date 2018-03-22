@@ -213,7 +213,7 @@ def place_order(request, pk):
     return render(request, 'crud/formset-create.html', {'formset': formset,
                                                         "customer": customer,
                                                         'create_name': customer.shop_name + ' Orders',
-                                                        'create_sub_name': 'order'})
+                                                        'create_sub_name': 'item'})
 
 
 def update_order(request, pk):
