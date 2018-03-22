@@ -36,7 +36,7 @@ class CustomAdminSite(AdminSite):
             "Invoices": 12,
             "Sales crates": 13,
             "Credit settlements": 14,
-            "Over pays": 15,
+            "Bbfs": 15,
             "Returns": 16,
             "Outwards Stocks Summary": 17,
             "Groups": 18,
