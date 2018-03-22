@@ -287,7 +287,7 @@ class CreditSettlement(models.Model):
         return 'credit settlement no. ' + str(self.number)
 
 
-class OverPay(models.Model):
+class BBF(models.Model):
     number = models.CharField(unique=True, max_length=10, primary_key=True)
     customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE,
                                  help_text='search by customer number, shop name and nick name')

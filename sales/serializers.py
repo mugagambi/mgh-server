@@ -146,8 +146,8 @@ class CreditSettlementSerializer(serializers.ModelSerializer):
 
 class OverPayOrUnderPaySerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.OverPay
-        fields = ('number', 'type', 'customer', 'receipt', 'amount', 'date')
+        model = models.BBF
+        fields = ('number', 'customer', 'receipt', 'amount', 'date')
 
 
 class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
