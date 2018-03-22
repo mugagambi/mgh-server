@@ -25,7 +25,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for order in filter.qs %}
+        {% for order in object_list %}
             <tr>
                 <td>{{ order.number }}</td>
                 <td>{{ order.customer.shop_name }}</td>
@@ -34,7 +34,7 @@
                 <td>{{ order.created_at }}</td>
                 <td>
                     <a class="btn btn-outline-success btn-sm"
-                       href="{% url 'update-order' pk=order.number %}">Details</a>
+                       href="#">Details</a>
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'place-order' pk=order.customer.number %}">Update</a>
                     <a class="btn btn-outline-danger btn-sm"
