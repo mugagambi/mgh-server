@@ -187,7 +187,8 @@ def place_order(request, pk):
                                           fields=('product', 'qty', 'price', 'discount'),
                                           widgets={'product': Select2Widget,
                                                    'price': Select2Widget,
-                                                   'discount': Select2Widget}, extra=10,
+                                                   'discount': Select2Widget}, min_num=1,
+                                          extra=10,
                                           can_delete=True)
     customer = models.Customer.objects.get(pk=pk)
     if request.method == 'POST':
