@@ -7,18 +7,15 @@
 {% endblock %}
 {% block content %}
     {% include 'includes/nav.html' %}
-    <h4 class="text-center">Total Sales</h4>
+    <h4 class="text-center">Cash Sale</h4>
     {% include 'includes/filter_by.html' %}
     <table id="customers" class="table table-striped" style="width:100%">
         <thead>
         <tr>
             <th>Receipt No.</th>
-            <th>Shop Name</th>
             <th>Product</th>
             <th>qty</th>
             <th>@ (Ksh)</th>
-            <th>Discount (%)</th>
-            <th>Total (Ksh)</th>
             <th>Date</th>
             <th>Actions</th>
         </tr>
@@ -26,14 +23,12 @@
         <tbody>
         {% for particular in filter.qs %}
             <tr>
-                <td>{{ particular.receipt.number }}</td>
-                <td>{{ particular.receipt.customer.shop_name }}</td>
-                <td>{{ particular.package_product.order_product.product.name }}</td>
+                <td>{{ particular.cash_receipt.number }}</td>
+                <td>{{ particular.product.name }}</td>
                 <td>{{ particular.qty }}</td>
                 <td>{{ particular.price }}</td>
                 <td>{{ particular.discount }}</td>
-                <th>{{ particular.total |floatformat:2| intcomma }}</th>
-                <th>{{ particular.receipt.date }}</th>
+                <th>{{ particular.cash_receipt.date }}</th>
                 <td>
                     <a class="btn btn-outline-success btn-sm" href="">view receipt</a>
                 </td>
@@ -43,12 +38,10 @@
         <tfoot>
         <tr>
             <th>Receipt No.</th>
-            <th>Shop Name</th>
             <th>Product</th>
             <th>qty</th>
             <th>@ (Ksh)</th>
             <th>Discount (%)</th>
-            <th>Total (Ksh)</th>
             <th>Date</th>
             <th>Actions</th>
         </tr>
@@ -68,7 +61,7 @@
                 'info': true,
                 'autoWidth': true,
                 "columnDefs": [{
-                    "targets": 8,
+                    "targets": 6,
                     "orderable": false,
                     "searchable": false
                 }]

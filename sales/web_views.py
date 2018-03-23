@@ -271,3 +271,29 @@ class DeleteOrder(LoginRequiredMixin, DeleteView):
 def order_detail(request, pk):
     order = get_object_or_404(models.Order, pk=pk)
     return render(request, 'sales/orders/order-detail.html', {'order': order})
+
+
+class CashSalesFilterSet(FilterSet):
+    date = django_filters.DateFromToRangeFilter(name='receipt__date',
+                                                label='Date (Between)')
+
+    class Meta:
+        model = models.CashReceiptParticular
+        fields = ('date',)
+
+
+class CashSalesList(LoginRequiredMixin, FilterView):
+    model = models.CashReceiptParticular
+    template_name = 'sales/sales/index.html'
+    filterset_class = CashSalesFilterSet
+
+    def get_queryset(self):
+        return models.CashReceiptParticular.objects.all().select_related('cash_receipt',
+                                                                         'product')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        data = super(CashSalesList, self).get_context_data(object_list=None, **kwargs)
+        date_30_days_ago = datetime.now() - timedelta(days=30)
+        date_30_days_ago = date_30_days_ago.strftime("%Y-%m-%d")
+        data['date_30_days_ago'] = date_30_days_ago
+        return data

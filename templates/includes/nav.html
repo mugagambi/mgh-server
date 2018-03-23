@@ -1,0 +1,14 @@
+<nav class="nav nav-pills nav-fill">
+    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'total-sales' %}
+                        active
+                        {% endif %}" href="{% url 'total-sales' %}">All Sales</a>
+    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'cash-sales' %}
+                        active
+                        {% endif %}" href="{% url 'cash-sales' %}">Cash Sales</a>
+    <a class="nav-item nav-link" href="#">Invoice</a>
+    <a class="nav-item nav-link" href="#">Credit Settlement</a>
+    <a class="nav-item nav-link" href="#">OverPays</a>
+    <a class="nav-item nav-link" href="#">UnderPays</a>
+    <a class="nav-item nav-link" href="#">Returns</a>
+    <a class="nav-item nav-link" href="#">Rejects</a>
+</nav>
