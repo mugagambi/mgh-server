@@ -285,7 +285,7 @@ class CashSalesFilterSet(FilterSet):
 
 class CashSalesList(LoginRequiredMixin, FilterView):
     model = models.CashReceiptParticular
-    template_name = 'sales/sales/index.html'
+    template_name = 'sales/sales/cash-sale.html'
     filterset_class = CashSalesFilterSet
 
     def get_queryset(self):
