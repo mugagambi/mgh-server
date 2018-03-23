@@ -184,7 +184,7 @@ class Receipt(models.Model):
 
 class ReceiptParticular(models.Model):
     qty = models.DecimalField(decimal_places=2, max_digits=8)
-    package_product = models.ForeignKey(PackageProduct, to_field='number', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
                                                                           'price for each quantity')
     discount = models.DecimalField(max_digits=5, decimal_places=2,
