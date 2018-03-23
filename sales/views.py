@@ -169,7 +169,7 @@ class ReceiptParticularsViewSet(viewsets.ModelViewSet):
     queryset = models.ReceiptParticular.objects.all()
     serializer_class = serializers.ReceiptParticularSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('package_product', 'receipt')
+    filter_fields = ('product', 'receipt')
     ordering_fields = ('qty', 'price', 'discount')
 
     def get_serializer(self, *args, **kwargs):
