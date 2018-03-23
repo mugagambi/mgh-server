@@ -200,8 +200,8 @@ def place_order(request, pk):
         main_order.number = generate_unique_id(request.user.id)
         main_order.received_by = request.user
         main_order.customer = customer
-        main_order.save()
         if formset.is_valid():
+            main_order.save()
             orders = formset.save(commit=False)
             for order in orders:
                 order.number = generate_unique_id(request.user.id)
