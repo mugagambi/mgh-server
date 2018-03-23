@@ -234,6 +234,12 @@ class CashReceiptViewSet(viewsets.ModelViewSet):
     filter_class = CashReceiptFilterSet
     ordering_fields = ('date',)
 
+    def get_serializer(self, *args, **kwargs):
+        """ if an array is passed, set serializer to many """
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+        return super(CashReceiptViewSet, self).get_serializer(*args, **kwargs)
+
 
 class CashReceiptParticularViewSet(viewsets.ModelViewSet):
     queryset = models.CashReceiptParticular.objects.all()
@@ -241,6 +247,12 @@ class CashReceiptParticularViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_fields = ('product', 'cash_receipt')
     ordering_fields = ('qty', 'price', 'discount')
+
+    def get_serializer(self, *args, **kwargs):
+        """ if an array is passed, set serializer to many """
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+        return super(CashReceiptParticularViewSet, self).get_serializer(*args, **kwargs)
 
 
 class CashReceiptPaymentsFilterSet(django_filters.rest_framework.FilterSet):
@@ -260,6 +272,12 @@ class CashReceiptPaymentViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = CashReceiptPaymentsFilterSet
     ordering_fields = ('created_at', 'amount', 'date_to_pay')
+
+    def get_serializer(self, *args, **kwargs):
+        """ if an array is passed, set serializer to many """
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+        return super(CashReceiptPaymentViewSet, self).get_serializer(*args, **kwargs)
 
 
 class CreditSettlementFilterSet(django_filters.rest_framework.FilterSet):
