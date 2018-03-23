@@ -230,7 +230,8 @@ def update_order(request, pk):
                                           widgets={'product': Select2Widget,
                                                    'price': Select2Widget,
                                                    'discount': Select2Widget}, extra=3,
-                                          can_delete=True)
+                                          can_delete=True,
+                                          min_num=1)
     order = models.Order.objects.get(pk=pk)
     if request.method == 'POST':
         formset = orders_formset(request.POST)
