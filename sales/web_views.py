@@ -13,6 +13,7 @@ from django_filters import FilterSet
 from django_filters.views import FilterView
 from django_select2.forms import Select2Widget
 from sales import forms
+from django.contrib.auth.decorators import login_required
 
 from sales import models
 from utils import generate_unique_id
@@ -30,6 +31,7 @@ class RegionList(LoginRequiredMixin, ListView):
     template_name = 'sales/regions/index.html'
 
 
+@login_required()
 def create_regions(request):
     region_formset = modelformset_factory(models.Region, fields=('name',), max_num=10)
     if request.method == 'POST':
@@ -43,7 +45,7 @@ def create_regions(request):
         return render(request, 'sales/regions/create.html', {'formset': formset})
 
 
-class UpdateRegion(SuccessMessageMixin, UpdateView):
+class UpdateRegion(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = models.Region
     fields = ['name']
     template_name = 'sales/regions/update.html'
@@ -51,7 +53,7 @@ class UpdateRegion(SuccessMessageMixin, UpdateView):
     success_message = 'region updated successfully'
 
 
-class DeleteRegion(DeleteView):
+class DeleteRegion(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         messages.success(request, 'region removed successfully!')
         return super().post(request, *args, **kwargs)
@@ -94,6 +96,7 @@ class SalesList(LoginRequiredMixin, FilterView):
         return data
 
 
+@login_required()
 def create_customer(request):
     if request.method == 'POST':
         form = forms.CustomerForm(request.POST)
@@ -109,7 +112,7 @@ def create_customer(request):
         return render(request, 'sales/customers/create.html', {'form': form})
 
 
-class DeleteCustomer(DeleteView):
+class DeleteCustomer(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         messages.success(request, 'Customer removed successfully!')
         return super().post(request, *args, **kwargs)
@@ -119,7 +122,7 @@ class DeleteCustomer(DeleteView):
     success_url = reverse_lazy('customers')
 
 
-class UpdateCustomer(SuccessMessageMixin, UpdateView):
+class UpdateCustomer(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = models.Customer
     fields = ['shop_name', 'nick_name', 'location', 'phone_number', 'region']
     template_name = 'sales/customers/update.html'
@@ -127,6 +130,7 @@ class UpdateCustomer(SuccessMessageMixin, UpdateView):
     success_message = 'Customer updated successfully'
 
 
+@login_required()
 def add_prices(request, pk):
     prices_formset = modelformset_factory(models.CustomerPrice, fields=('product', 'price'),
                                           widgets={'product': Select2Widget}, extra=10,
@@ -151,6 +155,7 @@ def add_prices(request, pk):
                                                         'create_sub_name': 'Price'})
 
 
+@login_required()
 def add_discounts(request, pk):
     discounts_formset = modelformset_factory(models.CustomerDiscount, fields=('product', 'discount'),
                                              widgets={'product': Select2Widget}, extra=10,
@@ -176,6 +181,7 @@ def add_discounts(request, pk):
                                                         'create_sub_name': 'discount'})
 
 
+@login_required()
 def place_order(request, pk):
     orders_formset = modelformset_factory(models.OrderProduct,
                                           fields=('product', 'qty', 'price', 'discount'),
@@ -216,6 +222,7 @@ def place_order(request, pk):
                                                         'create_sub_name': 'item'})
 
 
+@login_required()
 def update_order(request, pk):
     orders_formset = modelformset_factory(models.OrderProduct,
                                           fields=('product', 'qty', 'price', 'discount'),
@@ -230,7 +237,10 @@ def update_order(request, pk):
             form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=order.customer)
             form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=order.customer)
         if formset.is_valid():
-            formset.save()
+            items = formset.save(commit=False)
+            for item in items:
+                item.order = order
+                item.save()
             for obj in formset.deleted_objects:
                 obj.delete()
             messages.success(request, 'orders updated successfully!')
@@ -245,7 +255,7 @@ def update_order(request, pk):
                                                         'create_name': 'Update order ' + order.number + ' for ' + order.customer.shop_name})
 
 
-class DeleteOrder(DeleteView):
+class DeleteOrder(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         messages.success(request, 'Order removed!')
         return super().post(request, *args, **kwargs)
