@@ -85,7 +85,7 @@ class SalesList(LoginRequiredMixin, FilterView):
 
     def get_queryset(self):
         return models.ReceiptParticular.objects.all().select_related('receipt',
-                                                                     'package_product__order_product__product',
+                                                                     'product',
                                                                      'receipt__customer')
 
     def get_context_data(self, *, object_list=None, **kwargs):
