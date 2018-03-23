@@ -268,6 +268,7 @@ class DeleteOrder(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('orders')
 
 
+@login_required()
 def order_detail(request, pk):
     order = get_object_or_404(models.Order, pk=pk)
     return render(request, 'sales/orders/order-detail.html', {'order': order})
