@@ -1,12 +1,16 @@
+from datetime import datetime
+
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, DeleteView
 from django.views.generic.list import ListView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
+from django_select2.forms import Select2Widget
+
 from core import models
 
 
@@ -84,3 +88,33 @@ class DeleteProduct(LoginRequiredMixin, DeleteView):
     template_name = 'crud/delete.html'
     model = models.Product
     success_url = reverse_lazy('products-list')
+
+
+@login_required()
+def product_availability(request, center):
+    """used to indicate amount of products for sale in a center"""
+    center_product_formset = modelformset_factory(models.AggregationCenterProduct, fields=('product', 'qty'),
+                                                  widgets={'product': Select2Widget}, extra=10, min_num=1,
+                                                  can_delete=True)
+    center = models.AggregationCenter.objects.get(pk=center)
+    dt = datetime.now()
+    if request.method == 'POST':
+        formset = center_product_formset(request.POST)
+        if formset.is_valid():
+            products = formset.save(commit=False)
+            for product in products:
+                product.aggregation_center = center
+                product.save()
+            for obj in formset.deleted_objects:
+                obj.delete()
+            messages.success(request, 'Product availability in %s updated successfully!' % center.name)
+            return redirect(reverse_lazy('centers-list'))
+    else:
+        formset = center_product_formset(
+            queryset=models.AggregationCenterProduct.objects.select_related('product').filter(
+                aggregation_center=center, date=datetime.now()))
+    return render(request, 'crud/formset-create.html', {'formset': formset,
+                                                        "center": center,
+                                                        'create_name': center.name + ' product availability for ' + dt.strftime(
+                                                            '%a %B %d, %Y'),
+                                                        'create_sub_name': 'quantities'})

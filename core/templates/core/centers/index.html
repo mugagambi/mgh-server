@@ -25,7 +25,8 @@
                 <td>{{ center.name }}</td>
                 <td>{{ center.location }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm" href="">Product Availability</a>
+                    <a class="btn btn-outline-success btn-sm" href="{% url 'product-availability' center=center.id %}">Product
+                        Availability</a>
                     <a class="btn btn-outline-success btn-sm" href="{% url 'update-center' pk=center.id %}">Edit</a>
                     <a class="btn btn-outline-danger btn-sm" href="{% url 'delete-center' pk=center.id %}">Remove</a>
                 </td>

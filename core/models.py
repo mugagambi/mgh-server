@@ -42,8 +42,8 @@ class AggregationCenterProduct(models.Model):
     """Products in a certain aggregation center"""
     aggregation_center = models.ForeignKey(AggregationCenter, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    active = models.BooleanField('Available', default=True, help_text='If the product is sale '
-                                                                      'in this aggregation center')
+    qty = models.DecimalField(decimal_places=2, max_digits=8)
+    date = models.DateField(default=now)
 
     def __str__(self):
         return str(self.product) + ' at ' + str(self.aggregation_center)
