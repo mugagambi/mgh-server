@@ -2,6 +2,7 @@ from django import forms
 from django_select2.forms import Select2Widget
 
 from sales import models
+from core.models import Product
 
 
 class RegionForm(forms.ModelForm):
@@ -29,3 +30,7 @@ class OrderProductForm(forms.ModelForm):
         widgets = {'product': Select2Widget,
                    'price': Select2Widget,
                    'discount': Select2Widget}
+
+
+class ProductSelectionForm(forms.Form):
+    product = forms.ChoiceField(widget=Select2Widget, choices=Product.objects.values_list('id', 'name').all())

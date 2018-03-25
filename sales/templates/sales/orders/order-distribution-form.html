@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+    {{ form.media.css }}
+{% endblock %}
+{% block content %}
+    {% include 'includes/order-nav.html' %}
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <h4 class="text-center">Choose Product</h4>
+            <form method="post" id="formset">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <h5 class="text-center">Order Items</h5>
+    <table id="distribution" class="table table-striped" style="width:100%">
+        <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Order No.</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in order_products %}
+            <tr>
+                <td>{{ order.order.customer.shop_name }}</td>
+                <td>{{ order.order.number }}</td>
+                <td>{{ order.product.name }}</td>
+                <td>order: {{ order.qty }}
+                    {% for point in order.orderdistributionpoint_set.all %}
+                        <br/>
+                        {% if point.center %}
+                            {{ point.center.name }}: {{ point.qty }}
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    <a class="btn btn-outline-success btn-sm"
+                       href="">Distribute</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>Customer</th>
+            <th>Order No.</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Actions</th>
+        </tr>
+        </tfoot>
+    </table>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#distribution').DataTable({
+                'paging': true,
+                'lengthChange': true,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': true,
+                "columnDefs": [{
+                    "targets": 4,
+                    "orderable": false,
+                    "searchable": false
+                }]
+            });
+        });
+    </script>
+{% endblock %}

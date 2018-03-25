@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 import django_filters
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import modelformset_factory
@@ -12,9 +13,8 @@ from django.views.generic.edit import UpdateView, DeleteView
 from django_filters import FilterSet
 from django_filters.views import FilterView
 from django_select2.forms import Select2Widget
-from sales import forms
-from django.contrib.auth.decorators import login_required
 
+from sales import forms
 from sales import models
 from utils import generate_unique_id
 
@@ -23,7 +23,10 @@ class OrdersView(LoginRequiredMixin, ListView):
     template_name = 'sales/orders/index.html'
 
     def get_queryset(self):
-        return models.Order.objects.select_related('customer', 'received_by').all()
+        return models.Order.objects.select_related('customer', 'received_by').values('number', 'customer__shop_name',
+                                                                                     'received_by__username',
+                                                                                     'date_delivery',
+                                                                                     'created_at').all()
 
 
 class RegionList(LoginRequiredMixin, ListView):
@@ -207,6 +210,10 @@ def place_order(request, pk):
                 order.number = generate_unique_id(request.user.id)
                 order.order = main_order
                 order.save()
+                distribution_point = models.OrderDistributionPoint()
+                distribution_point.order_product = order
+                distribution_point.qty = order.qty
+                distribution_point.save()
             for obj in formset.deleted_objects:
                 obj.delete()
             messages.success(request, 'orders added successfully!')
@@ -298,3 +305,18 @@ class CashSalesList(LoginRequiredMixin, FilterView):
         date_30_days_ago = date_30_days_ago.strftime("%Y-%m-%d")
         data['date_30_days_ago'] = date_30_days_ago
         return data
+
+
+@login_required()
+def order_distribution_list(request):
+    if request.method == 'POST':
+        form = forms.ProductSelectionForm(request.POST)
+        if form.is_valid():
+            product = int(form.cleaned_data['product'])
+            order_products = models.OrderProduct.objects.select_related(
+                'order__customer', 'order', 'product').filter(product__id=product)
+            return render(request, 'sales/orders/order-distribution-form.html', {'form': form,
+                                                                                 'order_products': order_products})
+    else:
+        form = forms.ProductSelectionForm()
+    return render(request, 'sales/orders/order-distribution-form.html', {'form': form})

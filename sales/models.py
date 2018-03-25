@@ -1,9 +1,10 @@
 from decimal import Decimal
-from django.db import models
-from core.models import User, Product, Crate, AggregationCenter
-from django.core.exceptions import ValidationError
-from django.utils.timezone import now
 from functools import reduce
+
+from django.db import models
+from django.utils.timezone import now
+
+from core.models import User, Product, Crate, AggregationCenter
 
 
 # Create your models here.
@@ -99,6 +100,15 @@ class OrderProduct(models.Model):
     class Meta:
         verbose_name = 'Order Report'
         verbose_name_plural = 'Order Reports'
+
+
+class OrderDistributionPoint(models.Model):
+    center = models.ForeignKey(AggregationCenter, on_delete=models.SET_NULL, null=True)
+    order_product = models.ForeignKey(OrderProduct, on_delete=models.SET_NULL, null=True)
+    qty = models.DecimalField(decimal_places=2, max_digits=8)
+
+    def __str__(self):
+        return str(self.center)
 
 
 class Package(models.Model):
