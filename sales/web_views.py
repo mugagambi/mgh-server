@@ -309,14 +309,34 @@ class CashSalesList(LoginRequiredMixin, FilterView):
 
 @login_required()
 def order_distribution_list(request):
+    points_formset = modelformset_factory(models.OrderDistributionPoint,
+                                          fields=('center', 'qty'),
+                                          widgets={'center': Select2Widget}, extra=1,
+                                          can_delete=True,
+                                          min_num=1)
     if request.method == 'POST':
-        form = forms.ProductSelectionForm(request.POST)
+        formset = points_formset(request.POST)
+        order_product = request.POST.get("order_product")
+        url = request.POST.get("url")
+        order_product = models.OrderProduct.objects.get(pk=order_product)
+        if formset.is_valid():
+            points = formset.save(commit=False)
+            for point in points:
+                point.order_product = order_product
+                point.save()
+            for obj in formset.deleted_objects:
+                obj.delete()
+            messages.success(request, 'orders distributed successfully!')
+            return redirect(url)
+    else:
+        form = forms.ProductSelectionForm(request.GET)
         if form.is_valid():
             product = form.cleaned_data['product']
             order_products = models.OrderProduct.objects.select_related(
                 'order__customer', 'order', 'product').filter(product=product)
-            return render(request, 'sales/orders/order-distribution-form.html', {'form': form,
-                                                                                 'order_products': order_products})
-    else:
-        form = forms.ProductSelectionForm()
-    return render(request, 'sales/orders/order-distribution-form.html', {'form': form})
+            formset = points_formset(
+                queryset=models.OrderDistributionPoint.objects.filter(order_product__product=product))
+    return render(request, 'sales/orders/order-distribution-form.html', {'form': form,
+                                                                         'order_products': order_products,
+                                                                         'formset': formset
+                                                                         })
