@@ -314,6 +314,10 @@ def order_distribution_list(request):
                                           widgets={'center': Select2Widget}, extra=1,
                                           can_delete=True,
                                           min_num=1)
+    form = forms.ProductSelectionForm()
+    order_products = models.OrderProduct.objects.none()
+    formset = points_formset(
+        queryset=models.OrderDistributionPoint.objects.none())
     if request.method == 'POST':
         formset = points_formset(request.POST)
         order_product = request.POST.get("order_product")
