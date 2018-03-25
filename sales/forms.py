@@ -33,4 +33,4 @@ class OrderProductForm(forms.ModelForm):
 
 
 class ProductSelectionForm(forms.Form):
-    product = forms.ChoiceField(widget=Select2Widget, choices=Product.objects.values_list('id', 'name').all())
+    product = forms.ModelChoiceField(widget=Select2Widget, queryset=Product.objects.all())

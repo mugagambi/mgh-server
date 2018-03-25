@@ -312,9 +312,9 @@ def order_distribution_list(request):
     if request.method == 'POST':
         form = forms.ProductSelectionForm(request.POST)
         if form.is_valid():
-            product = int(form.cleaned_data['product'])
+            product = form.cleaned_data['product']
             order_products = models.OrderProduct.objects.select_related(
-                'order__customer', 'order', 'product').filter(product__id=product)
+                'order__customer', 'order', 'product').filter(product=product)
             return render(request, 'sales/orders/order-distribution-form.html', {'form': form,
                                                                                  'order_products': order_products})
     else:
