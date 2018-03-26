@@ -42,7 +42,8 @@ class CustomAdminSite(AdminSite):
             "Groups": 18,
             "Packages": 19,
             'Order Reports': 20,
-            'Receipt particulars': 21
+            'Receipt particulars': 21,
+            'Receipt payments': 22
 
         }
         app_dict = self._build_app_dict(request)

@@ -8,7 +8,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.views.generic.edit import UpdateView, DeleteView
 from django_filters import FilterSet
 from django_filters.views import FilterView
@@ -96,6 +96,11 @@ class SalesList(LoginRequiredMixin, FilterView):
         date_30_days_ago = date_30_days_ago.strftime("%Y-%m-%d")
         data['date_30_days_ago'] = date_30_days_ago
         return data
+
+
+class ReceiptDetail(LoginRequiredMixin, DetailView):
+    model = models.Receipt
+    template_name = 'sales/sales/receipt.html'
 
 
 @login_required()

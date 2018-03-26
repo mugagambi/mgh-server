@@ -33,7 +33,8 @@
                 <td>{{ receipt.balance }}</td>
                 <td>{{ receipt.date }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm" href="">view receipt</a>
+                    <a class="btn btn-outline-success btn-sm" href="{% url 'sale-receipt' pk=receipt.number %}">view
+                        receipt</a>
                 </td>
             </tr>
         {% endfor %}
