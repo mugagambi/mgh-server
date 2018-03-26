@@ -25,7 +25,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for particular in receipt.receiptparticular_set.all %}
+                {% for particular in particulars %}
                     <tr>
                         <td>{{ particular.product.name }}</td>
                         <td>{{ particular.qty }}</td>
@@ -39,15 +39,15 @@
             <hr/>
             {% if not receipt.has_credit %}
                 <div class="float-right">
-                    <p><b>Total Qty: </b>{{ receipt.total_qty }}</p>
-                    <p><b>Total Amount: </b>Ksh. {{ receipt.total_amount }}</p>
-                    <p><b>Amount Payed: </b>Ksh. {{ receipt.total_payment }}</p>
-                    <p><b>Balance: </b>Ksh. {{ receipt.balance }}</p>
+                    <p><b>Total Qty: </b>{{ total_qty.sum }}</p>
+                    <p><b>Total Amount: </b>Ksh. {{ total_amount.sum }}</p>
+                    <p><b>Amount Payed: </b>Ksh. {{ total_payment.sum }}</p>
+                    <p><b>Balance: </b>Ksh. {{ balance }}</p>
                 </div>
             {% endif %}
             <div class="float-left">
                 <h6 class="text-center">Receipt Payments</h6>
-                {% for payment in receipt.receiptpayment_set.all %}
+                {% for payment in payments %}
                     <p><b>Payment Type : </b>{{ payment.get_type_display }}</p>
                     <p><b>Amount : </b>Ksh. {{ payment.amount }}</p>
                     {% if payment.type == 1 %}
@@ -62,7 +62,7 @@
                     {% elif payment.type == 5 %}
                         <p><b>Transfer Code : </b>{{ payment.transfer_code }}</p>
                     {% endif %}
-                    {% empty %}
+                {% empty %}
                     <p><b>No Payments have been made yet.</b></p>
                 {% endfor %}
             </div>

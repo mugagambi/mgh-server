@@ -16,8 +16,6 @@
             <th>Shop Name</th>
             <th>Total Qty</th>
             <th>Total Amount</th>
-            <th>Amount Payed</th>
-            <th>Balance</th>
             <th>Date</th>
             <th>Actions</th>
         </tr>
@@ -29,8 +27,6 @@
                 <td>{{ receipt.customer.shop_name }}</td>
                 <td>{{ receipt.total_qty }}</td>
                 <td>{{ receipt.total_amount }}</td>
-                <td>{{ receipt.total_payment }}</td>
-                <td>{{ receipt.balance }}</td>
                 <td>{{ receipt.date }}</td>
                 <td>
                     <a class="btn btn-outline-success btn-sm" href="{% url 'sale-receipt' pk=receipt.number %}">view
@@ -45,8 +41,6 @@
             <th>Shop Name</th>
             <th>Total Qty</th>
             <th>Total Amount</th>
-            <th>Amount Payed</th>
-            <th>Balance</th>
             <th>Date</th>
             <th>Actions</th>
         </tr>
@@ -66,7 +60,7 @@
                 'info': true,
                 'autoWidth': true,
                 "columnDefs": [{
-                    "targets": 7,
+                    "targets": 5,
                     "orderable": false,
                     "searchable": false
                 }]

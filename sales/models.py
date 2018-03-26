@@ -170,24 +170,6 @@ class Receipt(models.Model):
         verbose_name_plural = 'Sales'
         verbose_name = 'Sale'
 
-    def total_qty(self):
-        if self.receiptparticular_set.all().exists():
-            return reduce((lambda x, y: x + y), [x.qty for x in self.receiptparticular_set.all()])
-        return 0
-
-    def total_amount(self):
-        if self.receiptparticular_set.all().exists():
-            return reduce((lambda x, y: x + y), [x.total for x in self.receiptparticular_set.all()])
-        return 0
-
-    def total_payment(self):
-        if self.receiptpayment_set.all().exists():
-            return reduce((lambda x, y: x + y), [x.amount for x in self.receiptpayment_set.all()])
-        return 0
-
-    def balance(self):
-        return self.total_payment() - self.total_amount()
-
     def has_credit(self):
         return self.receiptpayment_set.filter(type=4).exists()
 

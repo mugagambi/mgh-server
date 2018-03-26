@@ -5,10 +5,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Sum
 from django.forms import modelformset_factory
+from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, DeleteView
 from django_filters import FilterSet
 from django_filters.views import FilterView
@@ -87,8 +89,10 @@ class SalesList(LoginRequiredMixin, FilterView):
     filterset_class = SalesFilterSet
 
     def get_queryset(self):
-        return models.Receipt.objects.all().select_related('customer',
-                                                           'served_by')
+        return models.Receipt.objects.select_related('customer',
+                                                     'served_by').annotate(
+            total_qty=Sum('receiptparticular__qty'),
+            total_amount=Sum('receiptparticular__total'))
 
     def get_context_data(self, *, object_list=None, **kwargs):
         data = super(SalesList, self).get_context_data(object_list=None, **kwargs)
@@ -98,9 +102,26 @@ class SalesList(LoginRequiredMixin, FilterView):
         return data
 
 
-class ReceiptDetail(LoginRequiredMixin, DetailView):
-    model = models.Receipt
-    template_name = 'sales/sales/receipt.html'
+@login_required()
+def receipt_detail(request, pk):
+    try:
+        receipt = models.Receipt.objects.select_related('customer', 'served_by').get(pk=pk)
+    except models.Receipt.DoesNotExist:
+        raise Http404('Receipt not found')
+    particulars = models.ReceiptParticular.objects.select_related('product').filter(receipt=receipt)
+    payments = models.ReceiptPayment.objects.filter(receipt=receipt)
+    total_qty = particulars.aggregate(sum=Sum('qty'))
+    total_amount = particulars.aggregate(sum=Sum('total'))
+    total_payed_amount = payments.aggregate(sum=Sum('amount'))
+    balance = total_payed_amount['sum'] - total_amount['sum']
+    return render(request, 'sales/sales/receipt.html', {'receipt': receipt,
+                                                        'particulars': particulars,
+                                                        'total_qty': total_qty,
+                                                        'total_amount': total_amount,
+                                                        'payments': payments,
+                                                        'total_payment': total_payed_amount,
+                                                        'balance': balance
+                                                        })
 
 
 @login_required()
@@ -155,7 +176,8 @@ def add_prices(request, pk):
             messages.success(request, 'price added successfully!')
             return redirect(reverse_lazy('customers'))
     else:
-        formset = prices_formset(queryset=models.CustomerPrice.objects.select_related('product').filter(customer=pk))
+        formset = prices_formset(
+            queryset=models.CustomerPrice.objects.select_related('product').filter(customer=pk))
     return render(request, 'crud/formset-create.html', {'formset': formset,
                                                         "customer": customer,
                                                         'create_name': customer.shop_name + ' Prices',
