@@ -14,26 +14,24 @@
         <tr>
             <th>Receipt No.</th>
             <th>Shop Name</th>
-            <th>Product</th>
-            <th>qty</th>
-            <th>@ (Ksh)</th>
-            <th>Discount (%)</th>
-            <th>Total (Ksh)</th>
+            <th>Total Qty</th>
+            <th>Total Amount</th>
+            <th>Amount Payed</th>
+            <th>Balance</th>
             <th>Date</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        {% for particular in filter.qs %}
+        {% for receipt in filter.qs %}
             <tr>
-                <td>{{ particular.receipt.number }}</td>
-                <td>{{ particular.receipt.customer.shop_name }}</td>
-                <td>{{ particular.product.name }}</td>
-                <td>{{ particular.qty }}</td>
-                <td>{{ particular.price }}</td>
-                <td>{{ particular.discount }}</td>
-                <th>{{ particular.total |floatformat:2| intcomma }}</th>
-                <th>{{ particular.receipt.date }}</th>
+                <td>{{ receipt.number }}</td>
+                <td>{{ receipt.customer.shop_name }}</td>
+                <td>{{ receipt.total_qty }}</td>
+                <td>{{ receipt.total_amount }}</td>
+                <td>{{ receipt.total_payment }}</td>
+                <td>{{ receipt.balance }}</td>
+                <td>{{ receipt.date }}</td>
                 <td>
                     <a class="btn btn-outline-success btn-sm" href="">view receipt</a>
                 </td>
@@ -44,11 +42,10 @@
         <tr>
             <th>Receipt No.</th>
             <th>Shop Name</th>
-            <th>Product</th>
-            <th>qty</th>
-            <th>@ (Ksh)</th>
-            <th>Discount (%)</th>
-            <th>Total (Ksh)</th>
+            <th>Total Qty</th>
+            <th>Total Amount</th>
+            <th>Amount Payed</th>
+            <th>Balance</th>
             <th>Date</th>
             <th>Actions</th>
         </tr>
@@ -68,7 +65,7 @@
                 'info': true,
                 'autoWidth': true,
                 "columnDefs": [{
-                    "targets": 8,
+                    "targets": 7,
                     "orderable": false,
                     "searchable": false
                 }]

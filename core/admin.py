@@ -41,7 +41,8 @@ class CustomAdminSite(AdminSite):
             "Outwards Stocks Summary": 17,
             "Groups": 18,
             "Packages": 19,
-            'Order Reports': 20
+            'Order Reports': 20,
+            'Receipt particulars': 21
 
         }
         app_dict = self._build_app_dict(request)

@@ -73,7 +73,7 @@ class CustomerList(LoginRequiredMixin, FilterView):
 
 
 class SalesFilterSet(FilterSet):
-    date = django_filters.DateFromToRangeFilter(name='receipt__date',
+    date = django_filters.DateFromToRangeFilter(name='date',
                                                 label='Date (Between)')
 
     class Meta:
@@ -82,14 +82,13 @@ class SalesFilterSet(FilterSet):
 
 
 class SalesList(LoginRequiredMixin, FilterView):
-    model = models.ReceiptParticular
+    model = models.Receipt
     template_name = 'sales/sales/index.html'
     filterset_class = SalesFilterSet
 
     def get_queryset(self):
-        return models.ReceiptParticular.objects.all().select_related('receipt',
-                                                                     'product',
-                                                                     'receipt__customer')
+        return models.Receipt.objects.all().select_related('customer',
+                                                           'served_by')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         data = super(SalesList, self).get_context_data(object_list=None, **kwargs)

@@ -323,23 +323,9 @@ class SalesAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_filter = (SalesCustomerShopNameFilter, SalesCustomerNickNameFilter, 'served_by', 'date')
     date_hierarchy = 'date'
-    list_display = ('customer', 'served_by', 'date', 'get_receipt_url')
-    exclude = ('customer', 'served_by', 'date')
+    list_display = ('customer', 'served_by', 'date')
     search_fields = ('customer__name',)
     list_select_related = True
-
-    def has_add_permission(self, request):
-        return False
-
-    def get_receipt_url(self, obj):
-        return format_html('<a class="button" href="{}">view receipt</a>', urls.reverse('receipt', args=[obj.pk]))
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-    get_receipt_url.short_description = 'Receipt'
-    get_receipt_url.allow_tags = True
-
 
 class InvoiceAdmin(admin.ModelAdmin):
     list_per_page = 50
@@ -481,6 +467,7 @@ custom_admin_site.register(models.CreditSettlement, CreditSettlementAdmin)
 custom_admin_site.register(models.BBF, OverPayAdmin)
 custom_admin_site.register(models.Return)
 custom_admin_site.register(models.Receipt, SalesAdmin)
+custom_admin_site.register(models.ReceiptParticular)
 custom_admin_site.register(models.Invoices, InvoiceAdmin)
 custom_admin_site.register(models.OrderProduct, OrderProductAdmin)
 custom_admin_site.register(models.Package, PackageAdmin)
