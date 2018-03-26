@@ -36,7 +36,7 @@ class RegionList(LoginRequiredMixin, ListView):
 
 @login_required()
 def create_regions(request):
-    region_formset = modelformset_factory(models.Region, fields=('name',), max_num=10)
+    region_formset = modelformset_factory(models.Region, fields=('name',), max_num=5, min_num=1)
     if request.method == 'POST':
         formset = region_formset(request.POST)
         if formset.is_valid():
@@ -45,7 +45,7 @@ def create_regions(request):
             return redirect(reverse_lazy('regions'))
     else:
         formset = region_formset(queryset=models.Region.objects.none())
-        return render(request, 'sales/regions/create.html', {'formset': formset})
+    return render(request, 'sales/regions/create.html', {'formset': formset})
 
 
 class UpdateRegion(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
@@ -112,7 +112,7 @@ def create_customer(request):
             return redirect('customers')
     else:
         form = forms.CustomerForm()
-        return render(request, 'sales/customers/create.html', {'form': form})
+    return render(request, 'sales/customers/create.html', {'form': form})
 
 
 class DeleteCustomer(LoginRequiredMixin, DeleteView):
@@ -136,7 +136,7 @@ class UpdateCustomer(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 @login_required()
 def add_prices(request, pk):
     prices_formset = modelformset_factory(models.CustomerPrice, fields=('product', 'price'),
-                                          widgets={'product': Select2Widget}, extra=10,
+                                          widgets={'product': Select2Widget}, extra=5, min_num=1,
                                           can_delete=True)
     customer = models.Customer.objects.get(pk=pk)
     if request.method == 'POST':

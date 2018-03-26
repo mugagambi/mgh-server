@@ -27,11 +27,11 @@
     <ul class="navbar-nav px-3">
         {% if user.is_authenticated %}
             <li class="nav-item text-nowrap">
-                <a class="nav-link" href="{% url 'log-out' %}">Sign out</a>
+                <a class="nav-link" href="{% url 'log-out' %}">Log out</a>
             </li>
         {% else %}
             <li class="nav-item text-nowrap">
-                <a class="nav-link" href="{% url 'sign-in' %}">Sign In</a>
+                <a class="nav-link" href="{% url 'sign-in' %}">Log In</a>
             </li>
         {% endif %}
     </ul>
@@ -50,7 +50,7 @@
                             Dashboard <span class="sr-only">(current)</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" title="aggregation centers">
                         <a class="nav-link {% if 'centers' in request.path %}
                         active
                         {% endif %}" href="{% url 'centers-list' %}">
@@ -102,6 +102,18 @@
                         <a class="nav-link" href="#">
                             <span data-feather="bar-chart-2"></span>
                             Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="user-check"></span>
+                            System Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span data-feather="settings"></span>
+                            Settings
                         </a>
                     </li>
                     {% if user.is_authenticated %}
