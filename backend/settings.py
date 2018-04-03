@@ -158,7 +158,7 @@ DJOSER = {
     }
 }
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=86400),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=1),
     'JWT_ALLOW_REFRESH': True,
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'core.views.jwt_response_payload_handler'
 }
