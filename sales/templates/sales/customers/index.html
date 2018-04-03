@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% load static %}
 {% block styles %}
     <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
     {% include 'includes/filter_css.html' %}
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
 {% endblock %}
 {% block content %}
     <h4 class="text-center">Customers</h4>
@@ -37,9 +39,11 @@
                        href="{% url 'add-prices' pk=customer.number %}">prices</a>
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'add-discounts' pk=customer.number %}">discounts</a>
-                    <a class="btn btn-outline-success btn-sm"
-                       href="{% url 'place-order' pk=customer.number %}">place
-                        order</a>
+                    <button type="button" class="btn btn-outline-success btn-sm"
+                            id="place-order"
+                            data-toggle="modal" data-target="#exampleModalCenter"
+                            data-customer="{{ customer.number }}">place order
+                    </button>
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'update-customer' pk=customer.number %}">Edit</a>
                     <a class="btn btn-outline-danger btn-sm"
@@ -59,6 +63,32 @@
         </tr>
         </tfoot>
     </table>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Order Date Of Delivery</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form | crispy }}
+                        <div>
+                            <button type="submit" class="btn btn-primary">Add Items</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block scripts %}
     <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
@@ -81,4 +111,23 @@
         });
     </script>
     {% include 'includes/filter_js.html' %}
+    <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $('#id_date_of_delivery').datetimepicker(
+                    {
+                        'format': 'Y-m-d',
+                        'timepicker': false
+                    });
+            });
+            $("#place-order").click(function () {
+                var customer = $(this).data('customer');
+                $(".modal-body #id_customer_number").val(customer);
+                // As pointed out in comments,
+                // it is superfluous to have to manually call the modal.
+                $('#exampleModalCenter').modal('show');
+            });
+        });
+    </script>
 {% endblock %}

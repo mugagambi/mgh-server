@@ -36,7 +36,7 @@ class Order(models.Model):
                                  help_text='search by customer no. , shop name or nick name')
     number = models.CharField(max_length=10, unique=True, primary_key=True)
     received_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    date_delivery = models.DateField('date of delivery', null=True, blank=True)
+    date_delivery = models.DateField('date of delivery')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -68,10 +68,24 @@ class DeleteRegion(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('regions')
 
 
-class CustomerList(LoginRequiredMixin, FilterView):
-    model = models.Customer
-    template_name = 'sales/customers/index.html'
-    filter_fields = ('region', 'added_by')
+class CustomerFilter(FilterSet):
+    class Meta:
+        model = models.Customer
+        fields = ('region', 'added_by')
+
+
+def customer_list(request):
+    if request.method == 'POST':
+        form = forms.PlaceOrderModal(request.POST)
+        if form.is_valid():
+            customer_number = form.cleaned_data['customer_number']
+            date = form.cleaned_data['date_of_delivery']
+            return redirect('place-order', pk=customer_number, date=date)
+    else:
+        form = forms.PlaceOrderModal(initial={'date_of_delivery': datetime.now() + timedelta(days=1),
+                                              'customer_number': ''})
+    f = CustomerFilter(request.GET, queryset=models.Customer.objects.all())
+    return render(request, 'sales/customers/index.html', {'filter': f, 'form': form})
 
 
 class SalesFilterSet(FilterSet):
@@ -211,7 +225,7 @@ def add_discounts(request, pk):
 
 
 @login_required()
-def place_order(request, pk):
+def place_order(request, pk, date):
     orders_formset = modelformset_factory(models.OrderProduct,
                                           fields=('product', 'qty', 'price', 'discount'),
                                           widgets={'product': Select2Widget,
@@ -229,6 +243,7 @@ def place_order(request, pk):
         main_order.number = generate_unique_id(request.user.id)
         main_order.received_by = request.user
         main_order.customer = customer
+        main_order.date_delivery = date
         if formset.is_valid():
             main_order.save()
             orders = formset.save(commit=False)
