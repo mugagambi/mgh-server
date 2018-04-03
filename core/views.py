@@ -50,7 +50,7 @@ class AggregationCenterProductViewSet(viewsets.ModelViewSet):
     queryset = models.AggregationCenterProduct.objects.all()
     serializer_class = serializers.AggregationCenterProductSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('aggregation_center', 'product', 'active')
+    filter_fields = ('aggregation_center', 'product',)
     ordering_fields = ('id',)
 
 

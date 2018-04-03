@@ -32,9 +32,11 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderProductsSerializer(serializers.ModelSerializer):
+    distributing_qty = serializers.DecimalField(decimal_places=2, max_digits=7)
+
     class Meta:
         model = models.OrderProduct
-        fields = ('number', 'order', 'product', 'qty', 'price')
+        fields = ('number', 'order', 'product', 'qty', 'price', 'distributing_qty')
 
 
 class PackageSerializer(serializers.ModelSerializer):
@@ -80,7 +82,7 @@ class SalesCrateSerializer(serializers.ModelSerializer):
 class PackageProductCrateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PackageProductCrate
-        fields = ('number', 'crate', 'package_product')
+        fields = ('id', 'crate', 'package_product')
 
 
 class ReceiptSerializer(serializers.ModelSerializer):
@@ -161,4 +163,4 @@ class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Return
         fields = ('number'
-                  , 'type', 'product', 'qty', 'receipt', 'customer', 'description', 'date')
+                  , 'product', 'qty', 'receipt', 'customer', 'description', 'date')

@@ -96,7 +96,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class AggregationCenterProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.AggregationCenterProduct
-        fields = ('id', 'aggregation_center', 'product', 'active')
+        fields = ('id', 'aggregation_center', 'product')
 
 
 class CrateTypeSerializer(serializers.ModelSerializer):

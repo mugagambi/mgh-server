@@ -1,9 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets
 from sales import serializers
 from sales import models
 import django_filters.rest_framework
 from rest_framework import filters
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from core.models import AggregationCenter
 
 
 # Create your views here.
@@ -329,3 +333,17 @@ class ReturnsRejectsViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = ReturnsRejectsFilterSet
     ordering_fields = ('date', 'qty')
+
+
+@api_view(['GET'])
+def distributed_order_product(request, date, center):
+    """Distributed """
+    center = get_object_or_404(AggregationCenter, pk=center)
+    order_distribution_center_products = models.OrderDistributionPoint.objects.filter(center=center,
+                                                                                      order_product__order__date_delivery=date)
+    order_products = []
+    for product in order_distribution_center_products:
+        product.order_product.distributing_qty = product.qty
+        order_products.append(product.order_product)
+    serializer = serializers.OrderProductsSerializer(order_products, many=True)
+    return Response(serializer.data)

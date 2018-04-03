@@ -25,5 +25,6 @@ router.register(r'overpay-underpay', views.OverPayOrUnderPayViewSet)
 router.register(r'returns-rejects', views.ReturnsRejectsViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('order-products/<str:date>/<int:center>/', views.distributed_order_product)
 ]
