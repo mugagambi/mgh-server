@@ -123,12 +123,13 @@
                         'timepicker': false
                     });
             });
-            $("#place-order").click(function () {
-                var customer = $(this).data('customer');
-                $(".modal-body #id_customer_number").val(customer);
-                // As pointed out in comments,
-                // it is superfluous to have to manually call the modal.
-                $('#exampleModalCenter').modal('show');
+            $('#exampleModalCenter').on('show.bs.modal', function (e) {
+
+                //get data-id attribute of the clicked element
+                var customer = $(e.relatedTarget).data('customer');
+
+                //populate the textbox
+                $(e.currentTarget).find('input[id="id_customer_number"]').val(customer);
             });
         });
     </script>
