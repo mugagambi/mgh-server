@@ -5,7 +5,7 @@ from system_settings import models
 
 # Create your views here.
 def main_center_setting(request):
-    settings = models.Settings.objects.first()
+    settings = models.Settings.objects.latest('updated_at')
     if request.method == 'POST':
         form = forms.MainCenterForm(request.POST)
     else:

@@ -6,3 +6,4 @@ from core.models import AggregationCenter
 
 class Settings(models.Model):
     main_distribution = models.ForeignKey(AggregationCenter, on_delete=models.SET_NULL, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
