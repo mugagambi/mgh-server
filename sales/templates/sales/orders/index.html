@@ -6,7 +6,9 @@
 {% endblock %}
 {% block content %}
     {% include 'includes/order-nav.html' %}
-    <h4 class="text-center">Orders</h4>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2"> Orders</h1>
+    </div>
     {% include 'includes/filter_by.html' %}
     <table id="customers" class="table table-striped" style="width:100%">
         <thead>

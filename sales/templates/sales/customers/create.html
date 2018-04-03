@@ -5,9 +5,11 @@
     {{ form.media.css }}
 {% endblock %}
 {% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Add Customer</h1>
+    </div>
     <div class="row">
         <div class="col-sm-5 offset-sm-3">
-            <h4 class="text-center">Add Customer</h4>
             <p><sup>*</sup> fields are required</p>
             <br/>
             <form method="post" id="formset">

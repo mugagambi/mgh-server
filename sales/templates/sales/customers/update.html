@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Update Customer</h1>
+    </div>
     <div class="row">
         <div class="col-sm-5 offset-sm-3">
-            <h4 class="text-center">Update Customer</h4>
             <form method="post" novalidate>
                 {% csrf_token %}
                 {% include 'includes/form_include.html' with form=form %}
