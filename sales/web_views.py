@@ -74,6 +74,7 @@ class CustomerFilter(FilterSet):
         fields = ('region', 'added_by')
 
 
+@login_required()
 def customer_list(request):
     if request.method == 'POST':
         form = forms.PlaceOrderModal(request.POST)
