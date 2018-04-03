@@ -227,14 +227,6 @@ def add_discounts(request, pk):
                                                         'create_sub_name': 'discount'})
 
 
-class BaseOrderFormSet(BaseModelFormSet):
-    def clean(self):
-        super(BaseOrderFormSet, self).clean()
-        for form in self.forms:
-            price = form.cleaned_data['field']
-            product = form.cleaned_data['product']
-
-
 @login_required()
 def place_order(request, pk, date):
     settings = Settings.objects.all().first()
@@ -262,9 +254,16 @@ def place_order(request, pk, date):
             if not settings.main_distribution:
                 messages.success(request, 'You need to have a main center')
                 return redirect(reverse_lazy('main-center'))
-            main_order.save()
             orders = formset.save(commit=False)
             for order in orders:
+                if order.price.product != order.product:
+                    messages.error(request, '%s price expected. Found %s price.Kindly correct the error on the form below' % (
+                        order.product, order.price.product))
+                    return render(request, 'sales/customers/customer-prices.html', {'formset': formset,
+                                                                                    "customer": customer,
+                                                                                    'create_name': customer.shop_name + ' Orders',
+                                                                                    'create_sub_name': 'item'})
+                main_order.save()
                 order.number = generate_unique_id(request.user.id)
                 order.order = main_order
                 order.save()

@@ -125,10 +125,10 @@
             });
             $('#exampleModalCenter').on('show.bs.modal', function (e) {
 
-                //get data-id attribute of the clicked element
+                //get customer number attribute of the clicked element
                 var customer = $(e.relatedTarget).data('customer');
 
-                //populate the textbox
+                //populate the hidden field
                 $(e.currentTarget).find('input[id="id_customer_number"]').val(customer);
             });
         });
