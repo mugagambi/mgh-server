@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Sum
 from django.forms import modelformset_factory
+from django.forms import BaseModelFormSet
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
@@ -19,6 +20,7 @@ from django_select2.forms import Select2Widget
 from sales import forms
 from sales import models
 from utils import generate_unique_id
+from system_settings.models import Settings
 
 
 class OrdersView(LoginRequiredMixin, ListView):
@@ -225,8 +227,19 @@ def add_discounts(request, pk):
                                                         'create_sub_name': 'discount'})
 
 
+class BaseOrderFormSet(BaseModelFormSet):
+    def clean(self):
+        super(BaseOrderFormSet, self).clean()
+        for form in self.forms:
+            price = form.cleaned_data['field']
+            product = form.cleaned_data['product']
+
+
 @login_required()
 def place_order(request, pk, date):
+    settings = Settings.objects.all().first()
+    if not settings:
+        Settings.objects.create()
     orders_formset = modelformset_factory(models.OrderProduct,
                                           fields=('product', 'qty', 'price', 'discount'),
                                           widgets={'product': Select2Widget,
@@ -246,6 +259,9 @@ def place_order(request, pk, date):
         main_order.customer = customer
         main_order.date_delivery = date
         if formset.is_valid():
+            if not settings.main_distribution:
+                messages.success(request, 'You need to have a main center')
+                return redirect(reverse_lazy('main-center'))
             main_order.save()
             orders = formset.save(commit=False)
             for order in orders:
@@ -255,6 +271,7 @@ def place_order(request, pk, date):
                 distribution_point = models.OrderDistributionPoint()
                 distribution_point.order_product = order
                 distribution_point.qty = order.qty
+                distribution_point.center = settings.main_distribution
                 distribution_point.save()
             for obj in formset.deleted_objects:
                 obj.delete()
@@ -267,9 +284,9 @@ def place_order(request, pk, date):
             form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=customer)
             form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=customer)
     return render(request, 'sales/customers/customer-prices.html', {'formset': formset,
-                                                        "customer": customer,
-                                                        'create_name': customer.shop_name + ' Orders',
-                                                        'create_sub_name': 'item'})
+                                                                    "customer": customer,
+                                                                    'create_name': customer.shop_name + ' Orders',
+                                                                    'create_sub_name': 'item'})
 
 
 @login_required()
