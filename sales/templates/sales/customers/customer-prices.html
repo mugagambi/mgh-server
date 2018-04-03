@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block styles %}
+    {{ formset.media.css }}
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <h4 class="text-center">{{ create_name }}</h4>
+            <form method="post" id="formset">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                {% for form in formset %}
+                    {% if create_sub_name %}
+                        <h5 class="text-center">Add new {{ create_sub_name }}</h5>
+                    {% endif %}
+                    {{ form | crispy }}
+                {% endfor %}
+                <div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ formset.media.js }}
+{% endblock %}

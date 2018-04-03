@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'django_select2',
     'core.apps.CoreConfig',
     'sales.apps.SalesConfig',
-    'reports.apps.ReportsConfig'
+    'reports.apps.ReportsConfig',
+    'system_settings'
 ]
 
 MIDDLEWARE = [
@@ -157,7 +158,9 @@ DJOSER = {
     }
 }
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=86400)
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=86400),
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'core.views.jwt_response_payload_handler'
 }
 if DEBUG:
     INTERNAL_IPS = ('127.0.0.1', 'localhost',)

@@ -266,7 +266,7 @@ def place_order(request, pk, date):
         for form in formset:
             form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=customer)
             form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=customer)
-    return render(request, 'crud/formset-create.html', {'formset': formset,
+    return render(request, 'sales/customers/customer-prices.html', {'formset': formset,
                                                         "customer": customer,
                                                         'create_name': customer.shop_name + ' Orders',
                                                         'create_sub_name': 'item'})
