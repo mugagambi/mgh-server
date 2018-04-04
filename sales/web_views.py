@@ -126,6 +126,7 @@ def receipt_detail(request, pk):
     except models.Receipt.DoesNotExist:
         raise Http404('Receipt not found')
     particulars = models.ReceiptParticular.objects.select_related('product').filter(receipt=receipt)
+    orderlessparticulars = models.OrderlessParticular.objects.select_related('product').filter(receipt=receipt)
     payments = models.ReceiptPayment.objects.filter(receipt=receipt)
     total_qty = particulars.aggregate(sum=Sum('qty'))
     total_amount = particulars.aggregate(sum=Sum('total'))
@@ -137,7 +138,8 @@ def receipt_detail(request, pk):
                                                         'total_amount': total_amount,
                                                         'payments': payments,
                                                         'total_payment': total_payed_amount,
-                                                        'balance': balance
+                                                        'balance': balance,
+                                                        'orderlessparticulars': orderlessparticulars
                                                         })
 
 
@@ -162,7 +164,7 @@ class DeleteCustomer(LoginRequiredMixin, DeleteView):
         messages.success(request, 'Customer removed successfully!')
         return super().post(request, *args, **kwargs)
 
-    template_name = 'sales/regions/delete.html'
+    template_name = 'crud/delete.html'
     model = models.Customer
     success_url = reverse_lazy('customers')
 
@@ -260,10 +262,10 @@ def place_order(request, pk, date):
                     messages.error(request,
                                    '%s price expected. Found %s price.Kindly correct the error on the form below' % (
                                        order.product, order.price.product))
-                    return render(request, 'sales/customers/customer-prices.html', {'formset': formset,
-                                                                                    "customer": customer,
-                                                                                    'create_name': customer.shop_name + ' Orders',
-                                                                                    'create_sub_name': 'item'})
+                    return render(request, 'sales/customers/place-order.html', {'formset': formset,
+                                                                                "customer": customer,
+                                                                                'create_name': customer.shop_name + ' Orders',
+                                                                                'create_sub_name': 'item'})
                 main_order.save()
                 order.number = generate_unique_id(request.user.id)
                 order.order = main_order
@@ -283,10 +285,10 @@ def place_order(request, pk, date):
         for form in formset:
             form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=customer)
             form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=customer)
-    return render(request, 'sales/customers/customer-prices.html', {'formset': formset,
-                                                                    "customer": customer,
-                                                                    'create_name': customer.shop_name + ' Orders',
-                                                                    'create_sub_name': 'item'})
+    return render(request, 'sales/customers/place-order.html', {'formset': formset,
+                                                                "customer": customer,
+                                                                'create_name': customer.shop_name + ' Orders',
+                                                                'create_sub_name': 'item'})
 
 
 @login_required()

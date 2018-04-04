@@ -6,6 +6,14 @@
     {% include 'includes/filter_css.html' %}
     <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
 {% endblock %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Customers</li>
+        </ol>
+    </nav>
+{% endblock %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">Customers</h1>
@@ -37,18 +45,18 @@
                 <td>{{ customer.phone_number }}</td>
                 <td>{{ customer.region }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm"
+                    <a class="btn btn-outline-success btn-sm mb-1"
                        href="{% url 'add-prices' pk=customer.number %}">prices</a>
-                    <a class="btn btn-outline-success btn-sm"
+                    <a class="btn btn-outline-success btn-sm mb-1"
                        href="{% url 'add-discounts' pk=customer.number %}">discounts</a>
-                    <button type="button" class="btn btn-outline-success btn-sm"
+                    <button type="button" class="btn btn-outline-success btn-sm mb-1"
                             id="place-order"
                             data-toggle="modal" data-target="#exampleModalCenter"
                             data-customer="{{ customer.number }}">place order
                     </button>
-                    <a class="btn btn-outline-success btn-sm"
+                    <a class="btn btn-outline-success btn-sm mb-1"
                        href="{% url 'update-customer' pk=customer.number %}">Edit</a>
-                    <a class="btn btn-outline-danger btn-sm"
+                    <a class="btn btn-outline-danger btn-sm mb-1"
                        href="{% url 'delete-customer' pk=customer.number %}">Remove</a>
                 </td>
             </tr>
