@@ -21,7 +21,6 @@ from sales import forms
 from sales import models
 from system_settings.models import Settings
 from utils import generate_unique_id
-from django.db.models import Q
 
 
 class OrdersFilter(FilterSet):
@@ -132,11 +131,8 @@ class SalesFilterSet(FilterSet):
 
 @login_required()
 def sales_list(request):
-    query = Q(receiptparticular__isnull=False)
-    query.add(Q(orderlessparticular__isnull=False), Q.OR)
-    query.add(Q(receiptpayment__isnull=False), Q.AND)
     sale_list = models.Receipt.objects.select_related('customer',
-                                                      'served_by').filter(query)
+                                                      'served_by').filter(receiptpayment__isnull=False)
     sale_filter = SalesFilterSet(request.GET, queryset=sale_list)
     sale_list = sale_filter.qs
     paginator = Paginator(sale_list, 50)

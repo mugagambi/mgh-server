@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load humanize %}
 {% load static %}
 {% block content %}
     <h4 class="text-center"><u>Receipt Number {{ receipt.number }}</u></h4>
@@ -29,7 +30,7 @@
                     <tr>
                         <td>{{ particular.product.name }}</td>
                         <td>{{ particular.qty }}</td>
-                        <td>{{ particular.price }}</td>
+                        <td>{{ particular.price | intcomma }}</td>
                         <td>{{ particular.discount }}</td>
                         <td>{{ particular.total }}</td>
                         <td>Ordered</td>
