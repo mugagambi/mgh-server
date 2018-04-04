@@ -13,8 +13,6 @@
         <tr>
             <th>Receipt No.</th>
             <th>Shop Name</th>
-            <th>Total Qty</th>
-            <th>Total Amount</th>
             <th>Date</th>
             <th>Actions</th>
         </tr>
@@ -24,8 +22,6 @@
             <tr>
                 <td>{{ receipt.number }}</td>
                 <td>{{ receipt.customer.shop_name }}</td>
-                <td>{{ receipt.total_qty }}</td>
-                <td>{{ receipt.total_amount }}</td>
                 <td>{{ receipt.date }}</td>
                 <td>
                     <a class="btn btn-outline-success btn-sm" href="{% url 'sale-receipt' pk=receipt.number %}">view
@@ -43,6 +39,7 @@
                 {% if sales.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
                                 {{ sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
@@ -66,6 +63,7 @@
                     {% else %}
                         <li class="page-item"><a class="page-link" href="?page=
 
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -73,6 +71,7 @@
                 {% if sales.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 

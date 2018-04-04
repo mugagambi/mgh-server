@@ -21,6 +21,7 @@ from sales import forms
 from sales import models
 from system_settings.models import Settings
 from utils import generate_unique_id
+from django.db.models import Q
 
 
 class OrdersFilter(FilterSet):
@@ -131,11 +132,11 @@ class SalesFilterSet(FilterSet):
 
 @login_required()
 def sales_list(request):
+    query = Q(receiptparticular__isnull=False)
+    query.add(Q(orderlessparticular__isnull=False), Q.OR)
+    query.add(Q(receiptpayment__isnull=False), Q.AND)
     sale_list = models.Receipt.objects.select_related('customer',
-                                                      'served_by').filter(
-        receiptpayment__amount__isnull=False).annotate(
-        total_qty=Sum('receiptparticular__qty'),
-        total_amount=Sum('receiptparticular__total'))
+                                                      'served_by').filter(query)
     sale_filter = SalesFilterSet(request.GET, queryset=sale_list)
     sale_list = sale_filter.qs
     paginator = Paginator(sale_list, 50)
@@ -163,10 +164,24 @@ def receipt_detail(request, pk):
     payments = models.ReceiptPayment.objects.filter(receipt=receipt)
     particulars_qty = particulars.aggregate(sum=Sum('qty'))
     orderless_qty = orderlessparticulars.aggregate(sum=Sum('qty'))
-    total_qty = particulars_qty['sum'] + orderless_qty['sum']
+    if orderlessparticulars.exists() and particulars.exists():
+        total_qty = particulars_qty['sum'] + orderless_qty['sum']
+    elif orderlessparticulars.exists():
+        total_qty = orderless_qty['sum']
+    elif particulars.exists():
+        total_qty = particulars_qty['sum']
+    else:
+        total_qty = 0
     particulars_amount = particulars.aggregate(sum=Sum('total'))
     orderless_amount = particulars.aggregate(sum=Sum('total'))
-    total_amount = particulars_amount['sum'] + orderless_amount['sum']
+    if orderlessparticulars.exists() and particulars.exists():
+        total_amount = particulars_amount['sum'] + orderless_amount['sum']
+    elif orderlessparticulars.exists():
+        total_amount = orderless_amount['sum']
+    elif particulars.exists():
+        total_amount = particulars_amount['sum']
+    else:
+        total_amount = 0
     total_payed_amount = payments.aggregate(sum=Sum('amount'))
     balance = total_payed_amount['sum'] - total_amount
     return render(request, 'sales/sales/receipt.html', {'receipt': receipt,
