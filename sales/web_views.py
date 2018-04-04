@@ -128,8 +128,12 @@ def receipt_detail(request, pk):
     particulars = models.ReceiptParticular.objects.select_related('product').filter(receipt=receipt)
     orderlessparticulars = models.OrderlessParticular.objects.select_related('product').filter(receipt=receipt)
     payments = models.ReceiptPayment.objects.filter(receipt=receipt)
-    total_qty = particulars.aggregate(sum=Sum('qty'))
-    total_amount = particulars.aggregate(sum=Sum('total'))
+    particulars_qty = particulars.aggregate(sum=Sum('qty'))
+    orderless_qty = orderlessparticulars.aggregate(sum=Sum('qty'))
+    total_qty = particulars_qty['sum'] + orderless_qty['sum']
+    particulars_amount = particulars.aggregate(sum=Sum('total'))
+    orderless_amount = particulars.aggregate(sum=Sum('total'))
+    total_amount = particulars_amount['sum'] - orderless_amount['sum']
     total_payed_amount = payments.aggregate(sum=Sum('amount'))
     balance = total_payed_amount['sum'] - total_amount['sum']
     return render(request, 'sales/sales/receipt.html', {'receipt': receipt,
