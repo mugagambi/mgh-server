@@ -26,5 +26,5 @@ router.register(r'returns-rejects', views.ReturnsRejectsViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('order-products/<str:date>/<int:center>/', views.distributed_order_product),
-    path('bbfs/', views.bbfs)
+    path('bbfs/', views.BBFView.as_view())
 ]
