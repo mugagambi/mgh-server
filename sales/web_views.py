@@ -45,7 +45,7 @@ def order_list(request):
                                                                                        'created_at').all()
     order_filter = OrdersFilter(request.GET, queryset=order_list)
     order_list = order_filter.qs
-    paginator = Paginator(order_list, 1)
+    paginator = Paginator(order_list, 50)
     page = request.GET.get('page', 1)
     try:
         orders = paginator.page(page)
