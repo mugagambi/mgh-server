@@ -138,7 +138,7 @@ def sales_list(request):
         total_amount=Sum('receiptparticular__total'))
     sale_filter = SalesFilterSet(request.GET, queryset=sale_list)
     sale_list = sale_filter.qs
-    paginator = Paginator(sale_list, 1)
+    paginator = Paginator(sale_list, 50)
     page = request.GET.get('page', 1)
     try:
         sales = paginator.page(page)
