@@ -7,7 +7,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Sum
 from django.forms import modelformset_factory
-from django.forms import BaseModelFormSet
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
@@ -19,8 +18,8 @@ from django_select2.forms import Select2Widget
 
 from sales import forms
 from sales import models
-from utils import generate_unique_id
 from system_settings.models import Settings
+from utils import generate_unique_id
 
 
 class OrdersView(LoginRequiredMixin, ListView):
@@ -107,7 +106,8 @@ class SalesList(LoginRequiredMixin, FilterView):
 
     def get_queryset(self):
         return models.Receipt.objects.select_related('customer',
-                                                     'served_by').annotate(
+                                                     'served_by').filter(
+            receiptpayment__amount__isnull=False).annotate(
             total_qty=Sum('receiptparticular__qty'),
             total_amount=Sum('receiptparticular__total'))
 
@@ -257,8 +257,9 @@ def place_order(request, pk, date):
             orders = formset.save(commit=False)
             for order in orders:
                 if order.price.product != order.product:
-                    messages.error(request, '%s price expected. Found %s price.Kindly correct the error on the form below' % (
-                        order.product, order.price.product))
+                    messages.error(request,
+                                   '%s price expected. Found %s price.Kindly correct the error on the form below' % (
+                                       order.product, order.price.product))
                     return render(request, 'sales/customers/customer-prices.html', {'formset': formset,
                                                                                     "customer": customer,
                                                                                     'create_name': customer.shop_name + ' Orders',
