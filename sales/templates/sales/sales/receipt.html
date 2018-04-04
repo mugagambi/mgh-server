@@ -51,8 +51,8 @@
             <hr/>
             {% if not receipt.has_credit %}
                 <div class="float-right">
-                    <p><b>Total Qty: </b>{{ total_qty.sum }}</p>
-                    <p><b>Total Amount: </b>Ksh. {{ total_amount.sum }}</p>
+                    <p><b>Total Qty: </b>{{ total_qty }}</p>
+                    <p><b>Total Amount: </b>Ksh. {{ total_amount }}</p>
                     <p><b>Amount Payed: </b>Ksh. {{ total_payment.sum }}</p>
                     <p><b>Balance: </b>Ksh. {{ balance }}</p>
                 </div>
