@@ -25,7 +25,7 @@
                     <th scope="col">Type</th>
                 </tr>
                 </thead>
-                <tbody>
+                <>
                 {% for particular in particulars %}
                     <tr>
                         <td>{{ particular.product.name }}</td>
@@ -37,12 +37,14 @@
                     </tr>
                 {% endfor %}
                 {% for particular in orderlessparticulars %}
-                    <td>{{ particular.product.name }}</td>
-                    <td>{{ particular.qty }}</td>
-                    <td>{{ particular.price }}</td>
-                    <td>{{ particular.discount }}</td>
-                    <td>{{ particular.total }}</td>
-                    <td>Orderless</td>
+                    <tr>
+                        <td>{{ particular.product.name }}</td>
+                        <td>{{ particular.qty }}</td>
+                        <td>{{ particular.price }}</td>
+                        <td>{{ particular.discount }}</td>
+                        <td>{{ particular.total }}</td>
+                        <td>Orderless</td>
+                    </tr>
                 {% endfor %}
 
                 </tbody>
