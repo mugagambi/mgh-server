@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Sum
 from django.forms import modelformset_factory
 from django.http import Http404
@@ -22,14 +23,40 @@ from system_settings.models import Settings
 from utils import generate_unique_id
 
 
-class OrdersView(LoginRequiredMixin, ListView):
-    template_name = 'sales/orders/index.html'
+class OrdersFilter(FilterSet):
+    date_delivery_between = django_filters.DateTimeFromToRangeFilter(name='date_delivery',
+                                                                     label='Date of Delivery (Between)')
+    created_at_between = django_filters.DateTimeFromToRangeFilter(name='created_at',
+                                                                  label='Created at (Between)')
+    number = django_filters.CharFilter(lookup_expr='icontains', name='number', label='Order Number')
 
-    def get_queryset(self):
-        return models.Order.objects.select_related('customer', 'received_by').values('number', 'customer__shop_name',
-                                                                                     'received_by__username',
-                                                                                     'date_delivery',
-                                                                                     'created_at').all()
+    class Meta:
+        model = models.Order
+        fields = (
+            'number', 'customer', 'received_by', 'date_delivery', 'created_at', 'date_delivery_between',
+            'created_at_between')
+
+
+@login_required()
+def order_list(request):
+    order_list = models.Order.objects.select_related('customer', 'received_by').values('number', 'customer__shop_name',
+                                                                                       'received_by__username',
+                                                                                       'date_delivery',
+                                                                                       'created_at').all()
+    order_filter = OrdersFilter(request.GET, queryset=order_list)
+    order_list = order_filter.qs
+    paginator = Paginator(order_list, 1)
+    page = request.GET.get('page', 1)
+    try:
+        orders = paginator.page(page)
+    except PageNotAnInteger:
+        orders = paginator.page(1)
+    except EmptyPage:
+        orders = paginator.page(paginator.num_pages)
+    print(order_filter)
+    args = {'paginator': paginator, 'filter': order_filter,
+            'orders': orders, }
+    return render(request, 'sales/orders/index.html', args)
 
 
 class RegionList(LoginRequiredMixin, ListView):

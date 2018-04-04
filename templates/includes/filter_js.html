@@ -1,3 +1,4 @@
+{% load static %}
 <script>
     $('#filters').on('click', function (event) {
         event.preventDefault();
@@ -10,4 +11,33 @@
         $('.filter-container').hide("slow");
         $('#filters').show();
     });
+</script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $('.select').css('width', '100%').select2();
+    });
+</script>
+<script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $(function () {
+            $('.dateinput').datetimepicker(
+                {
+                    'format': 'Y-m-d',
+                    'timepicker': false
+                });
+            $('.datetimeinput').datetimepicker(
+                {'format': 'Y-m-d H:i'});
+            $("input[name$=\'between_0\']").datetimepicker(
+                {
+                    'format': 'Y-m-d H:i',
+                });
+            $("input[name$=\'between_1\']").datetimepicker(
+                {
+                    'format': 'Y-m-d H:i',
+                });
+        });
+    })
+
 </script>

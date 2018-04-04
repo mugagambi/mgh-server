@@ -28,7 +28,7 @@ class Customer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return 'Shop name ' + str(self.shop_name) + ' , customer no. ' + str(self.number)
+        return 'Shop name ' + str(self.shop_name) + ' , nick_name ' + str(self.nick_name)
 
 
 class Order(models.Model):
@@ -39,6 +39,9 @@ class Order(models.Model):
     date_delivery = models.DateField('date of delivery')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('date_delivery',)
 
     def __str__(self):
         return 'order no. ' + str(self.number) + ' for ' + str(self.customer.shop_name)
