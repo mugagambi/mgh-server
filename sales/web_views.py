@@ -118,32 +118,38 @@ def customer_list(request):
 
 
 class SalesFilterSet(FilterSet):
-    date = django_filters.DateFromToRangeFilter(name='date',
-                                                label='Date (Between)')
+    date_between = django_filters.DateFromToRangeFilter(name='date',
+                                                        label='Date (Between)')
+    number = django_filters.CharFilter(lookup_expr='icontains',
+                                       label='Receipt Number',
+                                       name='number')
 
     class Meta:
-        model = models.ReceiptParticular
-        fields = ('date',)
+        model = models.Receipt
+        fields = ('number', 'customer', 'served_by', 'date', 'date_between')
 
 
-class SalesList(LoginRequiredMixin, FilterView):
-    model = models.Receipt
-    template_name = 'sales/sales/index.html'
-    filterset_class = SalesFilterSet
-
-    def get_queryset(self):
-        return models.Receipt.objects.select_related('customer',
-                                                     'served_by').filter(
-            receiptpayment__amount__isnull=False).annotate(
-            total_qty=Sum('receiptparticular__qty'),
-            total_amount=Sum('receiptparticular__total'))
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        data = super(SalesList, self).get_context_data(object_list=None, **kwargs)
-        date_30_days_ago = datetime.now() - timedelta(days=30)
-        date_30_days_ago = date_30_days_ago.strftime("%Y-%m-%d")
-        data['date_30_days_ago'] = date_30_days_ago
-        return data
+@login_required()
+def sales_list(request):
+    sale_list = models.Receipt.objects.select_related('customer',
+                                                      'served_by').filter(
+        receiptpayment__amount__isnull=False).annotate(
+        total_qty=Sum('receiptparticular__qty'),
+        total_amount=Sum('receiptparticular__total'))
+    sale_filter = SalesFilterSet(request.GET, queryset=sale_list)
+    sale_list = sale_filter.qs
+    paginator = Paginator(sale_list, 1)
+    page = request.GET.get('page', 1)
+    try:
+        sales = paginator.page(page)
+    except PageNotAnInteger:
+        sales = paginator.page(1)
+    except EmptyPage:
+        sales = paginator.page(paginator.num_pages)
+    print(sale_filter)
+    args = {'paginator': paginator, 'filter': sale_filter,
+            'sales': sales, }
+    return render(request, 'sales/sales/index.html', args)
 
 
 @login_required()

@@ -2,7 +2,6 @@
 {% load static %}
 {% load humanize %}
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
     {% include 'includes/filter_css.html' %}
 {% endblock %}
 {% block content %}
@@ -10,7 +9,7 @@
     <h4 class="text-center">Total Sales</h4>
     {% include 'includes/filter_by.html' %}
     <table id="customers" class="table table-striped" style="width:100%">
-        <thead>
+        <thead class="thead-dark">
         <tr>
             <th>Receipt No.</th>
             <th>Shop Name</th>
@@ -21,7 +20,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for receipt in filter.qs %}
+        {% for receipt in sales %}
             <tr>
                 <td>{{ receipt.number }}</td>
                 <td>{{ receipt.customer.shop_name }}</td>
@@ -32,40 +31,72 @@
                     <a class="btn btn-outline-success btn-sm" href="{% url 'sale-receipt' pk=receipt.number %}">view
                         receipt</a>
                 </td>
+                {% empty %}
+                <td class="text-center"><b>No data available in table</b></td>
             </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
-        <tr>
-            <th>Receipt No.</th>
-            <th>Shop Name</th>
-            <th>Total Qty</th>
-            <th>Total Amount</th>
-            <th>Date</th>
-            <th>Actions</th>
-        </tr>
-        </tfoot>
     </table>
+    {% if sales.has_other_pages %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if sales.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=
+
+
+                                {{ sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                           aria-label="Previous">
+                            <span aria-hidden="true">Previous</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link"
+                                                      disabled
+                                                      aria-label="Previous">
+                        <span aria-hidden="true">Previous</span>
+                        <span class="sr-only">Previous</span>
+                    </a></li>
+                {% endif %}
+                {% for i in sales.paginator.page_range %}
+                    {% if sales.number == i %}
+                        <li class="page-item active"><a class="page-link" disabled>{{ i }} <span class="sr-only">(current)</span></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page=
+
+                                {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if sales.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=
+
+
+
+
+
+
+                                {{ sales.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                           aria-label="Next">
+                            <span aria-hidden="true">Next</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" disabled aria-label="Next">
+                            <span aria-hidden="true">Next</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
 {% endblock %}
 {% block scripts %}
-    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>
-    <script>
-        $(document).ready(function () {
-            $('#customers').DataTable({
-                'paging': true,
-                'lengthChange': true,
-                'searching': true,
-                'ordering': true,
-                'info': true,
-                'autoWidth': true,
-                "columnDefs": [{
-                    "targets": 5,
-                    "orderable": false,
-                    "searchable": false
-                }]
-            });
-        });
-    </script>
     {% include 'includes/filter_js.html' %}
 {% endblock %}
