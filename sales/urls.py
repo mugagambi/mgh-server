@@ -21,10 +21,10 @@ router.register(r'cash-receipts', views.CashReceiptViewSet)
 router.register(r'cash-receipt-particulars', views.CashReceiptParticularViewSet)
 router.register(r'cash-receipt-payments', views.CashReceiptPaymentViewSet)
 router.register(r'credit-settlement', views.CreditSettlementViewSet)
-router.register(r'overpay-underpay', views.OverPayOrUnderPayViewSet)
 router.register(r'returns-rejects', views.ReturnsRejectsViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('order-products/<str:date>/<int:center>/', views.distributed_order_product)
+    path('order-products/<str:date>/<int:center>/', views.distributed_order_product),
+    path('bbfs/', views.bbfs)
 ]

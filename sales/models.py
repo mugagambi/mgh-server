@@ -309,16 +309,12 @@ class CreditSettlement(models.Model):
 
 
 class BBF(models.Model):
-    number = models.CharField(unique=True, max_length=10, primary_key=True)
-    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE,
-                                 help_text='search by customer number, shop name and nick name')
     receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE,
                                 help_text='search by receipt no.')
     amount = models.DecimalField(max_digits=12, decimal_places=2)
-    date = models.DateTimeField(default=now)
 
     def __str__(self):
-        return 'over pay no. ' + str(self.number)
+        return 'balance ' + str(self.receipt)
 
 
 class Return(models.Model):

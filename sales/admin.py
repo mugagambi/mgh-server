@@ -327,6 +327,7 @@ class SalesAdmin(admin.ModelAdmin):
     search_fields = ('customer__name',)
     list_select_related = True
 
+
 class InvoiceAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_filter = (SalesCustomerShopNameFilter, SalesCustomerNickNameFilter, 'served_by', 'date')
@@ -388,25 +389,6 @@ class CreditSettlementAdmin(admin.ModelAdmin):
     get_receipt_no.admin_order_field = 'receipt__id'
 
 
-class OverPayNumber(NumberFilter):
-    title = 'OverPay Number'
-
-
-class OverPayAdmin(admin.ModelAdmin):
-    autocomplete_fields = ('receipt', 'customer')
-    list_filter = (
-        OverPayNumber, ForeignCustomerNumberFilter, ForeignKeyCustomerNickNameFilter, ForeignKeyCustomerShopNameFilter,
-        ReceiptNumberFilter, 'date')
-    list_display = ('number', 'customer', 'receipt', 'amount', 'date')
-    list_per_page = 50
-    list_select_related = True
-    readonly_fields = ('number',)
-
-    def save_model(self, request, obj, form, change):
-        generate_unique_number(obj, OverPayAdmin, self, request, form, change)
-        super(OverPayAdmin, self).save_model(request, obj, form, change)
-
-
 class ReturnAdmin(admin.ModelAdmin):
     pass
 
@@ -464,7 +446,6 @@ custom_admin_site.register(models.CustomerDiscount, CustomerDiscountsAdmin)
 custom_admin_site.register(models.Order, OrderAdmin)
 custom_admin_site.register(models.SalesCrate)
 custom_admin_site.register(models.CreditSettlement, CreditSettlementAdmin)
-custom_admin_site.register(models.BBF, OverPayAdmin)
 custom_admin_site.register(models.Return)
 custom_admin_site.register(models.Receipt, SalesAdmin)
 custom_admin_site.register(models.ReceiptParticular)

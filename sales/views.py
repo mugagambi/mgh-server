@@ -301,21 +301,13 @@ class CreditSettlementViewSet(viewsets.ModelViewSet):
     ordering_fields = ('date', 'amount')
 
 
-class OverPayOrUnderPayFilterSet(django_filters.rest_framework.FilterSet):
-    date_between = django_filters.DateTimeFromToRangeFilter(name='date',
-                                                            label='Date (Between)')
-
-    class Meta:
-        model = models.BBF
-        fields = ('customer', 'receipt', 'date', 'date_between')
-
-
-class OverPayOrUnderPayViewSet(viewsets.ModelViewSet):
-    queryset = models.BBF.objects.all()
-    serializer_class = serializers.OverPayOrUnderPaySerializer
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_class = OverPayOrUnderPayFilterSet
-    ordering_fields = ('date', 'amount')
+@api_view(['GET'])
+def bbfs(request):
+    serializer = serializers.BBFSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReturnsRejectsFilterSet(django_filters.rest_framework.FilterSet):

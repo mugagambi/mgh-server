@@ -153,10 +153,10 @@ class CreditSettlementSerializer(serializers.ModelSerializer):
         fields = ('number', 'receipt', 'amount', 'date', 'served_by')
 
 
-class OverPayOrUnderPaySerializer(serializers.ModelSerializer):
+class BBFSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.BBF
-        fields = ('number', 'customer', 'receipt', 'amount', 'date')
+        fields = ('receipt', 'amount')
 
 
 class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
