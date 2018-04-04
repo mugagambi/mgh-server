@@ -55,7 +55,7 @@ urlpatterns = [
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.jwt')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('docs/', include_docs_urls(title='MGH API')),
+    path('docs/', include_docs_urls(title='MGH API', public=False)),
     path('select2/', include('django_select2.urls'))
 ]
 
