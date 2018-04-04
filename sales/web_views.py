@@ -135,7 +135,7 @@ def receipt_detail(request, pk):
     orderless_amount = particulars.aggregate(sum=Sum('total'))
     total_amount = particulars_amount['sum'] - orderless_amount['sum']
     total_payed_amount = payments.aggregate(sum=Sum('amount'))
-    balance = total_payed_amount['sum'] - total_amount['sum']
+    balance = total_payed_amount['sum'] - total_amount
     return render(request, 'sales/sales/receipt.html', {'receipt': receipt,
                                                         'particulars': particulars,
                                                         'total_qty': total_qty,
