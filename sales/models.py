@@ -21,7 +21,7 @@ class Customer(models.Model):
     shop_name = models.CharField(max_length=100)
     nick_name = models.CharField(blank=True, max_length=100)
     location = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=15, blank=True)
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     region = models.ForeignKey(Region, on_delete=models.CASCADE, help_text='search by region name')
     created_at = models.DateTimeField(auto_now_add=True)
