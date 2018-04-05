@@ -192,6 +192,26 @@ def receipt_detail(request, pk):
 
 
 @login_required()
+def invoices_list(request):
+    sale_list = models.Receipt.objects.select_related('customer',
+                                                      'served_by').filter(receiptpayment__isnull=False)
+    sale_filter = SalesFilterSet(request.GET, queryset=sale_list)
+    sale_list = sale_filter.qs
+    paginator = Paginator(sale_list, 50)
+    page = request.GET.get('page', 1)
+    try:
+        sales = paginator.page(page)
+    except PageNotAnInteger:
+        sales = paginator.page(1)
+    except EmptyPage:
+        sales = paginator.page(paginator.num_pages)
+    print(sale_filter)
+    args = {'paginator': paginator, 'filter': sale_filter,
+            'sales': sales, }
+    return render(request, 'sales/sales/index.html', args)
+
+
+@login_required()
 def create_customer(request):
     if request.method == 'POST':
         form = forms.CustomerForm(request.POST)

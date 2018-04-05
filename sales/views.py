@@ -73,7 +73,7 @@ class PackageFilterSet(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = models.Package
-        fields = ('order', 'number', 'packaged_by', 'created_at', 'created_between')
+        fields = ('order', 'number', 'packaged_by', 'created_at', 'created_between', 'order__date_delivery')
 
 
 class PackageViewSet(viewsets.ModelViewSet):
