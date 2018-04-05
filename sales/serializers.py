@@ -164,3 +164,8 @@ class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
         model = models.Return
         fields = ('number'
                   , 'product', 'qty', 'receipt', 'customer', 'description', 'date')
+
+
+class BbfAccountSerializer(serializers.Serializer):
+    receipt__customer = serializers.CharField()
+    balance = serializers.DecimalField(max_digits=12, decimal_places=2)

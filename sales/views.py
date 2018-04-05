@@ -1,14 +1,15 @@
-from django.shortcuts import render, get_object_or_404
-from rest_framework import viewsets
-from sales import serializers
-from sales import models
 import django_filters.rest_framework
+from django.db.models import Sum
+from django.shortcuts import render, get_object_or_404
 from rest_framework import filters
-from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from core.models import AggregationCenter
 from rest_framework.generics import CreateAPIView
+from rest_framework.response import Response
+
+from core.models import AggregationCenter
+from sales import models
+from sales import serializers
 
 
 # Create your views here.
@@ -94,7 +95,7 @@ class PackageProductsViewSet(viewsets.ModelViewSet):
     queryset = models.PackageProduct.objects.all()
     serializer_class = serializers.PackageProductSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('package', 'order_product')
+    filter_fields = ('package', 'order_product', 'package__order__date_delivery')
     ordering_fields = ('qty_order', 'qty_weigh', 'crate_weight')
 
     def get_serializer(self, *args, **kwargs):
@@ -335,4 +336,17 @@ def distributed_order_product(request, date, center):
         product.order_product.distributing_qty = product.qty
         order_products.append(product.order_product)
     serializer = serializers.OrderProductsSerializer(order_products, many=True)
+    return Response(serializer.data)
+
+
+class BbfAccount(object):
+    def __init__(self, customer_number, balance):
+        self.customer_number = customer_number
+        self.balance = balance
+
+
+@api_view(['GET'])
+def bbf_account_balance_list(request):
+    Balance = models.BBF.objects.values('receipt__customer').annotate(balance=Sum('amount'))
+    serializer = serializers.BbfAccountSerializer(Balance, many=True)
     return Response(serializer.data)
