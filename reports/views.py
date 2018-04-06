@@ -12,10 +12,10 @@ def sale_summary_report(request):
     items = Product.objects.values('name').annotate(
         cash_qty=Sum('cashreceiptparticular__qty'),
         cash_total=Sum(
-            'cashreceiptparticular__total'),
-        customer_qty=Sum('receiptparticular__qty'),
-        customer_total=Sum('receiptparticular__total',
-                           )).order_by(
+            'cashreceiptparticular__total')
+
+    ).annotate(customer_qty=Sum('receiptparticular__qty'),
+               customer_total=Sum('receiptparticular__total', )).order_by(
         'customer_total'
     )
     return render(request, 'reports/sale_summary.html', {'items': items})
