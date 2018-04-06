@@ -16,7 +16,7 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-5 offset-sm-3">
-            <h4 class="text-center">{{ create_name }}</h4>
+            <h4 class="text-center">Place {{ customer.shop_name }} orders to be delivered on {{ delivery   }}</h4>
             <form method="post" id="formset">
                 {% csrf_token %}
                 {{ formset.management_form }}

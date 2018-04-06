@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 import django_filters
 from django.contrib import messages
@@ -55,7 +55,7 @@ def order_list(request):
         orders = paginator.page(paginator.num_pages)
     print(order_filter)
     args = {'paginator': paginator, 'filter': order_filter,
-            'orders': orders, }
+            'orders': orders, 'today': date.today()}
     return render(request, 'sales/orders/index.html', args)
 
 
@@ -109,7 +109,7 @@ def customer_list(request):
         if form.is_valid():
             customer_number = form.cleaned_data['customer_number']
             date = form.cleaned_data['date_of_delivery']
-            return redirect('place-order', pk=customer_number, date=date)
+            return redirect('place-order', pk=customer_number, date_given=date)
     else:
         form = forms.PlaceOrderModal(initial={'date_of_delivery': datetime.now() + timedelta(days=1),
                                               'customer_number': ''})
@@ -299,31 +299,34 @@ def add_discounts(request, pk):
 
 
 @login_required()
-def place_order(request, pk, date):
+def place_order(request, pk, date_given):
+    date_given = datetime.strptime(date_given, '%Y-%m-%d').date()
+    if date_given < date.today():
+        messages.error(request, 'Error! You can\'t place an order with delivery date in the past!')
+        return redirect('customers')
+    customer = models.Customer.objects.get(pk=pk)
+    if models.Order.objects.filter(customer=customer, date_delivery__exact=date_given).exists():
+        messages.info(request, 'Continue adding items to the order')
+        order = models.Order.objects.filter(customer=customer, date_delivery__exact=date_given).first()
+        return redirect('update-order', pk=order.number)
     settings = Settings.objects.all().first()
     if not settings:
         Settings.objects.create()
     orders_formset = modelformset_factory(models.OrderProduct,
-                                          fields=('product', 'qty', 'price', 'discount'),
-                                          widgets={'product': Select2Widget,
-                                                   'price': Select2Widget,
-                                                   'discount': Select2Widget}, min_num=1,
+                                          fields=('product', 'qty'),
+                                          widgets={'product': Select2Widget}, min_num=1,
                                           extra=10,
                                           can_delete=True)
-    customer = models.Customer.objects.get(pk=pk)
     if request.method == 'POST':
         formset = orders_formset(request.POST)
-        for form in formset:
-            form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=customer)
-            form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=customer)
         main_order = models.Order()
         main_order.number = generate_unique_id(request.user.id)
         main_order.received_by = request.user
         main_order.customer = customer
-        main_order.date_delivery = date
+        main_order.date_delivery = date_given
         if formset.is_valid():
             if not settings.main_distribution:
-                messages.success(request, 'You need to have a main center')
+                messages.error(request, 'You need to have a main center')
                 return redirect(reverse_lazy('main-center'))
             orders = formset.save(commit=False)
             for order in orders:
@@ -351,30 +354,26 @@ def place_order(request, pk, date):
     else:
         formset = orders_formset(
             queryset=models.OrderProduct.objects.none())
-        for form in formset:
-            form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=customer)
-            form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=customer)
     return render(request, 'sales/customers/place-order.html', {'formset': formset,
                                                                 "customer": customer,
                                                                 'create_name': customer.shop_name + ' Orders',
-                                                                'create_sub_name': 'item'})
+                                                                'create_sub_name': 'item',
+                                                                'delivery': date_given})
 
 
 @login_required()
 def update_order(request, pk):
     orders_formset = modelformset_factory(models.OrderProduct,
-                                          fields=('product', 'qty', 'price', 'discount'),
-                                          widgets={'product': Select2Widget,
-                                                   'price': Select2Widget,
-                                                   'discount': Select2Widget}, extra=3,
+                                          fields=('product', 'qty'),
+                                          widgets={'product': Select2Widget}, extra=3,
                                           can_delete=True,
                                           min_num=1)
     order = models.Order.objects.get(pk=pk)
+    if order.date_delivery < date.today():
+        messages.error(request, 'Error! You can\'t  update orders whose delivery dates have passed')
+        return redirect('orders')
     if request.method == 'POST':
         formset = orders_formset(request.POST)
-        for form in formset:
-            form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=order.customer)
-            form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=order.customer)
         if formset.is_valid():
             items = formset.save(commit=False)
             for item in items:
@@ -387,11 +386,12 @@ def update_order(request, pk):
     else:
         formset = orders_formset(
             queryset=models.OrderProduct.objects.filter(order=order))
-        for form in formset:
-            form.fields['price'].queryset = models.CustomerPrice.objects.filter(customer=order.customer)
-            form.fields['discount'].queryset = models.CustomerDiscount.objects.filter(customer=order.customer)
     return render(request, 'crud/formset-create.html', {'formset': formset,
-                                                        'create_name': 'Update order ' + order.number + ' for ' + order.customer.shop_name,
+                                                        'create_name': 'Update order '
+                                                                       + order.number + ' for '
+                                                                       + order.customer.shop_name
+                                                                       + ' to be delivered on '
+                                                                       + str(order.date_delivery),
                                                         'create_sub_name': 'order'})
 
 
