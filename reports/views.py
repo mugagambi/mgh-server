@@ -9,13 +9,13 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 @login_required()
 def sale_summary_report(request):
-    items = Product.objects.values('name').annotate(
+    cash = Product.objects.values('name', 'id').annotate(
         cash_qty=Sum('cashreceiptparticular__qty'),
         cash_total=Sum(
             'cashreceiptparticular__total')
 
-    ).annotate(customer_qty=Sum('receiptparticular__qty'),
-               customer_total=Sum('receiptparticular__total', )).order_by(
-        'customer_total'
     )
+    customer = Product.objects.values('name', 'id').annotate(customer_qty=Sum('receiptparticular__qty'),
+                                                             customer_total=Sum('receiptparticular__total', ))
+    items = customer.union(cash).order_by('customer_total')
     return render(request, 'reports/sale_summary.html', {'items': items})
