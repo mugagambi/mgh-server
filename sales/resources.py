@@ -6,7 +6,7 @@ from sales import models
 
 class CustomerResource(resources.ModelResource):
     region = Field()
-    added_by = Field()
+    added_by = Field(column_name='added_by')
 
     class Meta:
         model = models.Customer
@@ -16,5 +16,5 @@ class CustomerResource(resources.ModelResource):
     def dehydrate_region(self, customer):
         return str(customer.region.name)
 
-    def dehdrate_added_by(self, customer):
+    def dehydrate_added_by(self, customer):
         return str(customer.added_by)
