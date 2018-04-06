@@ -23,11 +23,11 @@
         {% for item in items %}
             <tr>
                 <td>{{ item.name }}</td>
-                <td>{{ item.customer_qty | floatformat:2 | intcomma }}</td>
-                <td>Ksh. {{ item.customer_total | floatformat:2 | intcomma }}</td>
-                <td>{{ item.cash_qty | floatformat:2 | intcomma }}</td>
-                <td>Ksh. {{ item.cash_total | floatformat:2 | intcomma }}</td>
-                <td>{{ item.customer_qty | add:item.cash_qty | floatformat:2 | intcomma }}</td>
+                <td>{{ item.customer_qty|default_if_none:0 | floatformat:2 | intcomma }}</td>
+                <td>Ksh. {{ item.customer_total|default_if_none:0 | floatformat:2 | intcomma }}</td>
+                <td>{{ item.cash_qty |default:0 | floatformat:2 | intcomma }}</td>
+                <td>Ksh. {{ item.cash_total|default:0 | floatformat:2 | intcomma }}</td>
+                <td>0</td>
                 <td>Ksh. 510, 000</td>
             </tr>
         {% endfor %}
@@ -48,6 +48,8 @@
                 {% if orders.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
@@ -105,6 +107,8 @@
 
 
 
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -112,6 +116,8 @@
                 {% if orders.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
