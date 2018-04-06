@@ -5,7 +5,9 @@
     <a class="nav-item nav-link {% if request.resolver_match.url_name == 'cash-sales' %}
                         active
                         {% endif %}" href="{% url 'cash-sales' %}">Cash Sales</a>
-    <a class="nav-item nav-link" href="#">Invoice</a>
+    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'invoices' %}
+                        active
+                        {% endif %}" href="{% url 'invoices' %}">Invoice</a>
     <a class="nav-item nav-link" href="#">Debt Settlement</a>
     <a class="nav-item nav-link" href="#">BBF Accounts</a>
     <a class="nav-item nav-link" href="#">Returns</a>

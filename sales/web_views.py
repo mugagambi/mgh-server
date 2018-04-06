@@ -121,7 +121,7 @@ class SalesFilterSet(FilterSet):
     date_between = django_filters.DateFromToRangeFilter(name='date',
                                                         label='Date (Between)')
     number = django_filters.CharFilter(lookup_expr='icontains',
-                                       label='Receipt Number',
+                                       label='Receipt/Invoice Number',
                                        name='number')
 
     class Meta:
@@ -193,22 +193,23 @@ def receipt_detail(request, pk):
 
 @login_required()
 def invoices_list(request):
-    sale_list = models.Receipt.objects.select_related('customer',
-                                                      'served_by').filter(receiptpayment__isnull=False)
-    sale_filter = SalesFilterSet(request.GET, queryset=sale_list)
-    sale_list = sale_filter.qs
-    paginator = Paginator(sale_list, 50)
+    invoice_list = models.Receipt.objects.select_related('customer',
+                                                         'served_by').filter(receiptpayment__isnull=False,
+                                                                             receiptpayment__type=4)
+    invoice_filter = SalesFilterSet(request.GET, queryset=invoice_list)
+    invoice_list = invoice_filter.qs
+    paginator = Paginator(invoice_list, 50)
     page = request.GET.get('page', 1)
     try:
-        sales = paginator.page(page)
+        invoices = paginator.page(page)
     except PageNotAnInteger:
-        sales = paginator.page(1)
+        invoices = paginator.page(1)
     except EmptyPage:
-        sales = paginator.page(paginator.num_pages)
-    print(sale_filter)
-    args = {'paginator': paginator, 'filter': sale_filter,
-            'sales': sales, }
-    return render(request, 'sales/sales/index.html', args)
+        invoices = paginator.page(paginator.num_pages)
+    print(invoice_filter)
+    args = {'paginator': paginator, 'filter': invoice_filter,
+            'invoices': invoices, }
+    return render(request, 'sales/sales/invoices.html', args)
 
 
 @login_required()

@@ -11,6 +11,7 @@ urlpatterns = [
     path('customers/<str:pk>/delete/', web_views.DeleteCustomer.as_view(), name='delete-customer'),
     path('customers/<str:pk>/edit/', web_views.UpdateCustomer.as_view(), name='update-customer'),
     path('all/', web_views.sales_list, name='total-sales'),
+    path('invoices/', web_views.invoices_list, name='invoices'),
     path('all/receipt/<str:pk>/', web_views.receipt_detail, name='sale-receipt'),
     path('all/cash', web_views.CashSalesList.as_view(), name='cash-sales'),
     path('customers/<str:pk>/prices/', web_views.add_prices, name='add-prices'),
