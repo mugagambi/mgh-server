@@ -14,6 +14,6 @@ def sale_summary_report(request):
                                                                        cash_qty=Sum('cashparticular__qty'),
                                                                        cash_total=Sum(
                                                                            'cashparticular__total'))).order_by(
-        'customer_total'
+        '-customer_total'
     )
     return render(request, 'reports/sale_summary.html', {'items': items})

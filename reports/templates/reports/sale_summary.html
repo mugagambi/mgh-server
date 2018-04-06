@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% load static %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
@@ -22,33 +23,14 @@
         {% for item in items %}
             <tr>
                 <td>{{ item.name }}</td>
-                <td>400</td>
-                <td>Ksh. {{ item.customer_total }}</td>
-                <td>80</td>
-                <td>Ksh. 10, 000</td>
-                <td>480</td>
+                <td>{{ item.customer_qty | floatformat:2 | intcomma }}</td>
+                <td>Ksh. {{ item.customer_total | floatformat:2 | intcomma }}</td>
+                <td>{{ item.cash_qty | floatformat:2 | intcomma }}</td>
+                <td>Ksh. {{ item.cash_total | floatformat:2 | intcomma }}</td>
+                <td>{{ item.customer_qty | add:item.cash_qty | floatformat:2 | intcomma }}</td>
                 <td>Ksh. 510, 000</td>
             </tr>
         {% endfor %}
-
-        <tr>
-            <td>Cavedish Long Banana</td>
-            <td>400</td>
-            <td>Ksh. 500, 000</td>
-            <td>80</td>
-            <td>Ksh. 10, 000</td>
-            <td>480</td>
-            <td>Ksh. 510, 000</td>
-        </tr>
-        <tr>
-            <td>Sweet Banana</td>
-            <td>300</td>
-            <td>Ksh. 400, 000</td>
-            <td>100</td>
-            <td>Ksh. 15, 000</td>
-            <td>400</td>
-            <td>Ksh. 415, 000</td>
-        </tr>
         <tr>
             <th>Total</th>
             <th>700</th>
@@ -66,6 +48,12 @@
                 {% if orders.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
+
+
+
 
 
 
@@ -111,6 +99,12 @@
 
 
 
+
+
+
+
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -118,6 +112,12 @@
                 {% if orders.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
+
+
+
 
 
 
