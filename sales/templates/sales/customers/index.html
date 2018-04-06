@@ -18,7 +18,9 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">Customers</h1>
         <button class="btn btn-outline-success" data-toggle="modal"
-                data-target="#export-data">Export Data
+                data-target="#export-data">
+            <span data-feather="database"></span>
+            Export Data
         </button>
         <a class="btn btn-outline-success" href="{% url 'create-customer' %}">
             <span data-feather="plus"></span>
@@ -111,7 +113,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <a class="btn btn-outline-success btn-block" href="{% url 'export-customers' %}">Export Customer Data as CSV</a>
+                    <a class="btn btn-outline-success btn-block" href="{% url 'export-customers' %}">Export Customer
+                        Data as CSV</a>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

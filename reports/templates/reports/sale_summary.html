@@ -1,54 +1,69 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load humanize %}
-{% block styles %}
-    {% include 'includes/filter_css.html' %}
-{% endblock %}
 {% block content %}
-    {% include 'includes/nav.html' %}
-    <hr/>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2">Total Customer Sales</h1>
-        <button class="btn btn-outline-success btn-sm" data-toggle="modal"
-                data-target="#export-data">
-            <span data-feather="database"></span>
-            Export Data
-        </button>
-        <a class="btn btn-outline-success btn-sm" href="{% url 'create-customer' %}">
-            <span data-feather="activity"></span>
-            Reports
-        </a>
+        <h1 class="h2"> Sales Summary</h1>
     </div>
-    {% include 'includes/filter_by.html' %}
-    <table id="customers" class="table table-striped" style="width:100%">
-        <thead class="thead-dark">
+    <table id="customers" class="table table-bordered" style="width:100%">
         <tr>
-            <th>Receipt No.</th>
-            <th>Shop Name</th>
-            <th>Date</th>
-            <th>Actions</th>
+            <th rowspan="2">Product</th>
+            <th colspan="2">Customer Sales</th>
+            <th colspan="2">Cash Sales</th>
+            <th colspan="2">Sub Total</th>
         </tr>
-        </thead>
-        <tbody>
-        {% for receipt in sales %}
+        <tr>
+            <th>Units</th>
+            <th>Total Sales</th>
+            <th>Units</th>
+            <th>Total Sales</th>
+            <th>Units</th>
+            <th>Total Sales</th>
+        </tr>
+        {% for item in items %}
             <tr>
-                <td>{{ receipt.number }}</td>
-                <td>{{ receipt.customer.shop_name }}</td>
-                <td>{{ receipt.date }}</td>
-                <td>
-                    <a class="btn btn-outline-success btn-sm" href="{% url 'sale-receipt' pk=receipt.number %}">view
-                        receipt</a>
-                </td>
-                {% empty %}
-                <td class="text-center"><b>No data available in table</b></td>
+                <td>{{ item.name }}</td>
+                <td>400</td>
+                <td>Ksh. {{ item.customer_total }}</td>
+                <td>80</td>
+                <td>Ksh. 10, 000</td>
+                <td>480</td>
+                <td>Ksh. 510, 000</td>
             </tr>
         {% endfor %}
-        </tbody>
+
+        <tr>
+            <td>Cavedish Long Banana</td>
+            <td>400</td>
+            <td>Ksh. 500, 000</td>
+            <td>80</td>
+            <td>Ksh. 10, 000</td>
+            <td>480</td>
+            <td>Ksh. 510, 000</td>
+        </tr>
+        <tr>
+            <td>Sweet Banana</td>
+            <td>300</td>
+            <td>Ksh. 400, 000</td>
+            <td>100</td>
+            <td>Ksh. 15, 000</td>
+            <td>400</td>
+            <td>Ksh. 415, 000</td>
+        </tr>
+        <tr>
+            <th>Total</th>
+            <th>700</th>
+            <th>Ksh. 900, 000</th>
+            <th>180</th>
+            <th>Ksh. 25, 000</th>
+            <th>880</th>
+            <th>Ksh. 925, 000</th>
+        </tr>
     </table>
-    {% if sales.has_other_pages %}
+    </table>
+    {% if orders.has_other_pages %}
         <nav aria-label="Page navigation example">
             <ul class="pagination">
-                {% if sales.has_previous %}
+                {% if orders.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
 
@@ -56,7 +71,15 @@
 
 
 
-                                {{ sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+
+
+
+
+
+
+
+
+                                {{ orders.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                            aria-label="Previous">
                             <span aria-hidden="true">Previous</span>
                             <span class="sr-only">Previous</span>
@@ -70,8 +93,8 @@
                         <span class="sr-only">Previous</span>
                     </a></li>
                 {% endif %}
-                {% for i in sales.paginator.page_range %}
-                    {% if sales.number == i %}
+                {% for i in orders.paginator.page_range %}
+                    {% if orders.number == i %}
                         <li class="page-item active"><a class="page-link" disabled>{{ i }} <span class="sr-only">(current)</span></a>
                         </li>
                     {% else %}
@@ -80,11 +103,19 @@
 
 
 
+
+
+
+
+
+
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
                 {% endfor %}
-                {% if sales.has_next %}
+                {% if orders.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
 
@@ -96,7 +127,9 @@
 
 
 
-                                {{ sales.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+
+
+                                {{ orders.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                            aria-label="Next">
                             <span aria-hidden="true">Next</span>
                             <span class="sr-only">Next</span>
@@ -113,7 +146,4 @@
             </ul>
         </nav>
     {% endif %}
-{% endblock %}
-{% block scripts %}
-    {% include 'includes/filter_js.html' %}
 {% endblock %}

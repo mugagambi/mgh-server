@@ -1,7 +1,7 @@
 <nav class="nav nav-pills nav-fill">
     <a class="nav-item nav-link {% if request.resolver_match.url_name == 'total-sales' %}
                         active
-                        {% endif %}" href="{% url 'total-sales' %}">All Sales</a>
+                        {% endif %}" href="{% url 'total-sales' %}">Customers Sales</a>
     <a class="nav-item nav-link {% if request.resolver_match.url_name == 'cash-sales' %}
                         active
                         {% endif %}" href="{% url 'cash-sales' %}">Cash Sales</a>
