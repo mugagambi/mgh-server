@@ -17,13 +17,14 @@
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">Customers</h1>
-    </div>
-    <p>
+        <button class="btn btn-outline-success" data-toggle="modal"
+                data-target="#export-data">Export Data
+        </button>
         <a class="btn btn-outline-success" href="{% url 'create-customer' %}">
             <span data-feather="plus"></span>
             New Customer
         </a>
-    </p>
+    </div>
     {% include 'includes/filter_by.html' %}
     <table id="customers" class="table table-striped" style="width:100%">
         <thead>
@@ -99,6 +100,26 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="export-data" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Export Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <a class="btn btn-outline-success btn-block" href="{% url 'export-customers' %}">Export Customer Data as CSV</a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 {% block scripts %}
     <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
