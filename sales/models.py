@@ -267,11 +267,24 @@ class CashReceiptParticular(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
                                                                           'price for each quantity')
     discount = models.DecimalField(max_digits=5, decimal_places=2,
-                                   help_text='% discount')
+                                   help_text='% discount', default=0)
     cash_receipt = models.ForeignKey(CashReceipt, to_field='number', on_delete=models.CASCADE)
+    total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
 
     def __str__(self):
         return str(self.cash_receipt)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        amount = self.qty * self.price
+        if self.discount:
+            total_discount = Decimal(amount) * (Decimal(self.discount) / 100)
+            self.total = amount - total_discount
+            return super(CashReceiptParticular, self).save(force_insert=False, force_update=False, using=None,
+                                                           update_fields=None)
+        self.total = amount
+        return super(CashReceiptParticular, self).save(force_insert=False, force_update=False, using=None,
+                                                       update_fields=None)
 
 
 class CashReceiptPayment(models.Model):
