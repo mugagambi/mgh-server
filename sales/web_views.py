@@ -132,7 +132,7 @@ class SalesFilterSet(FilterSet):
 @login_required()
 def sales_list(request):
     sale_list = models.Receipt.objects.select_related('customer',
-                                                      'served_by').filter(receiptpayment__isnull=False)
+                                                      'served_by').filter(receiptpayment__isnull=False).distinct()
     sale_filter = SalesFilterSet(request.GET, queryset=sale_list)
     sale_list = sale_filter.qs
     paginator = Paginator(sale_list, 50)
