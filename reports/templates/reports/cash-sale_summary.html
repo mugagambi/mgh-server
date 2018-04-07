@@ -24,14 +24,14 @@
                     {% for customer_receipt in customer_receipts %}
                         <tr>
                             <td>{{ customer_receipt.receipt__number }}</td>
-                            <td>{{ customer_receipt.total_amount }}</td>
+                            <td>{{ customer_receipt.total_amount | intcomma }}</td>
                         </tr>
                     {% endfor %}
 
                     </tbody>
                 </table>
                 <hr>
-                <p><b>Total</b>: Ksh. {{ customer_total_amount_cash }}</p>
+                <p><b>Total</b>: Ksh. {{ customer_total_amount_cash.total_amount | intcomma }}</p>
             </div>
             <div class="col-md-6">
                 <h6 class="text-center" data-toggle="tooltip" data-placement="top" title="Cash Sale Summary">Cash Sale
@@ -47,24 +47,26 @@
                     {% for cash_receipt in cash_receipts %}
                         <tr>
                             <td>{{ cash_receipt.cash_receipt__number }}</td>
-                            <td>{{ cash_receipt.total_amount }}</td>
+                            <td>{{ cash_receipt.total_amount | intcomma }}</td>
                         </tr>
                     {% endfor %}
 
                     </tbody>
                 </table>
                 <hr>
-                <p><b>Total: </b>Ksh. {{ cash_total_amount_cash }}</p>
+                <p><b>Total: </b>Ksh. {{ cash_total_amount_cash.total_amount | intcomma }}</p>
             </div>
         </div>
         <hr/>
-        <p><b>Total Cash Sale: </b> Ksh. {{ total_cash_summary }}</p>
+        <p><b>Total Cash Sale: </b> Ksh. {{ total_cash_summary | intcomma }}</p>
         {% if orders.has_other_pages %}
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
                     {% if orders.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
+
+
 
 
 
@@ -178,6 +180,8 @@
 
 
 
+
+
                                     {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                             </li>
                         {% endif %}
@@ -185,6 +189,8 @@
                     {% if orders.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
+
+
 
 
 
