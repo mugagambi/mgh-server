@@ -32,7 +32,7 @@
                         <td>{{ particular.qty }}</td>
                         <td>{{ particular.price | intcomma }}</td>
                         <td>{{ particular.discount }}</td>
-                        <td>{{ particular.total }}</td>
+                        <td>{{ particular.total | intcomma }}</td>
                         <td>Ordered</td>
                     </tr>
                 {% endfor %}
@@ -47,22 +47,21 @@
                     </tr>
                 {% endfor %}
 
-                </tbody>
             </table>
             <hr/>
             {% if not receipt.has_credit %}
                 <div class="float-right">
-                    <p><b>Total Qty: </b>{{ total_qty }}</p>
-                    <p><b>Total Amount: </b>Ksh. {{ total_amount }}</p>
-                    <p><b>Amount Payed: </b>Ksh. {{ total_payment.sum }}</p>
-                    <p><b>Balance: </b>Ksh. {{ balance }}</p>
+                    <p><b>Total Qty: </b>{{ total_qty | intcomma }}</p>
+                    <p><b>Total Amount: </b>Ksh. {{ total_amount | intcomma }}</p>
+                    <p><b>Amount Payed: </b>Ksh. {{ total_payment.sum  | intcomma}}</p>
+                    <p><b>Balance: </b>Ksh. {{ balance | intcomma }}</p>
                 </div>
             {% endif %}
             <div class="float-left">
                 <h6 class="text-center">Receipt Payments</h6>
                 {% for payment in payments %}
                     <p><b>Payment Type : </b>{{ payment.get_type_display }}</p>
-                    <p><b>Amount : </b>Ksh. {{ payment.amount }}</p>
+                    <p><b>Amount : </b>Ksh. {{ payment.amount | intcomma }}</p>
                     {% if payment.type == 1 %}
                         <p><b>Cheque Number : </b> {{ payment.check_number }}</p>
                     {% elif payment.type == 2 %}

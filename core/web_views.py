@@ -58,7 +58,7 @@ class ProductList(LoginRequiredMixin, ListView):
 
 @login_required()
 def create_product(request):
-    product_formset = modelformset_factory(models.Product, fields=('name',), max_num=10)
+    product_formset = modelformset_factory(models.Product, fields=('name', 'common_price'), max_num=10)
     if request.method == 'POST':
         formset = product_formset(request.POST)
         if formset.is_valid():
@@ -74,7 +74,7 @@ def create_product(request):
 
 class UpdateProduct(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = models.Product
-    fields = ['name']
+    fields = ['name', 'common_price']
     template_name = 'crud/update.html'
     success_url = reverse_lazy('products-list')
     success_message = 'Product updated successfully'

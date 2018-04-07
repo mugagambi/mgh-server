@@ -15,6 +15,7 @@
         <thead>
         <tr>
             <th>name</th>
+            <th>Common Price</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -22,6 +23,7 @@
         {% for product in object_list %}
             <tr>
                 <td>{{ product.name }}</td>
+                <td>Ksh. {{ product.common_price }}</td>
                 <td>
                     <a class="btn btn-outline-success btn-sm" href="{% url 'update-product' pk=product.id %}">Edit</a>
                     <a class="btn btn-outline-danger btn-sm" href="{% url 'delete-product' pk=product.id %}">Remove</a>
