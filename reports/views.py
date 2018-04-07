@@ -36,14 +36,14 @@ def cash_sale_summary_report(request, date_0, date_1):
     if customer_report.exists():
         customer_total_amount_cash = customer_report.aggregate(total_amount=Sum('amount'))
     else:
-        customer_total_amount_cash = 0
+        customer_total_amount_cash = {'total_amount': 0}
     customer_receipts = customer_report.values(
         'receipt__number').annotate(total_amount=Sum('amount'))
     cash_report = models.CashReceiptParticular.objects.filter(cash_receipt__date__range=(date_0, date_1))
     if cash_report.exists():
         cash_total_amount_cash = cash_report.aggregate(total_amount=Sum(F('qty') * F('price')))
     else:
-        cash_total_amount_cash = 0
+        cash_total_amount_cash = {'total_amount': 0}
     cash_receipts = cash_report.values('cash_receipt__number').annotate(total_amount=Sum(F('qty') * F('price')))
     total_cash_summary = customer_total_amount_cash['total_amount'] + customer_total_amount_cash['total_amount']
     args = {
