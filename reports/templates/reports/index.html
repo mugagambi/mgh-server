@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}
+    Reports dashboard
+{% endblock %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Reports</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    <a class="btn btn-outline-success" href="{% url 'sales-summary' %}">Sales Summary</a>
+{% endblock %}

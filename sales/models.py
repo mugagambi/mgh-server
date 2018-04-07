@@ -289,11 +289,8 @@ class CashReceiptParticular(models.Model):
 
 class CashReceiptPayment(models.Model):
     TYPES = (
-        (1, 'Cheque'),
-        (2, 'Mpesa'),
-        (3, 'Cash'),
-        (4, 'Credit'),
-        (5, 'Bank Transfer')
+        (1, 'Mpesa'),
+        (2, 'Cash')
     )
     cash_receipt = models.ForeignKey(CashReceipt, to_field='number', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12, decimal_places=2)

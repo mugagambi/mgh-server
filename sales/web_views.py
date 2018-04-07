@@ -206,7 +206,6 @@ def invoices_list(request):
         invoices = paginator.page(1)
     except EmptyPage:
         invoices = paginator.page(paginator.num_pages)
-    print(invoice_filter)
     args = {'paginator': paginator, 'filter': invoice_filter,
             'invoices': invoices, }
     return render(request, 'sales/sales/invoices.html', args)
