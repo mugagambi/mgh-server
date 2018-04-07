@@ -47,14 +47,14 @@
                     {% for cash_receipt in cash_receipts %}
                         <tr>
                             <td>{{ cash_receipt.cash_receipt__number }}</td>
-                            <td>{{ cash_receipt.total_amount | intcomma }}</td>
+                            <td>{{ cash_receipt.total_amount | floatformat:2 | intcomma }}</td>
                         </tr>
                     {% endfor %}
 
                     </tbody>
                 </table>
                 <hr>
-                <p><b>Total: </b>Ksh. {{ cash_total_amount_cash.total_amount | intcomma }}</p>
+                <p><b>Total: </b>Ksh. {{ cash_total_amount_cash.total_amount | floatformat:2 | intcomma }}</p>
             </div>
         </div>
         <hr/>
@@ -65,6 +65,8 @@
                     {% if orders.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
+
+
 
 
 
@@ -182,6 +184,8 @@
 
 
 
+
+
                                     {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                             </li>
                         {% endif %}
@@ -189,6 +193,8 @@
                     {% if orders.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
+
+
 
 
 
