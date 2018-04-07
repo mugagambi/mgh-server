@@ -22,8 +22,10 @@
                     </thead>
                     <tbody>
                     {% for customer_receipt in customer_receipts %}
-                        <td>{{ customer_receipt.receipt__number }}</td>
-                        <td>{{ customer_receipt.total_amount }}</td>
+                        <tr>
+                            <td>{{ customer_receipt.receipt__number }}</td>
+                            <td>{{ customer_receipt.total_amount }}</td>
+                        </tr>
                     {% endfor %}
 
                     </tbody>
@@ -43,8 +45,10 @@
                     </thead>
                     <tbody>
                     {% for cash_receipt in cash_receipts %}
-                        <td>{{ cash_receipt.cash_receipt__number }}</td>
-                        <td>{{ cash_receipt.total_amount }}</td>
+                        <tr>
+                            <td>{{ cash_receipt.cash_receipt__number }}</td>
+                            <td>{{ cash_receipt.total_amount }}</td>
+                        </tr>
                     {% endfor %}
 
                     </tbody>
@@ -61,6 +65,8 @@
                     {% if orders.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
+
+
 
 
 
@@ -170,6 +176,8 @@
 
 
 
+
+
                                     {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                             </li>
                         {% endif %}
@@ -177,6 +185,8 @@
                     {% if orders.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
+
+
 
 
 
