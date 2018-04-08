@@ -49,7 +49,7 @@
                 <td>{{ customer.region }}</td>
                 <td>
                     <a class="btn btn-outline-success btn-sm mb-1"
-                       href="{% url 'add-prices' pk=customer.number %}">prices</a>
+                       href="{% url 'customer_prices' pk=customer.number %}">prices</a>
                     <a class="btn btn-outline-success btn-sm mb-1"
                        href="{% url 'add-discounts' pk=customer.number %}">discounts</a>
                     <button type="button" class="btn btn-outline-success btn-sm mb-1"

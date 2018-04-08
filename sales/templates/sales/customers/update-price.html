@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'customers' %}">Customers</a></li>
+            <li class="breadcrumb-item"><a
+                    href="{% url 'update-customer' pk=customer.number %}">{{ customer.shop_name }}</a></li>
+            <li class="breadcrumb-item"><a
+                    href="{% url 'customer_prices' pk=customer.number %}">{{ customer.shop_name }} prices</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                update {{ customer.shop_name }}, {{ price.product.name }} negotiated price
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">update {{ customer.shop_name }}, {{ price.product.name }} negotiated price</h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% include 'includes/form_include.html' with form=form %}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

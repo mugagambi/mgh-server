@@ -62,8 +62,9 @@ class CustomerPrice(models.Model):
                                  help_text='search by customer no. , shop name or nick name',
                                  on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
-                                                                          'price for each quantity')
+                                                                          ' price for each quantity')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search by product name')
+    negotiated_price = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

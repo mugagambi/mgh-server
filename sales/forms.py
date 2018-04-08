@@ -34,3 +34,9 @@ class ProductSelectionForm(forms.Form):
 class PlaceOrderModal(forms.Form):
     date_of_delivery = forms.DateField(label='Date Of Delivery')
     customer_number = forms.CharField(widget=forms.HiddenInput())
+
+
+class CustomerPriceForm(forms.ModelForm):
+    class Meta:
+        model = models.CustomerPrice
+        fields = ('price',)

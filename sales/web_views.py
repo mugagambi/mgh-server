@@ -17,10 +17,12 @@ from django_filters import FilterSet
 from django_filters.views import FilterView
 from django_select2.forms import Select2Widget
 
+from core.models import Product
 from sales import forms
 from sales import models
 from system_settings.models import Settings
 from utils import generate_unique_id
+from django.db import transaction
 
 
 class OrdersFilter(FilterSet):
@@ -212,6 +214,7 @@ def invoices_list(request):
 
 
 @login_required()
+@transaction.atomic
 def create_customer(request):
     if request.method == 'POST':
         form = forms.CustomerForm(request.POST)
@@ -220,6 +223,10 @@ def create_customer(request):
             customer.number = generate_unique_id(request.user.id)
             customer.added_by = request.user
             customer.save()
+            products = Product.objects.all()
+            customer_prices = [models.CustomerPrice(product=product, price=product.common_price, customer=customer) for
+                               product in products]
+            models.CustomerPrice.objects.bulk_create(customer_prices)
             messages.success(request, 'Customer added successfully')
             return redirect('customers')
     else:
@@ -246,29 +253,29 @@ class UpdateCustomer(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 
 
 @login_required()
-def add_prices(request, pk):
-    prices_formset = modelformset_factory(models.CustomerPrice, fields=('product', 'price'),
-                                          widgets={'product': Select2Widget}, extra=5, min_num=1,
-                                          can_delete=True)
-    customer = models.Customer.objects.get(pk=pk)
+def customer_prices(request, pk):
+    customer = get_object_or_404(models.Customer, pk=pk)
+    prices = models.CustomerPrice.objects.select_related('product').filter(customer=customer)
+    return render(request, 'sales/customers/prices.html', {'prices': prices, 'customer': customer})
+
+
+@login_required()
+def update_price(request, customer, pk):
+    customer = get_object_or_404(models.Customer, pk=customer)
+    price = models.CustomerPrice.objects.get(pk=pk)
     if request.method == 'POST':
-        formset = prices_formset(request.POST)
-        if formset.is_valid():
-            prices = formset.save(commit=False)
-            for price in prices:
-                price.customer = customer
-                price.save()
-            for obj in formset.deleted_objects:
-                obj.delete()
-            messages.success(request, 'price added successfully!')
-            return redirect(reverse_lazy('customers'))
+        form = forms.CustomerPriceForm(request.POST, instance=price)
+        if form.is_valid():
+            price = form.save(commit=False)
+            price.negotiated_price = True
+            price.save()
+            return redirect('customer_prices', pk=customer.number)
     else:
-        formset = prices_formset(
-            queryset=models.CustomerPrice.objects.select_related('product').filter(customer=pk))
-    return render(request, 'crud/formset-create.html', {'formset': formset,
-                                                        "customer": customer,
-                                                        'create_name': customer.shop_name + ' Prices',
-                                                        'create_sub_name': 'Price'})
+        form = forms.CustomerPriceForm(initial={'price': price.price})
+    return render(request, 'sales/customers/update-price.html', {
+        'customer': customer,
+        'price': price,
+        'form': form})
 
 
 @login_required()

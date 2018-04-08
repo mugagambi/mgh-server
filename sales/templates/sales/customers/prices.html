@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+{% endblock %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'customers' %}">Customers</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'update-customer' pk=customer.number %}">
+                {{ customer.shop_name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Prices</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">{{ customer.shop_name }} Prices</h1>
+    </div>
+    <table id="customers" class="table table-striped" style="width:100%">
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Type</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for price in prices %}
+            <tr>
+                <td>{{ price.product }}</td>
+                <td>{{ price.price }}</td>
+                <td>{% if price.negotiated_price %}
+                    Negotiated Price{% else %}
+                    Common Price
+                {% endif %}
+                </td>
+                <td>{{ price.updated_at }}</td>
+                <td>
+                    <a class="btn btn-outline-success btn-sm mb-1"
+                       href="{% url 'update_customer_price' customer=customer.number  pk=price.id %}">update negotiated
+                        price</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Type</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#customers').DataTable({
+                'paging': true,
+                'lengthChange': true,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': true,
+                "columnDefs": [{
+                    "targets": 4,
+                    "orderable": false,
+                    "searchable": false
+                }]
+            });
+        });
+    </script>
+{% endblock %}
