@@ -150,8 +150,9 @@ class CreditSettlementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.CreditSettlement
-        fields = ('number', 'customer', 'amount', 'check_number', 'transaction_id', 'mobile_number', 'transfer_code',
-                  'date', 'recorded_by', 'updated_at')
+        fields = (
+            'number', 'customer', 'type', 'amount', 'check_number', 'transaction_id', 'mobile_number', 'transfer_code',
+            'date', 'recorded_by', 'updated_at')
 
 
 class BBFSerializer(serializers.ModelSerializer):

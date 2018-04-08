@@ -332,9 +332,17 @@ class CreditSettlement(models.Model):
 
 
 class BBF(models.Model):
-    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE,
-                                help_text='search by receipt no.')
+    BFF_TYPE = (
+        ('p', 'Payment'),
+        ('r', 'Returns Credit Note'),
+        ('c', 'Credit Settlement Excess'),
+        ('s', 'Pre System')
+    )
+    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.SET_NULL,
+                                help_text='search by receipt no.', null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
+    bbf_type = models.CharField(max_length=1, choices=BFF_TYPE)
+    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return 'balance ' + str(self.receipt)

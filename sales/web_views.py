@@ -197,7 +197,7 @@ def receipt_detail(request, pk):
 def invoices_list(request):
     invoice_list = models.Receipt.objects.select_related('customer',
                                                          'served_by').filter(receiptpayment__isnull=False,
-                                                                             receiptpayment__type=4)
+                                                                             receiptpayment__type=4).distinct()
     invoice_filter = SalesFilterSet(request.GET, queryset=invoice_list)
     invoice_list = invoice_filter.qs
     paginator = Paginator(invoice_list, 50)
@@ -480,3 +480,18 @@ def order_distribution_list(request):
                                                                          'order_products': order_products,
                                                                          'formset': formset
                                                                          })
+
+
+@login_required()
+def bbf_accounts(request):
+    customer_balances = models.BBF.objects.values('customer__shop_name', 'customer__number').annotate(
+        balance=Sum('amount')).order_by('amount')
+    paginator = Paginator(customer_balances, 50)
+    page = request.GET.get('page', 1)
+    try:
+        balances = paginator.page(page)
+    except PageNotAnInteger:
+        balances = paginator.page(1)
+    except EmptyPage:
+        balances = paginator.page(paginator.num_pages)
+    return render(request, 'sales/sales/bbfs.html', {'balances': balances})

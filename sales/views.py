@@ -331,6 +331,6 @@ def distributed_order_product(request, date, center):
 
 @api_view(['GET'])
 def bbf_account_balance_list(request):
-    Balance = models.BBF.objects.values('receipt__customer').annotate(balance=Sum('amount'))
-    serializer = serializers.BbfAccountSerializer(Balance, many=True)
+    balance = models.BBF.objects.values('customer').annotate(balance=Sum('amount'))
+    serializer = serializers.BbfAccountSerializer(balance, many=True)
     return Response(serializer.data)

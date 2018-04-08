@@ -5,27 +5,27 @@
     {% include 'includes/filter_css.html' %}
 {% endblock %}
 {% block content %}
-    {% include 'includes/nav.html' %}
-    <h4 class="text-center">Invoices</h4>
+    {% include 'includes/order-nav.html' %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2"> BBF Accounts</h1>
+    </div>
     {% include 'includes/filter_by.html' %}
     <table id="customers" class="table table-striped" style="width:100%">
         <thead class="thead-dark">
         <tr>
-            <th>Invoice No.</th>
-            <th>Shop Name</th>
-            <th>Date</th>
+            <th>Customer</th>
+            <th>Balance</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        {% for invoice in invoices %}
+        {% for balance in balances %}
             <tr>
-                <td>{{ invoice.number }}</td>
-                <td>{{ invoice.customer.shop_name }}</td>
-                <td>{{ invoice.date }}</td>
+                <td>{{ balance.customer__shop_name }}</td>
+                <td>{{ balance.balance | intcomma }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm" href="">view
-                        invoice</a>
+                    <a class="btn btn-outline-success btn-sm"
+                       href="#">Details</a>
                 </td>
                 {% empty %}
                 <td class="text-center"><b>No data available in table</b></td>
@@ -33,20 +33,14 @@
         {% endfor %}
         </tbody>
     </table>
-    {% if invoices.has_other_pages %}
+    {% if balances.has_other_pages %}
         <nav aria-label="Page navigation example">
             <ul class="pagination">
-                {% if invoices.has_previous %}
+                {% if balances.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
 
-
-
-
-
-
-
-                                {{ invoices.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                {{ balances.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                            aria-label="Previous">
                             <span aria-hidden="true">Previous</span>
                             <span class="sr-only">Previous</span>
@@ -60,28 +54,25 @@
                         <span class="sr-only">Previous</span>
                     </a></li>
                 {% endif %}
-                {% for i in invoices.paginator.page_range %}
-                    {% if invoices.number == i %}
+                {% for i in balances.paginator.page_range %}
+                    {% if balances.number == i %}
                         <li class="page-item active"><a class="page-link" disabled>{{ i }} <span class="sr-only">(current)</span></a>
                         </li>
                     {% else %}
                         <li class="page-item"><a class="page-link" href="?page=
 
 
-
-
-
-
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
                 {% endfor %}
-                {% if invoices.has_next %}
+                {% if balances.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
 
 
-                                {{ invoices.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+
+                                {{ balances.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                            aria-label="Next">
                             <span aria-hidden="true">Next</span>
                             <span class="sr-only">Next</span>
