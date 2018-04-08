@@ -495,3 +495,40 @@ def bbf_accounts(request):
     except EmptyPage:
         balances = paginator.page(paginator.num_pages)
     return render(request, 'sales/sales/bbfs.html', {'balances': balances})
+
+
+@login_required()
+def add_bbf(request, pk):
+    customer = get_object_or_404(models.Customer, pk=pk)
+    if request.method == 'POST':
+        form = forms.BbfForm(request.POST)
+        if form.is_valid():
+            bbf = form.save(commit=False)
+            bbf.customer = customer
+            bbf.bbf_type = 's'
+            bbf.save()
+            messages.success(request,
+                             '%s existing bbf added.You can view the customer bbf by going to '
+                             ' sales and then BBF accounts tab' % customer.shop_name)
+            return redirect('customers')
+    else:
+        form = forms.BbfForm()
+    return render(request, 'sales/customers/add-bbf.html', {'form': form, 'customer': customer})
+
+
+@login_required()
+def customer_bbfs(request, customer):
+    customer = get_object_or_404(models.Customer, pk=customer)
+    bbfs = models.BBF.objects.filter(customer=customer)
+    balance = bbfs.aggregate(total=Sum('amount'))
+    paginator = Paginator(bbfs, 50)
+    page = request.GET.get('page', 1)
+    try:
+        bbfs = paginator.page(page)
+    except PageNotAnInteger:
+        bbfs = paginator.page(1)
+    except EmptyPage:
+        bbfs = paginator.page(paginator.num_pages)
+    return render(request, 'sales/sales/bbf.html', {'bbfs': bbfs,
+                                                    'customer': customer,
+                                                    'balance': balance})

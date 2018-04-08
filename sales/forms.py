@@ -40,3 +40,9 @@ class CustomerPriceForm(forms.ModelForm):
     class Meta:
         model = models.CustomerPrice
         fields = ('price',)
+
+
+class BbfForm(forms.ModelForm):
+    class Meta:
+        model = models.BBF
+        fields = ('amount',)

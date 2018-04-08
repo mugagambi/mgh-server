@@ -58,6 +58,9 @@
                             data-customer="{{ customer.number }}">place order
                     </button>
                     <a class="btn btn-outline-success btn-sm mb-1"
+                       href="{% url 'add-customer-bff' pk=customer.number %}" data-toggle="tooltip" data-placement="top"
+                       title="add {{ customer.shop_name }} existing bbf">Add Bbf</a>
+                    <a class="btn btn-outline-success btn-sm mb-1"
                        href="{% url 'update-customer' pk=customer.number %}">Edit</a>
                     <a class="btn btn-outline-danger btn-sm mb-1"
                        href="{% url 'delete-customer' pk=customer.number %}">Remove</a>

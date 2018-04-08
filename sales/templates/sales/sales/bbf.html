@@ -8,40 +8,46 @@
     {% include 'includes/nav.html' %}
     <hr/>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2"> BBF Accounts</h1>
+        <h1 class="h2">{{ customer.shop_name }} BBF amounts</h1>
+        <a href="{% url 'add-customer-bff' pk=customer.number %}"
+           class="btn btn-outline-success">add {{ customer.shop_name }} previous bbf</a>
     </div>
-    {% include 'includes/filter_by.html' %}
     <table id="customers" class="table table-striped" style="width:100%">
         <thead class="thead-dark">
         <tr>
             <th>Customer</th>
-            <th>Balance</th>
-            <th>Actions</th>
+            <th>Amount</th>
+            <th>Receipt</th>
+            <th>BBF Type</th>
         </tr>
         </thead>
         <tbody>
-        {% for balance in balances %}
+        {% for bbf in bbfs %}
             <tr>
-                <td>{{ balance.customer__shop_name }}</td>
-                <td>{{ balance.balance | intcomma }}</td>
-                <td>
-                    <a class="btn btn-outline-success btn-sm"
-                       href="{% url 'customer-bbfs' customer=balance.customer__number %}" data-toggle="tooltip"
-                       data-placement="top"
-                       title="View all {{ balance.customer__shop_name }} the bbf amounts">Details</a>
-                </td>
+                <td><a href="{% url 'update-customer' pk=customer.number %}"> {{ bbf.customer.shop_name }}</a></td>
+                <td>{{ bbf.amount | intcomma }}</td>
+                {% if bbf.receipt %}
+                    <td><a href="{% url 'sale-receipt' pk=bbf.receipt.number %}">{{ bbf.receipt.number }}</a></td>
+                {% else %}
+                    <td>No Receipt</td>
+                {% endif %}
+                <td>{{ bbf.get_bbf_type_display }}</td>
                 {% empty %}
                 <td class="text-center"><b>No data available in table</b></td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    <hr/>
+    <p><b>{{ customer.shop_name }} BBF Account Balance: </b> Ksh. {{ balance.total }}</p>
     {% if balances.has_other_pages %}
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 {% if balances.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
@@ -75,6 +81,8 @@
 
 
 
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -82,6 +90,8 @@
                 {% if balances.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 

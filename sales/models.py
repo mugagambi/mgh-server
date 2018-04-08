@@ -340,7 +340,10 @@ class BBF(models.Model):
     )
     receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.SET_NULL,
                                 help_text='search by receipt no.', null=True)
-    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    amount = models.DecimalField(max_digits=12, decimal_places=2,
+                                 help_text='(-) are amounts the customer owes Meru Greens'
+                                           ' and (+) are amounts that Meru Greens owes the'
+                                           'customer')
     bbf_type = models.CharField(max_length=1, choices=BFF_TYPE)
     customer = models.ForeignKey(Customer, to_field='number', on_delete=models.SET_NULL, null=True)
 
