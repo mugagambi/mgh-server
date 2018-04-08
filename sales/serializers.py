@@ -143,14 +143,15 @@ class CashReceiptPaymentSerializer(serializers.ModelSerializer):
 
 
 class CreditSettlementSerializer(serializers.ModelSerializer):
-    served_by = serializers.PrimaryKeyRelatedField(
+    recorded_by = serializers.PrimaryKeyRelatedField(
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
 
     class Meta:
         model = models.CreditSettlement
-        fields = ('number', 'receipt', 'amount', 'date', 'served_by')
+        fields = ('number', 'customer', 'amount', 'check_number', 'transaction_id', 'mobile_number', 'transfer_code',
+                  'date', 'recorded_by', 'updated_at')
 
 
 class BBFSerializer(serializers.ModelSerializer):

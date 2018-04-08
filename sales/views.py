@@ -286,20 +286,10 @@ class CashReceiptPaymentViewSet(viewsets.ModelViewSet):
         return super(CashReceiptPaymentViewSet, self).get_serializer(*args, **kwargs)
 
 
-class CreditSettlementFilterSet(django_filters.rest_framework.FilterSet):
-    date_between = django_filters.DateTimeFromToRangeFilter(name='date',
-                                                            label='Date (Between)')
-
-    class Meta:
-        model = models.CreditSettlement
-        fields = ('receipt', 'served_by', 'date', 'date_between')
-
-
 class CreditSettlementViewSet(viewsets.ModelViewSet):
     queryset = models.CreditSettlement.objects.all()
     serializer_class = serializers.CreditSettlementSerializer
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_class = CreditSettlementFilterSet
+    filter_backends = (filters.OrderingFilter,)
     ordering_fields = ('date', 'amount')
 
 

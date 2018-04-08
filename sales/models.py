@@ -309,11 +309,23 @@ class CashReceiptPayment(models.Model):
 
 
 class CreditSettlement(models.Model):
+    TYPES = (
+        (1, 'Cheque'),
+        (2, 'Mpesa'),
+        (3, 'Cash'),
+        (4, 'Bank Transfer')
+    )
     number = models.CharField(unique=True, max_length=10, primary_key=True)
-    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE, help_text='search by receipt no.')
+    type = models.PositiveSmallIntegerField(choices=TYPES)
+    customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE, help_text='search by customer')
     amount = models.DecimalField(max_digits=12, decimal_places=2)
+    check_number = models.CharField(max_length=50, blank=True)
+    transaction_id = models.CharField(max_length=15, blank=True)
+    mobile_number = models.CharField(max_length=15, blank=True)
+    transfer_code = models.CharField(max_length=50, blank=True)
     date = models.DateTimeField(default=now)
-    served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    recorded_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return 'credit settlement no. ' + str(self.number)

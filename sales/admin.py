@@ -363,30 +363,6 @@ class ReceiptNumberFilter(NumberFilter):
     title = 'Receipt Number'
 
 
-class CreditSettlementAdmin(admin.ModelAdmin):
-    list_per_page = 50
-    list_display = ('get_receipt_no', 'amount', 'served_by', 'date')
-    exclude = ('served_by',)
-    date_hierarchy = 'date'
-    list_filter = (ReceiptNumberFilter, 'date', 'served_by')
-    autocomplete_fields = ('receipt',)
-    list_select_related = True
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "receipt":
-            kwargs["queryset"] = models.Receipt.objects.filter(receiptpayment__type=4)
-        return super(CreditSettlementAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-    def save_model(self, request, obj, form, change):
-        obj.served_by = request.user
-        generate_unique_number(obj, CreditSettlementAdmin, self, request, form, change)
-        super(CreditSettlementAdmin, self).save_model(request, obj, form, change)
-
-    def get_receipt_no(self, obj):
-        return obj.receipt.id
-
-    get_receipt_no.short_description = 'Receipt No.'
-    get_receipt_no.admin_order_field = 'receipt__id'
 
 
 class ReturnAdmin(admin.ModelAdmin):
@@ -445,7 +421,7 @@ custom_admin_site.register(models.CustomerPrice, CustomerPricesAdmin)
 custom_admin_site.register(models.CustomerDiscount, CustomerDiscountsAdmin)
 custom_admin_site.register(models.Order, OrderAdmin)
 custom_admin_site.register(models.SalesCrate)
-custom_admin_site.register(models.CreditSettlement, CreditSettlementAdmin)
+custom_admin_site.register(models.CreditSettlement)
 custom_admin_site.register(models.Return)
 custom_admin_site.register(models.Receipt, SalesAdmin)
 custom_admin_site.register(models.ReceiptParticular)
