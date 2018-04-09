@@ -336,14 +336,6 @@ def place_order(request, pk, date_given):
                 return redirect(reverse_lazy('main-center'))
             orders = formset.save(commit=False)
             for order in orders:
-                if order.price.product != order.product:
-                    messages.error(request,
-                                   '%s price expected. Found %s price.Kindly correct the error on the form below' % (
-                                       order.product, order.price.product))
-                    return render(request, 'sales/customers/place-order.html', {'formset': formset,
-                                                                                "customer": customer,
-                                                                                'create_name': customer.shop_name + ' Orders',
-                                                                                'create_sub_name': 'item'})
                 main_order.save()
                 order.number = generate_unique_id(request.user.id)
                 order.order = main_order
