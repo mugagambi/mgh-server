@@ -336,9 +336,26 @@ def place_order(request, pk, date_given):
                 return redirect(reverse_lazy('main-center'))
             orders = formset.save(commit=False)
             for order in orders:
-                main_order.save()
                 order.number = generate_unique_id(request.user.id)
                 order.order = main_order
+                try:
+                    price = models.CustomerPrice.objects.get(product=order.product, customer=main_order.customer)
+                    order.price = price
+                except models.CustomerPrice.DoesNotExist:
+                    messages.error(request, '%s\'s price for %s not set.Go and set prices for that customer.' % (
+                        main_order.customer.shop_name, order.product))
+                    formset = orders_formset(
+                        request.POST)
+                    return render(request, 'sales/customers/place-order.html', {'formset': formset,
+                                                                                "customer": customer,
+                                                                                'create_name': customer.shop_name + ' Orders',
+                                                                                'create_sub_name': 'item',
+                                                                                'delivery': date_given})
+                discounts = models.CustomerDiscount.objects.filter(product=order.product,
+                                                                   customer=main_order.customer).first()
+                if discounts:
+                    order.discounts = discounts
+                main_order.save()
                 order.save()
                 distribution_point = models.OrderDistributionPoint()
                 distribution_point.order_product = order
@@ -347,7 +364,8 @@ def place_order(request, pk, date_given):
                 distribution_point.save()
             for obj in formset.deleted_objects:
                 obj.delete()
-            messages.success(request, 'orders added successfully!')
+            messages.success(request,
+                             'orders added successfully!To view the order, go to the orders link on the sidebar')
             return redirect(reverse_lazy('customers'))
     else:
         formset = orders_formset(
@@ -375,11 +393,30 @@ def update_order(request, pk):
         if formset.is_valid():
             items = formset.save(commit=False)
             for item in items:
+                try:
+                    price = models.CustomerPrice.objects.get(product=item.product, customer=order.customer)
+                    item.price = price
+                except models.CustomerPrice.DoesNotExist:
+                    messages.error(request, '%s\'s price for %s not set.Go and set prices for that customer.' % (
+                        order.customer.shop_name, order.product))
+                    formset = orders_formset(
+                        request.POST)
+                    return render(request, 'crud/formset-create.html', {'formset': formset,
+                                                                        'create_name': 'Update order '
+                                                                                       + order.number + ' for '
+                                                                                       + order.customer.shop_name
+                                                                                       + ' to be delivered on '
+                                                                                       + str(order.date_delivery),
+                                                                        'create_sub_name': 'order'})
+                discounts = models.CustomerDiscount.objects.filter(product=item.product,
+                                                                   customer=order.customer).first()
+                if discounts:
+                    item.discounts = discounts
                 item.order = order
                 item.save()
             for obj in formset.deleted_objects:
                 obj.delete()
-            messages.success(request, 'orders updated successfully!')
+            messages.success(request, 'order for %s updated successfully!' % order.customer.shop_name)
             return redirect(reverse_lazy('orders'))
     else:
         formset = orders_formset(
