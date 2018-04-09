@@ -55,7 +55,7 @@ def cash_sale_summary_report(request, date_0, date_1):
         cash_total_amount_cash = {'total_amount': 0}
     cash_receipts = cash_report.values('cash_receipt__number').annotate(total_amount=Sum(F('qty') * F('price')))
     cash_page = request.GET.get('cash_page', 1)
-    paginator = Paginator(cash_receipts, 1)
+    paginator = Paginator(cash_receipts, 5)
     try:
         cash_receipts = paginator.page(cash_page)
     except PageNotAnInteger:

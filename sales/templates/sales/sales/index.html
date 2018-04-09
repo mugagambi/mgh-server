@@ -45,12 +45,15 @@
         {% endfor %}
         </tbody>
     </table>
+    <hr/>
+    <p><b>Showing {{ sales.start_index }} to {{ sales.end_index }} of {{ sales.paginator.count }} customer sales</b></p>
     {% if sales.has_other_pages %}
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 {% if sales.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
@@ -80,6 +83,7 @@
 
 
 
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -87,6 +91,7 @@
                 {% if sales.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
