@@ -158,7 +158,7 @@ class CreditSettlementSerializer(serializers.ModelSerializer):
 class BBFSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.BBF
-        fields = ('receipt', 'amount')
+        fields = ('receipt', 'amount', 'customer')
 
 
 class ReturnsOrRejectsSerializer(serializers.ModelSerializer):

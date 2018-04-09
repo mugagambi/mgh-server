@@ -297,6 +297,11 @@ class BBFView(CreateAPIView):
     queryset = models.BBF.objects.all()
     serializer_class = serializers.BBFSerializer
 
+    def perform_create(self, serializer):
+        bbf = serializer.save()
+        bbf.bbf_type = 'p'
+        bbf.save()
+
 
 class ReturnsRejectsFilterSet(django_filters.rest_framework.FilterSet):
     date_between = django_filters.DateTimeFromToRangeFilter(name='date',
