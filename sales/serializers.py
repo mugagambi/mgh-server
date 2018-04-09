@@ -169,5 +169,5 @@ class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
 
 
 class BbfAccountSerializer(serializers.Serializer):
-    receipt__customer = serializers.CharField()
+    customer = serializers.CharField()
     balance = serializers.DecimalField(max_digits=12, decimal_places=2)
