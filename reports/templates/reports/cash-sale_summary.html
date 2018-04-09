@@ -288,5 +288,5 @@
         </div>
     </div>
     <hr/>
-    <p><b>Total Cash Sale: </b> Ksh. {{ total_cash_summary | intcomma }}</p>
+    <p><b>Total Cash Sale: </b> Ksh. {{ total_cash_summary | floatformat:2 | intcomma }}</p>
 {% endblock %}
