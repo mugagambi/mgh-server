@@ -62,7 +62,7 @@ def cash_sale_summary_report(request, date_0, date_1):
         cash_receipts = paginator.page(1)
     except EmptyPage:
         cash_receipts = paginator.page(paginator.num_pages)
-    total_cash_summary = customer_total_amount_cash['total_amount'] + customer_total_amount_cash['total_amount']
+    total_cash_summary = customer_total_amount_cash['total_amount'] + cash_total_amount_cash['total_amount']
     args = {
         'customer_total_amount_cash': customer_total_amount_cash,
         'customer_receipts': customer_receipts,
