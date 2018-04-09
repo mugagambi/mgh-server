@@ -33,7 +33,7 @@
                        href="{% url 'order_detail' pk=order.number %}">Details</a>
                     {% if order.date_delivery > today %}
                         <a class="btn btn-outline-success btn-sm"
-                           href="{% url 'update-order' pk=order.number %}">Update</a>
+                           href="{% url 'more-items' order=order.number %}">Add More Items</a>
                     {% endif %}
                     <a class="btn btn-outline-danger btn-sm"
                        href="{% url 'delete-order' pk=order.number %}">Remove</a>
@@ -52,6 +52,7 @@
                 {% if orders.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
@@ -83,6 +84,7 @@
 
 
 
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -90,6 +92,7 @@
                 {% if orders.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 

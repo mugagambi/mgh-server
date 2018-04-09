@@ -23,7 +23,7 @@ urlpatterns = [
     path('customers/<str:pk>/place-order/<str:date_given>/', web_views.place_order, name='place-order'),
     path('orders/', web_views.order_list, name='orders'),
     path('orders/distribute/', web_views.order_distribution_list, name='orders-distribute'),
-    path('orders/<str:pk>/update/', web_views.update_order, name='update-order'),
+    path('orders/<str:order>/more/', web_views.add_more_products, name='more-items'),
     path('orders/<str:pk>/delete/', web_views.DeleteOrder.as_view(), name='delete-order'),
     path('orders/<str:pk>/', web_views.order_detail, name='order_detail'),
 ]

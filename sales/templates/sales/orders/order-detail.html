@@ -15,6 +15,10 @@
     <h5 class="text-center">Items</h5>
     <div class="row">
         <div class="col-md-8 offset-md-2">
+            {% if order.date_delivery > today %}
+                <a class="btn btn-outline-success mb-2" href="{% url 'more-items' order=order.number %}">Add More
+                    Items</a>
+            {% endif %}
             <table class="table">
                 <thead class="thead-dark">
                 <tr>
@@ -22,6 +26,7 @@
                     <th scope="col">Qty</th>
                     <th scope="col">@ (Ksh)</th>
                     <th scope="col">Discount (%)</th>
+                    <th scope="col">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -31,6 +36,12 @@
                         <td>{{ item.qty }}</td>
                         <td>{{ item.price.price }}</td>
                         <td>{{ item.discount.discount }}</td>
+                        {% if order.date_delivery > today %}
+                            <td><a href="" class="btn btn-outline-success mb-1">update item</a>
+                                <a href="" class="btn btn-outline-danger mb-1">remove item</a></td>
+                        {% else %}
+                            <td>No actions at this time</td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>

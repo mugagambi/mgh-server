@@ -6,23 +6,25 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db import transaction
 from django.db.models import Sum
 from django.forms import modelformset_factory
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.utils.html import format_html
 from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, DeleteView
 from django_filters import FilterSet
 from django_filters.views import FilterView
 from django_select2.forms import Select2Widget
+from django.forms.widgets import HiddenInput
 
 from core.models import Product
 from sales import forms
 from sales import models
 from system_settings.models import Settings
 from utils import generate_unique_id
-from django.db import transaction
 
 
 class OrdersFilter(FilterSet):
@@ -314,7 +316,7 @@ def place_order(request, pk, date_given):
     if models.Order.objects.filter(customer=customer, date_delivery__exact=date_given).exists():
         messages.info(request, 'Continue adding items to the order')
         order = models.Order.objects.filter(customer=customer, date_delivery__exact=date_given).first()
-        return redirect('update-order', pk=order.number)
+        return redirect('more-items', order=order.number)
     settings = Settings.objects.all().first()
     if not settings:
         Settings.objects.create()
@@ -342,8 +344,10 @@ def place_order(request, pk, date_given):
                     price = models.CustomerPrice.objects.get(product=order.product, customer=main_order.customer)
                     order.price = price
                 except models.CustomerPrice.DoesNotExist:
-                    messages.error(request, '%s\'s price for %s not set.Go and set prices for that customer.' % (
-                        main_order.customer.shop_name, order.product))
+                    messages.error(request, format_html(
+                        "{} price for {} not set.Go to this <a href='{}'>link</a> and set the price for the customer",
+                        main_order.customer.shop_name, order.product,
+                        reverse('customer_prices', kwargs={'pk': main_order.customer.number})))
                     formset = orders_formset(
                         request.POST)
                     return render(request, 'sales/customers/place-order.html', {'formset': formset,
@@ -364,8 +368,11 @@ def place_order(request, pk, date_given):
                 distribution_point.save()
             for obj in formset.deleted_objects:
                 obj.delete()
-            messages.success(request,
-                             'orders added successfully!To view the order, go to the orders link on the sidebar')
+            messages.success(request, format_html(
+                "order added successfully!To view the order, go to <a href='{}'>this</a> link,"
+                "or continue placing more orders.",
+                reverse('order_detail', kwargs={'pk': main_order.number})
+            ))
             return redirect(reverse_lazy('customers'))
     else:
         formset = orders_formset(
@@ -378,56 +385,61 @@ def place_order(request, pk, date_given):
 
 
 @login_required()
-def update_order(request, pk):
+def add_more_products(request, order):
+    order = get_object_or_404(models.Order, pk=order)
+    settings = Settings.objects.all().first()
+    if not settings:
+        Settings.objects.create()
     orders_formset = modelformset_factory(models.OrderProduct,
                                           fields=('product', 'qty'),
-                                          widgets={'product': Select2Widget}, extra=3,
-                                          can_delete=True,
-                                          min_num=1)
-    order = models.Order.objects.get(pk=pk)
-    if order.date_delivery < date.today():
-        messages.error(request, 'Error! You can\'t  update orders whose delivery dates have passed')
-        return redirect('orders')
+                                          widgets={'product': Select2Widget}, min_num=1,
+                                          extra=10,
+                                          can_delete=True)
     if request.method == 'POST':
         formset = orders_formset(request.POST)
         if formset.is_valid():
+            if not settings.main_distribution:
+                messages.error(request, 'You need to have a main center')
+                return redirect(reverse_lazy('main-center'))
             items = formset.save(commit=False)
             for item in items:
+                item.number = generate_unique_id(request.user.id)
+                item.order = order
                 try:
                     price = models.CustomerPrice.objects.get(product=item.product, customer=order.customer)
-                    item.price = price
+                    order.price = price
                 except models.CustomerPrice.DoesNotExist:
-                    messages.error(request, '%s\'s price for %s not set.Go and set prices for that customer.' % (
-                        order.customer.shop_name, order.product))
+                    messages.error(request, format_html(
+                        "{} price for {} not set.Go to this <a href='{}'>link</a> and set the price for the customer",
+                        order.customer.shop_name, item.product,
+                        reverse('customer_prices', kwargs={'pk': order.customer.number})))
                     formset = orders_formset(
                         request.POST)
-                    return render(request, 'crud/formset-create.html', {'formset': formset,
-                                                                        'create_name': 'Update order '
-                                                                                       + order.number + ' for '
-                                                                                       + order.customer.shop_name
-                                                                                       + ' to be delivered on '
-                                                                                       + str(order.date_delivery),
-                                                                        'create_sub_name': 'order'})
+                    return render(request, 'sales/orders/add-more-items.html', {'formset': formset,
+                                                                                'order': order})
                 discounts = models.CustomerDiscount.objects.filter(product=item.product,
                                                                    customer=order.customer).first()
                 if discounts:
-                    item.discounts = discounts
-                item.order = order
+                    order.discounts = discounts
                 item.save()
+                distribution_point = models.OrderDistributionPoint()
+                distribution_point.order_product = item
+                distribution_point.qty = item.qty
+                distribution_point.center = settings.main_distribution
+                distribution_point.save()
             for obj in formset.deleted_objects:
                 obj.delete()
-            messages.success(request, 'order for %s updated successfully!' % order.customer.shop_name)
-            return redirect(reverse_lazy('orders'))
+            messages.success(request, format_html(
+                "items added successfully!To view the order, go to <a href='{}'>this</a> link,"
+                "or continue placing more orders.",
+                reverse('order_detail', kwargs={'pk': order.number})
+            ))
+            return redirect(reverse_lazy('customers'))
     else:
         formset = orders_formset(
-            queryset=models.OrderProduct.objects.filter(order=order))
-    return render(request, 'crud/formset-create.html', {'formset': formset,
-                                                        'create_name': 'Update order '
-                                                                       + order.number + ' for '
-                                                                       + order.customer.shop_name
-                                                                       + ' to be delivered on '
-                                                                       + str(order.date_delivery),
-                                                        'create_sub_name': 'order'})
+            queryset=models.OrderProduct.objects.none())
+    return render(request, 'sales/orders/add-more-items.html', {'formset': formset,
+                                                                'order': order})
 
 
 class DeleteOrder(LoginRequiredMixin, DeleteView):
@@ -443,7 +455,7 @@ class DeleteOrder(LoginRequiredMixin, DeleteView):
 @login_required()
 def order_detail(request, pk):
     order = get_object_or_404(models.Order, pk=pk)
-    return render(request, 'sales/orders/order-detail.html', {'order': order})
+    return render(request, 'sales/orders/order-detail.html', {'order': order, 'today': date.today()})
 
 
 class CashSalesFilterSet(FilterSet):
