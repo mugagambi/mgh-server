@@ -252,7 +252,7 @@ class CashReceiptParticularViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CashReceiptParticularSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_fields = ('product', 'cash_receipt')
-    ordering_fields = ('qty', 'price', 'discount')
+    ordering_fields = ('qty', 'price')
 
     def get_serializer(self, *args, **kwargs):
         """ if an array is passed, set serializer to many """

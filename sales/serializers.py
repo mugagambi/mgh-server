@@ -131,7 +131,7 @@ class CashReceiptSerializer(serializers.ModelSerializer):
 class CashReceiptParticularSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CashReceiptParticular
-        fields = ('qty', 'product', 'price', 'discount', 'cash_receipt')
+        fields = ('qty', 'product', 'price', 'cash_receipt')
 
 
 class CashReceiptPaymentSerializer(serializers.ModelSerializer):
