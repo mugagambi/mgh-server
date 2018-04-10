@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load static %}
+{% block content %}
+    <h4 class="text-center"><u>Cash Receipt Number {{ receipt.number }}</u></h4>
+    <div class="row">
+        <div class="col-sm-8 offset-sm-4">
+            <p><b>Served By: </b>{{ receipt.served_by.username }}</p>
+            <p><b>Date: </b>{{ receipt.date }}</p>
+        </div>
+    </div>
+    <br/>
+    <h5 class="text-center">Cash Receipt Particulars</h5>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">@ (Ksh)</th>
+                    <th scope="col">Sub Total (Ksh)</th>
+                </tr>
+                </thead>
+                {% for particular in particulars %}
+                    <tr>
+                        <td>{{ particular.product.name }}</td>
+                        <td>{{ particular.qty }}</td>
+                        <td>{{ particular.price | intcomma }}</td>
+                        <td>{{ particular.total_sum | floatformat:2 | intcomma }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <hr/>
+            <div class="float-right">
+                <p><b>Total Qty: </b>{{ total_qty.sum | intcomma }}</p>
+                <p><b>Total Amount: </b>Ksh. {{ total_amount.total | floatformat:2 | intcomma }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

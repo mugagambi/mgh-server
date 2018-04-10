@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.forms import modelformset_factory
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
@@ -459,29 +459,42 @@ def order_detail(request, pk):
 
 
 class CashSalesFilterSet(FilterSet):
-    date = django_filters.DateFromToRangeFilter(name='receipt__date',
+    date = django_filters.DateFromToRangeFilter(name='date',
                                                 label='Date (Between)')
 
     class Meta:
-        model = models.CashReceiptParticular
+        model = models.CashReceipt
         fields = ('date',)
 
 
-class CashSalesList(LoginRequiredMixin, FilterView):
-    model = models.CashReceiptParticular
-    template_name = 'sales/sales/cash-sale.html'
-    filterset_class = CashSalesFilterSet
+@login_required()
+def cash_sales_list(request):
+    sales = models.CashReceipt.objects.all()
+    paginator = Paginator(sales, 50)
+    page = request.GET.get('page', 1)
+    try:
+        sales = paginator.page(page)
+    except PageNotAnInteger:
+        sales = paginator.page(1)
+    except EmptyPage:
+        sales = paginator.page(paginator.num_pages)
+    return render(request, 'sales/sales/cash-sale.html', {'sales': sales})
 
-    def get_queryset(self):
-        return models.CashReceiptParticular.objects.all().select_related('cash_receipt',
-                                                                         'product')
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        data = super(CashSalesList, self).get_context_data(object_list=None, **kwargs)
-        date_30_days_ago = datetime.now() - timedelta(days=30)
-        date_30_days_ago = date_30_days_ago.strftime("%Y-%m-%d")
-        data['date_30_days_ago'] = date_30_days_ago
-        return data
+@login_required()
+def cash_receipt(request, pk):
+    cash = models.CashReceipt.objects.get(pk=pk)
+    particulars = models.CashReceiptParticular.objects.filter(cash_receipt=cash).select_related('product').annotate(
+        total_sum=F('price') * F('qty')
+    )
+    total_qty = models.CashReceiptParticular.objects.aggregate(sum=Sum('qty'))
+    total_amount = models.CashReceiptParticular.objects.aggregate(total=Sum(F('qty') * F('price')))
+    return render(request, 'sales/sales/cash-receipt.html', {
+        'receipt': cash,
+        'particulars': particulars,
+        'total_qty': total_qty,
+        'total_amount': total_amount
+    })
 
 
 @login_required()

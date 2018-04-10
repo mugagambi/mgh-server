@@ -2,69 +2,125 @@
 {% load static %}
 {% load humanize %}
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
-    {% include 'includes/filter_css.html' %}
 {% endblock %}
 {% block content %}
     {% include 'includes/nav.html' %}
     <h4 class="text-center">Cash Sale</h4>
-    {% include 'includes/filter_by.html' %}
-    <table id="customers" class="table table-striped" style="width:100%">
-        <thead>
+    <table class="table table-striped table-responsive-md" style="width:100%">
+        <thead class="thead-dark">
         <tr>
-            <th>Receipt No.</th>
-            <th>Product</th>
-            <th>qty</th>
-            <th>@ (Ksh)</th>
+            <th>Number</th>
             <th>Date</th>
+            <th>Served By</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        {% for particular in filter.qs %}
+        {% for sale in sales %}
             <tr>
-                <td>{{ particular.cash_receipt.number }}</td>
-                <td>{{ particular.product.name }}</td>
-                <td>{{ particular.qty }}</td>
-                <td>{{ particular.price }}</td>
-                <th>{{ particular.cash_receipt.date }}</th>
+                <td>{{ sale.number }}</td>
+                <td>{{ sale.date }}</td>
+                <td>{{ sale.served_by.username }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm" href="">view receipt</a>
+                    <a class="btn btn-outline-success btn-sm" href="{% url 'cash-receipt' pk=sale.number %}">view cash
+                        receipt</a>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
-        <tr>
-            <th>Receipt No.</th>
-            <th>Product</th>
-            <th>qty</th>
-            <th>@ (Ksh)</th>
-            <th>Date</th>
-            <th>Actions</th>
-        </tr>
-        </tfoot>
     </table>
+    <hr>
+    <p><b>Showing {{ sales.start_index }} to {{ sales.end_index }} of {{ sales.paginator.count }} cash sales</b></p>
+    {% if sales.has_other_pages %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if sales.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
+
+
+                                {{ sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                           aria-label="Previous">
+                            <span aria-hidden="true">Previous</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link"
+                                                      disabled
+                                                      aria-label="Previous">
+                        <span aria-hidden="true">Previous</span>
+                        <span class="sr-only">Previous</span>
+                    </a></li>
+                {% endif %}
+                {% for i in sales.paginator.page_range %}
+                    {% if sales.number == i %}
+                        <li class="page-item active"><a class="page-link" disabled>{{ i }} <span class="sr-only">(current)</span></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
+
+                                {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if sales.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                {{ sales.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                           aria-label="Next">
+                            <span aria-hidden="true">Next</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" disabled aria-label="Next">
+                            <span aria-hidden="true">Next</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+    <div class="alert alert-info" role="alert">
+        <span data-feather="help-circle"> </span>
+        To view all the items in a certain cash sale receipt click on view cash receipt
+    </div>
 {% endblock %}
 {% block scripts %}
-    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>
-    <script>
-        $(document).ready(function () {
-            $('#customers').DataTable({
-                'paging': true,
-                'lengthChange': true,
-                'searching': true,
-                'ordering': true,
-                'info': true,
-                'autoWidth': true,
-                "columnDefs": [{
-                    "targets": 5,
-                    "orderable": false,
-                    "searchable": false
-                }]
-            });
-        });
-    </script>
-    {% include 'includes/filter_js.html' %}
 {% endblock %}

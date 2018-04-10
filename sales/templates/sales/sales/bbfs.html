@@ -37,7 +37,8 @@
         </tbody>
     </table>
     <hr/>
-    <p><b>Showing {{ balances.start_index }} to {{ balances.end_index }} of {{ balances.paginator.count }} bbf accounts</b>
+    <p><b>Showing {{ balances.start_index }} to {{ balances.end_index }} of {{ balances.paginator.count }} bbf
+        accounts</b>
     </p>
     {% if balances.has_other_pages %}
         <nav aria-label="Page navigation example">
@@ -45,6 +46,8 @@
                 {% if balances.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
@@ -80,6 +83,8 @@
 
 
 
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -87,6 +92,8 @@
                 {% if balances.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
@@ -113,6 +120,12 @@
             </ul>
         </nav>
     {% endif %}
+    <div class="alert alert-info" role="alert">
+        <span data-feather="help-circle"> </span>
+        bbf accounts show all the aggregate balance for each customer.
+        (-) means the customer owes Meru Greens and (+) means the Meru Greens owe the customer.
+        Click on details to view each account balance breakdown and view all the individual bbfs before aggregation
+    </div>
 {% endblock %}
 {% block scripts %}
     {% include 'includes/filter_js.html' %}
