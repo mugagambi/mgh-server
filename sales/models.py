@@ -18,7 +18,7 @@ class Region(models.Model):
 class Customer(models.Model):
     email = models.EmailField(null=True, blank=True)
     number = models.CharField(max_length=10, unique=True, primary_key=True)
-    shop_name = models.CharField(max_length=100)
+    shop_name = models.CharField(max_length=100, unique=True)
     nick_name = models.CharField(blank=True, max_length=100)
     location = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15, blank=True)
