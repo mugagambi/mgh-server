@@ -185,20 +185,6 @@ class ReceiptParticularsViewSet(viewsets.ModelViewSet):
         return super(ReceiptParticularsViewSet, self).get_serializer(*args, **kwargs)
 
 
-class OrderlessParticularsViewSet(viewsets.ModelViewSet):
-    queryset = models.OrderlessParticular.objects.all()
-    serializer_class = serializers.OrderLessParticularSerializer
-    filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('product', 'receipt')
-    ordering_fields = ('qty', 'price', 'discount')
-
-    def get_serializer(self, *args, **kwargs):
-        """ if an array is passed, set serializer to many """
-        if isinstance(kwargs.get('data', {}), list):
-            kwargs['many'] = True
-        return super(OrderlessParticularsViewSet, self).get_serializer(*args, **kwargs)
-
-
 class ReceiptPaymentsFilterSet(django_filters.rest_framework.FilterSet):
     date_to_pay_between = django_filters.DateFromToRangeFilter(name='date_to_pay',
                                                                label='Date to pay (Between)')
@@ -301,6 +287,9 @@ class BBFView(CreateAPIView):
         bbf = serializer.save()
         bbf.bbf_type = 'p'
         bbf.save()
+        account, created = models.BbfBalance.objects.get_or_create(customer=bbf.customer)
+        account.balance = account.balance + bbf.amount
+        account.save()
 
 
 class ReturnsRejectsFilterSet(django_filters.rest_framework.FilterSet):

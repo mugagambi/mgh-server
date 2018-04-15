@@ -19,6 +19,7 @@ from django_filters import FilterSet
 from django_filters.views import FilterView
 from django_select2.forms import Select2Widget
 from django.forms.widgets import HiddenInput
+from django.views.decorators.http import require_http_methods
 
 from core.models import Product
 from sales import forms
@@ -160,38 +161,31 @@ def receipt_detail(request, pk):
     except models.Receipt.DoesNotExist:
         raise Http404('Receipt not found')
     particulars = models.ReceiptParticular.objects.select_related('product').filter(receipt=receipt)
-    orderlessparticulars = models.OrderlessParticular.objects.select_related('product').filter(receipt=receipt)
     payments = models.ReceiptPayment.objects.filter(receipt=receipt)
     particulars_qty = particulars.aggregate(sum=Sum('qty'))
-    orderless_qty = orderlessparticulars.aggregate(sum=Sum('qty'))
-    if orderlessparticulars.exists() and particulars.exists():
-        total_qty = particulars_qty['sum'] + orderless_qty['sum']
-    elif orderlessparticulars.exists():
-        total_qty = orderless_qty['sum']
-    elif particulars.exists():
+    if particulars.exists():
         total_qty = particulars_qty['sum']
     else:
         total_qty = 0
     particulars_amount = particulars.aggregate(sum=Sum('total'))
-    orderless_amount = particulars.aggregate(sum=Sum('total'))
-    if orderlessparticulars.exists() and particulars.exists():
-        total_amount = particulars_amount['sum'] + orderless_amount['sum']
-    elif orderlessparticulars.exists():
-        total_amount = orderless_amount['sum']
-    elif particulars.exists():
+    if particulars.exists():
         total_amount = particulars_amount['sum']
     else:
         total_amount = 0
     total_payed_amount = payments.aggregate(sum=Sum('amount'))
-    balance = total_payed_amount['sum'] - total_amount
+    try:
+        bcf = models.BBF.objects.get(receipt=receipt)
+    except models.BBF.DoesNotExist:
+        bcf = {'amount': 0}
+    except models.BBF.MultipleObjectsReturned:
+        bcf = models.BBF.objects.filter(receipt=receipt).last()
     return render(request, 'sales/sales/receipt.html', {'receipt': receipt,
                                                         'particulars': particulars,
                                                         'total_qty': total_qty,
                                                         'total_amount': total_amount,
                                                         'payments': payments,
                                                         'total_payment': total_payed_amount,
-                                                        'balance': balance,
-                                                        'orderlessparticulars': orderlessparticulars
+                                                        'bcf': bcf
                                                         })
 
 
@@ -316,7 +310,7 @@ def place_order(request, pk, date_given):
     if models.Order.objects.filter(customer=customer, date_delivery__exact=date_given).exists():
         messages.info(request, 'Continue adding items to the order')
         order = models.Order.objects.filter(customer=customer, date_delivery__exact=date_given).first()
-        return redirect('more-items', order=order.number)
+        return redirect('order_detail', pk=order.number)
     settings = Settings.objects.all().first()
     if not settings:
         Settings.objects.create()
@@ -387,16 +381,19 @@ def place_order(request, pk, date_given):
 @login_required()
 def add_more_products(request, order):
     order = get_object_or_404(models.Order, pk=order)
+    product_ids = [order.product.id for order in order.orderproduct_set.all()]
+    products = Product.objects.exclude(pk__in=product_ids)
     settings = Settings.objects.all().first()
     if not settings:
         Settings.objects.create()
     orders_formset = modelformset_factory(models.OrderProduct,
                                           fields=('product', 'qty'),
                                           widgets={'product': Select2Widget}, min_num=1,
-                                          extra=10,
-                                          can_delete=True)
+                                          extra=5)
     if request.method == 'POST':
         formset = orders_formset(request.POST)
+        for form in formset:
+            form.fields['product'].queryset = products
         if formset.is_valid():
             if not settings.main_distribution:
                 messages.error(request, 'You need to have a main center')
@@ -407,7 +404,7 @@ def add_more_products(request, order):
                 item.order = order
                 try:
                     price = models.CustomerPrice.objects.get(product=item.product, customer=order.customer)
-                    order.price = price
+                    item.price = price
                 except models.CustomerPrice.DoesNotExist:
                     messages.error(request, format_html(
                         "{} price for {} not set.Go to this <a href='{}'>link</a> and set the price for the customer",
@@ -438,8 +435,30 @@ def add_more_products(request, order):
     else:
         formset = orders_formset(
             queryset=models.OrderProduct.objects.none())
+        for form in formset:
+            form.fields['product'].queryset = products
     return render(request, 'sales/orders/add-more-items.html', {'formset': formset,
                                                                 'order': order})
+
+
+def update_particular_item(request, order, pk):
+    particular = models.OrderProduct.objects.get(order__pk=order, pk=pk)
+    if request.method == 'POST':
+        form = forms.OrderProductForm(request.POST, instance=particular)
+        if form.is_valid():
+            form.save()
+            return redirect('order_detail', pk=order)
+    else:
+        form = forms.OrderProductForm(instance=particular)
+    return render(request, 'sales/orders/update-order-product.html', {'form': form})
+
+
+@require_http_methods(['POST'])
+def remove_order_product(request, order):
+    item_id = request.POST['item_id']
+    models.OrderProduct.objects.get(order__pk=order, pk=item_id).delete()
+    messages.success(request, 'Order item removed successfully')
+    return redirect('order_detail', pk=order)
 
 
 class DeleteOrder(LoginRequiredMixin, DeleteView):
@@ -487,8 +506,8 @@ def cash_receipt(request, pk):
     particulars = models.CashReceiptParticular.objects.filter(cash_receipt=cash).select_related('product').annotate(
         total_sum=F('price') * F('qty')
     )
-    total_qty = models.CashReceiptParticular.objects.aggregate(sum=Sum('qty'))
-    total_amount = models.CashReceiptParticular.objects.aggregate(total=Sum(F('qty') * F('price')))
+    total_qty = particulars.aggregate(sum=Sum('qty'))
+    total_amount = particulars.aggregate(total=Sum(F('qty') * F('price')))
     return render(request, 'sales/sales/cash-receipt.html', {
         'receipt': cash,
         'particulars': particulars,
@@ -527,9 +546,11 @@ def order_distribution_list(request):
         if form.is_valid():
             product = form.cleaned_data['product']
             order_products = models.OrderProduct.objects.select_related(
-                'order__customer', 'order', 'product').filter(product=product)
+                'order__customer', 'order', 'product').filter(product=product,
+                                                              order__date_delivery__gt=datetime.today())
             formset = points_formset(
-                queryset=models.OrderDistributionPoint.objects.filter(order_product__product=product))
+                queryset=models.OrderDistributionPoint.objects.filter(order_product__product=product,
+                                                                      order_product__order__date_delivery__gt=datetime.today()))
     return render(request, 'sales/orders/order-distribution-form.html', {'form': form,
                                                                          'order_products': order_products,
                                                                          'formset': formset
@@ -538,8 +559,7 @@ def order_distribution_list(request):
 
 @login_required()
 def bbf_accounts(request):
-    customer_balances = models.BBF.objects.values('customer__shop_name', 'customer__number').annotate(
-        balance=Sum('amount')).order_by('amount')
+    customer_balances = models.BbfBalance.objects.all()
     paginator = Paginator(customer_balances, 50)
     page = request.GET.get('page', 1)
     try:
@@ -561,6 +581,9 @@ def add_bbf(request, pk):
             bbf.customer = customer
             bbf.bbf_type = 's'
             bbf.save()
+            account, created = models.BbfBalance.objects.get_or_create(customer=bbf.customer)
+            account.balance = account.balance + bbf.amount
+            account.save()
             messages.success(request,
                              '%s existing bbf added.You can view the customer bbf by going to '
                              ' sales and then BBF accounts tab' % customer.shop_name)
@@ -574,7 +597,7 @@ def add_bbf(request, pk):
 def customer_bbfs(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
     bbfs = models.BBF.objects.filter(customer=customer)
-    balance = bbfs.aggregate(total=Sum('amount'))
+    balance = models.BbfBalance.objects.get(customer=customer)
     paginator = Paginator(bbfs, 50)
     page = request.GET.get('page', 1)
     try:

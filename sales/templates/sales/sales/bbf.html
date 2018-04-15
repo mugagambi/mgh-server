@@ -39,7 +39,7 @@
         </tbody>
     </table>
     <hr/>
-    <p><b>{{ customer.shop_name }} BBF Account Balance: </b> Ksh. {{ balance.total }}</p>
+    <p><b>{{ customer.shop_name }} BBF Account Balance: </b> Ksh. {{ balance.balance | intcomma }}</p>
     {% if balances.has_other_pages %}
         <nav aria-label="Page navigation example">
             <ul class="pagination">

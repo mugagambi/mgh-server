@@ -22,13 +22,15 @@
         <tbody>
         {% for balance in balances %}
             <tr>
-                <td>{{ balance.customer__shop_name }}</td>
+                <td>
+                    <a href="{% url 'update-customer' pk=balance.customer.number %}">{{ balance.customer.shop_name }}</a>
+                </td>
                 <td>{{ balance.balance | intcomma }}</td>
                 <td>
                     <a class="btn btn-outline-success btn-sm"
-                       href="{% url 'customer-bbfs' customer=balance.customer__number %}" data-toggle="tooltip"
+                       href="{% url 'customer-bbfs' customer=balance.customer.number %}" data-toggle="tooltip"
                        data-placement="top"
-                       title="View all {{ balance.customer__shop_name }} the bbf amounts">Details</a>
+                       title="View all {{ balance.customer.shop_name }} the bbf amounts">Details</a>
                 </td>
                 {% empty %}
                 <td class="text-center"><b>No data available in table</b></td>
@@ -46,6 +48,9 @@
                 {% if balances.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
 
 
 
@@ -85,6 +90,9 @@
 
 
 
+
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -92,6 +100,9 @@
                 {% if balances.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
 
 
 

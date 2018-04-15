@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block styles %}
+    {{ form.media.css }}
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <h4 class="text-center">Update order item</h4>
+            <form method="post" id="formset">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
+{% endblock %}

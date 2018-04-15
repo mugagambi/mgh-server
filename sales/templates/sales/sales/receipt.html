@@ -33,17 +33,7 @@
                         <td>{{ particular.price | intcomma }}</td>
                         <td>{{ particular.discount }}</td>
                         <td>{{ particular.total | intcomma }}</td>
-                        <td>Ordered</td>
-                    </tr>
-                {% endfor %}
-                {% for particular in orderlessparticulars %}
-                    <tr>
-                        <td>{{ particular.product.name }}</td>
-                        <td>{{ particular.qty }}</td>
-                        <td>{{ particular.price }}</td>
-                        <td>{{ particular.discount }}</td>
-                        <td>{{ particular.total }}</td>
-                        <td>Orderless</td>
+                        <td>{{ particular.get_type_display }}</td>
                     </tr>
                 {% endfor %}
 
@@ -53,8 +43,11 @@
                 <div class="float-right">
                     <p><b>Total Qty: </b>{{ total_qty | intcomma }}</p>
                     <p><b>Total Amount: </b>Ksh. {{ total_amount | intcomma }}</p>
-                    <p><b>Amount Payed: </b>Ksh. {{ total_payment.sum  | intcomma}}</p>
-                    <p><b>Balance: </b>Ksh. {{ balance | intcomma }}</p>
+                    <p data-toggle="tooltip" data-placement="top" title="Balance Brought Forward">
+                        <b>BBF: </b>Ksh.{{ receipt.bbf_balance | intcomma }}</p>
+                    <p><b>Amount Payed: </b>Ksh. {{ total_payment.sum  | intcomma }}</p>
+                    <p data-toggle="tooltip" data-placement="top" title="Balance Carried Forward">
+                        <b>BCF: </b>Ksh. {{ bcf.amount | intcomma }}</p>
                 </div>
             {% endif %}
             <div class="float-left">

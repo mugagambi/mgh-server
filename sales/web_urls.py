@@ -27,4 +27,6 @@ urlpatterns = [
     path('orders/<str:order>/more/', web_views.add_more_products, name='more-items'),
     path('orders/<str:pk>/delete/', web_views.DeleteOrder.as_view(), name='delete-order'),
     path('orders/<str:pk>/', web_views.order_detail, name='order_detail'),
+    path('orders/<str:order>/product/<str:pk>/', web_views.update_particular_item, name='update_order_product'),
+    path('orders/<str:order>/remove-item', web_views.remove_order_product, name='remove_order_product'),
 ]

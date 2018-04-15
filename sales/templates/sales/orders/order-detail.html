@@ -37,9 +37,18 @@
                         <td>{{ item.price.price }}</td>
                         <td>{{ item.discount.discount }}</td>
                         {% if order.date_delivery > today %}
-                            <td><a href="" class="btn btn-outline-success mb-1">update item</a>
-                                <a href="" class="btn btn-outline-danger mb-1">remove item</a></td>
-                        {% else %}
+                            <td><a href="{% url 'update_order_product' order=order.number pk=item.number %}"
+                                   class="btn btn-outline-success btn-sm mb-1">update item</a>
+                                <form action="{% url 'remove_order_product' order=order.number %}"
+                                      method="post" style="display: inline;" onsubmit="window.mytest()">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="item_id"
+                                           value="{{ item.pk }}"/>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm mb-1">
+                                        Remove
+                                    </button>
+                                </form>
+                                {% else %}
                             <td>No actions at this time</td>
                         {% endif %}
                     </tr>
@@ -48,4 +57,13 @@
             </table>
         </div>
     </div>
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript">window.mytest = function () {
+        var isValid = confirm('Are you sure ?');
+        if (!isValid) {
+            event.preventDefault();
+            alert("Remove cancelled!");
+        }
+    }</script>
 {% endblock %}

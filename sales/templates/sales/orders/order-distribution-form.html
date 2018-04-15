@@ -33,6 +33,7 @@
             <th>Order No.</th>
             <th>Product</th>
             <th>Qty</th>
+            <th>Delivery Date</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -50,6 +51,7 @@
                         {% endif %}
                     {% endfor %}
                 </td>
+                <td>{{ order.order.date_delivery }}</td>
                 <td>
                     <button class="btn btn-outline-success btn-sm"
                             id="distribute"
@@ -70,6 +72,7 @@
             <th>Order No.</th>
             <th>Product</th>
             <th>Qty</th>
+            <th>Delivery Date</th>
             <th>Actions</th>
         </tr>
         </tfoot>

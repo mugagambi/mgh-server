@@ -21,10 +21,8 @@ class CustomerForm(forms.ModelForm):
 class OrderProductForm(forms.ModelForm):
     class Meta:
         model = models.OrderProduct
-        fields = ('discount', 'price', 'qty', 'product')
-        widgets = {'product': Select2Widget,
-                   'price': Select2Widget,
-                   'discount': Select2Widget}
+        fields = ('product', 'qty',)
+        widgets = {'product': Select2Widget}
 
 
 class ProductSelectionForm(forms.Form):

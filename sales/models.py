@@ -166,6 +166,7 @@ class Receipt(models.Model):
     customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE)
     date = models.DateTimeField(default=now)
     served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    bbf_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
 
     def __str__(self):
         return 'Receipt no ' + ' ' + str(self.number)
@@ -179,6 +180,11 @@ class Receipt(models.Model):
 
 
 class ReceiptParticular(models.Model):
+    TYPE = (
+        ('O', 'Ordered'),
+        ('L', 'Orderless')
+    )
+    type = models.CharField(max_length=1, choices=TYPE, default='O')
     qty = models.DecimalField(decimal_places=2, max_digits=8)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
@@ -202,32 +208,6 @@ class ReceiptParticular(models.Model):
         self.total = amount
         return super(ReceiptParticular, self).save(force_insert=False, force_update=False, using=None,
                                                    update_fields=None)
-
-
-class OrderlessParticular(models.Model):
-    qty = models.DecimalField(decimal_places=2, max_digits=8)
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-    price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
-                                                                          'price for each quantity')
-    discount = models.DecimalField(max_digits=5, decimal_places=2,
-                                   help_text='% discount', null=True)
-    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE)
-    total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
-
-    def __str__(self):
-        return str(self.receipt)
-
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        amount = self.qty * self.price
-        if self.discount:
-            total_discount = Decimal(amount) * (Decimal(self.discount) / 100)
-            self.total = amount - total_discount
-            return super(OrderlessParticular, self).save(force_insert=False, force_update=False, using=None,
-                                                         update_fields=None)
-        self.total = amount
-        return super(OrderlessParticular, self).save(force_insert=False, force_update=False, using=None,
-                                                     update_fields=None)
 
 
 class ReceiptPayment(models.Model):
@@ -326,7 +306,7 @@ class CreditSettlement(models.Model):
 
 class BBF(models.Model):
     BFF_TYPE = (
-        ('p', 'Payment'),
+        ('p', 'Balance Carried Forward'),
         ('r', 'Returns Credit Note'),
         ('c', 'Credit Settlement Excess'),
         ('s', 'Pre System')
@@ -342,6 +322,18 @@ class BBF(models.Model):
 
     def __str__(self):
         return 'balance ' + str(self.receipt)
+
+
+class BbfBalance(models.Model):
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.customer)
+
+    class Meta:
+        ordering = ('balance',)
 
 
 class Return(models.Model):
