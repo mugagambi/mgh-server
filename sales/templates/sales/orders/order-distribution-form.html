@@ -53,15 +53,10 @@
                 </td>
                 <td>{{ order.order.date_delivery }}</td>
                 <td>
-                    <button class="btn btn-outline-success btn-sm"
-                            id="distribute"
-                            data-toggle="modal" data-target="#exampleModalCenter"
-                            data-customer="{{ order.order.customer.shop_name }}"
-                            data-product="{{ order.product.name }}"
-                            data-qty="{{ order.qty }}"
-                            data-order_product="{{ order.number }}">
+                    <a class="btn btn-outline-success btn-sm"
+                       href="{% url 'distribute-order' order_product=order.number %}">
                         Distribute
-                    </button>
+                    </a>
                 </td>
             </tr>
         {% endfor %}
@@ -77,39 +72,6 @@
         </tr>
         </tfoot>
     </table>
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Order Distribution</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p><b>Customer: </b><span id="customer"></span></p>
-                    <p><b>Product: </b><span id="product"></span></p>
-                    <p><b>Order Qty: </b><span id="qty"></span></p>
-                    <form method="post">
-                        {% csrf_token %}
-                        <input name="url" type="hidden" value="{{ request.get_full_path }}">
-                        <input name="order_product" type="hidden" id="order_product">
-                        {{ formset.management_form }}
-                        {% for form in formset %}
-                            {{ form | crispy }}
-                        {% endfor %}
-                        <div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}
 {% block scripts %}
     {{ form.media.js }}
@@ -130,20 +92,6 @@
                     "orderable": false,
                     "searchable": false
                 }]
-            });
-            $("#distribute").click(function () {
-                var customer = $(this).data('customer');
-                var product = $(this).data('product');
-                var qty = $(this).data('qty');
-                var order_product = $(this).data('order_product');
-                console.log(order_product)
-                $(".modal-body p span#customer").text(customer);
-                $(".modal-body p span#product").text(product);
-                $(".modal-body p span#qty").text(qty);
-                $(".modal-body #order_product").val(order_product);
-                // As pointed out in comments,
-                // it is superfluous to have to manually call the modal.
-                $('#exampleModalCenter').modal('show');
             });
         });
     </script>

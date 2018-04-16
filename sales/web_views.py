@@ -58,7 +58,6 @@ def order_list(request):
         orders = paginator.page(1)
     except EmptyPage:
         orders = paginator.page(paginator.num_pages)
-    print(order_filter)
     args = {'paginator': paginator, 'filter': order_filter,
             'orders': orders, 'today': date.today()}
     return render(request, 'sales/orders/index.html', args)
@@ -148,7 +147,6 @@ def sales_list(request):
         sales = paginator.page(1)
     except EmptyPage:
         sales = paginator.page(paginator.num_pages)
-    print(sale_filter)
     args = {'paginator': paginator, 'filter': sale_filter,
             'sales': sales, }
     return render(request, 'sales/sales/index.html', args)
@@ -518,43 +516,40 @@ def cash_receipt(request, pk):
 
 @login_required()
 def order_distribution_list(request):
-    points_formset = modelformset_factory(models.OrderDistributionPoint,
-                                          fields=('center', 'qty'),
-                                          widgets={'center': Select2Widget}, extra=1,
-                                          can_delete=True,
-                                          min_num=1)
-    form = forms.ProductSelectionForm()
     order_products = models.OrderProduct.objects.none()
-    formset = points_formset(
-        queryset=models.OrderDistributionPoint.objects.none())
+    form = forms.ProductSelectionForm(request.GET)
+    if form.is_valid():
+        product = form.cleaned_data['product']
+        order_products = models.OrderProduct.objects.select_related(
+            'order__customer', 'order', 'product').filter(product=product,
+                                                          order__date_delivery__gt=datetime.today())
+    return render(request, 'sales/orders/order-distribution-form.html', {'form': form,
+                                                                         'order_products': order_products
+                                                                         })
+
+
+@login_required()
+def distribute_order(request, order_product):
+    order_distribution_formset = modelformset_factory(models.OrderDistributionPoint,
+                                                      fields=('center', 'qty'),
+                                                      widgets={'center': Select2Widget}, min_num=1,
+                                                      extra=2, can_delete=True)
+    order_product = get_object_or_404(models.OrderProduct, pk=order_product)
     if request.method == 'POST':
-        formset = points_formset(request.POST)
-        order_product = request.POST.get("order_product")
-        url = request.POST.get("url")
-        order_product = models.OrderProduct.objects.get(pk=order_product)
+        formset = order_distribution_formset(request.POST, )
         if formset.is_valid():
-            points = formset.save(commit=False)
-            for point in points:
-                point.order_product = order_product
-                point.save()
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.order_product = order_product
+                instance.save()
             for obj in formset.deleted_objects:
                 obj.delete()
-            messages.success(request, 'orders distributed successfully!')
-            return redirect(url)
+            messages.success(request, 'order distributed successfully')
+            return redirect(reverse('orders-distribute') + '?product=' + str(order_product.product.pk))
     else:
-        form = forms.ProductSelectionForm(request.GET)
-        if form.is_valid():
-            product = form.cleaned_data['product']
-            order_products = models.OrderProduct.objects.select_related(
-                'order__customer', 'order', 'product').filter(product=product,
-                                                              order__date_delivery__gt=datetime.today())
-            formset = points_formset(
-                queryset=models.OrderDistributionPoint.objects.filter(order_product__product=product,
-                                                                      order_product__order__date_delivery__gt=datetime.today()))
-    return render(request, 'sales/orders/order-distribution-form.html', {'form': form,
-                                                                         'order_products': order_products,
-                                                                         'formset': formset
-                                                                         })
+        formset = order_distribution_formset(
+            queryset=models.OrderDistributionPoint.objects.filter(order_product=order_product))
+    return render(request, 'sales/orders/distribution-form.html', {'formset': formset, 'order_product': order_product})
 
 
 @login_required()

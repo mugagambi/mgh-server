@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block styles %}
+    {{ formset.media.css }}
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <h4 class="text-center">Distribute Order</h4>
+            <p><b>Customer Shop: </b> {{ order_product.order.customer.shop_name }}</p>
+            <p><b>Product: </b>{{ order_product.product.name }}</p>
+            <p><b>Qty Ordered: </b>{{ order_product.qty }}</p>
+            <p><b>Date of Delivery: </b>{{ order_product.order.date_delivery }}</p>
+            <form method="post" id="formset">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                {% for form in formset %}
+                    {% if create_sub_name %}
+                        <h5 class="text-center">Add new item</h5>
+                    {% endif %}
+                    {{ form | crispy }}
+                {% endfor %}
+                <div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ formset.media.js }}
+{% endblock %}

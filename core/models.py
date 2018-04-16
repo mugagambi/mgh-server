@@ -43,7 +43,7 @@ class AggregationCenterProduct(models.Model):
     """Products in a certain aggregation center"""
     aggregation_center = models.ForeignKey(AggregationCenter, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    qty = models.DecimalField(decimal_places=2, max_digits=8)
+    qty = models.DecimalField(decimal_places=2, max_digits=8, help_text='in kgs.')
     date = models.DateField(default=now)
 
     def __str__(self):
