@@ -158,7 +158,7 @@ class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Return
         fields = ('number'
-                  , 'product', 'qty', 'receipt', 'customer', 'description', 'date')
+                  , 'product', 'qty', 'receipt', 'customer', 'description', 'date', 'reason')
 
 
 class BbfAccountSerializer(serializers.Serializer):

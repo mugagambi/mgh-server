@@ -1,5 +1,6 @@
 from django.urls import path
 from sales import web_views
+from sales import extra_views
 
 urlpatterns = [
     path('regions/', web_views.RegionList.as_view(), name='regions'),
@@ -30,4 +31,6 @@ urlpatterns = [
     path('orders/<str:pk>/', web_views.order_detail, name='order_detail'),
     path('orders/<str:order>/product/<str:pk>/', web_views.update_particular_item, name='update_order_product'),
     path('orders/<str:order>/remove-item', web_views.remove_order_product, name='remove_order_product'),
+    path('all/returns', extra_views.ReturnsList.as_view(), name='returns'),
+    path('all/returns/record/<str:receipt>/', extra_views.record_return, name='record-return')
 ]
