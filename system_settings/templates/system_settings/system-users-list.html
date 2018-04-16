@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+{% endblock %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">System Users</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">System Users</h1>
+        <a class="btn btn-outline-success" href="{% url 'create-user' %}">
+            <span data-feather="plus"></span>
+            New User
+        </a>
+    </div>
+    <table id="customers" class="table table-striped table-responsive-md" style="width:100%">
+        <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Username</th>
+            <th>Date Added</th>
+            <th>Active?</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+                <td>0{{ user.phone_number }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.date_joined }}</td>
+                <td>{{ user.is_active }}</td>
+                {% if user.is_active %}
+                    <td>
+                        <form action="{% url 'deactivate-users' %}"
+                              method="post" style="display: inline;" onsubmit="window.deactivate()">
+                            {% csrf_token %}
+                            <input type="hidden" name="username"
+                                   value="{{ user.username }}"/>
+                            <input type="hidden" name="option"
+                                   value="de-activate"/>
+                            <button type="submit" class="btn btn-outline-danger">Deactivate
+                            </button>
+                        </form>
+                    </td>
+                {% else %}
+                    <td>
+                        <form action="{% url 'deactivate-users' %}"
+                              method="post" style="display: inline;" onsubmit="window.activate()">
+                            {% csrf_token %}
+                            <input type="hidden" name="username"
+                                   value="{{ user.username }}"/>
+                            <input type="hidden" name="option"
+                                   value="activate"/>
+                            <button type="submit" class="btn btn-outline-success">Activate
+                            </button>
+                        </form>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Username</th>
+            <th>Date Added</th>
+            <th>Active?</th>
+            <th>Actions</th>
+        </tr>
+        </tfoot>
+    </table>
+    <br/>
+    <div class="alert alert-info" role="alert">
+        <span data-feather="help-circle"> </span>
+        Only active users, i.e users with active set to True, can log in to the system.
+        When you deactivate a user, their log in details are revoked and they can not access Meru Greens System.
+        You can latter activate them and they will be able to log in once again.
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#customers').DataTable({
+                'paging': true,
+                'lengthChange': true,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': true,
+                "columnDefs": [{
+                    "targets": 7,
+                    "orderable": false,
+                    "searchable": false
+                }]
+            });
+        });
+    </script>
+    <script type="text/javascript">window.deactivate = function () {
+        var isValid = confirm('Are you sure you want to deactivate this user ?');
+        if (!isValid) {
+            event.preventDefault();
+            alert("Not deactivated");
+        }
+    }</script>
+    <script type="text/javascript">window.activate = function () {
+        var isValid = confirm('Are you sure you want to deactivate this user ?');
+        if (!isValid) {
+            event.preventDefault();
+            alert("Not deactivated");
+        }
+    }</script>
+{% endblock %}

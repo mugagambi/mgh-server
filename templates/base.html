@@ -27,7 +27,7 @@
     <ul class="navbar-nav px-3">
         {% if user.is_authenticated %}
             <li class="nav-item text-nowrap">
-                <a class="nav-link" href="{% url 'log-out' %}">Log out</a>
+                <a class="nav-link" href="{% url 'log-out' %}">{{ request.user.username }}, Log out</a>
             </li>
         {% else %}
             <li class="nav-item text-nowrap">
@@ -107,7 +107,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{% url 'users' %}">
                             <span data-feather="user-check"></span>
                             System Users
                         </a>
@@ -124,7 +124,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'log-out' %}">
                                 <span data-feather="log-out"></span>
-                                Log Out
+                                {{ request.user.username }}, Log Out
                             </a>
                         </li>
                     {% else %}

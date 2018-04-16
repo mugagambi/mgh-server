@@ -345,6 +345,7 @@ class Return(models.Model):
                                  help_text='search by customer number, shop name and nick name')
     description = models.TextField()
     date = models.DateTimeField(default=now)
+    approved = models.BooleanField(default=False)
 
     def __str__(self):
         return 'return number ' + str(self.number)

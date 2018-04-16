@@ -13,13 +13,11 @@ from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.html import format_html
+from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, DeleteView
 from django_filters import FilterSet
-from django_filters.views import FilterView
 from django_select2.forms import Select2Widget
-from django.forms.widgets import HiddenInput
-from django.views.decorators.http import require_http_methods
 
 from core.models import Product
 from sales import forms

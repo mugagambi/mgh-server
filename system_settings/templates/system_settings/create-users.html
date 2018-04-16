@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'users' %}">system users</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add User</li>
+        </ol>
+    </nav>
+
+{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Add System User</h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <p><sup>*</sup> fields are required</p>
+            <br/>
+            <form method="post" id="formset">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+            <br/>
+            <div class="alert alert-info" role="alert">
+                <span data-feather="help-circle"> </span>
+                Once the user has been created, they will be emailed the username and password which is system
+                generated.They will use the provided username and password to log in to the system.
+                They can then choose to change it.The password is not visible to the person who added the user.
+                Updating the user details can only be done by the user themselves.
+            </div>
+        </div>
+    </div>
+{% endblock %}
