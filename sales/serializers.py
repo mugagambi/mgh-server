@@ -53,7 +53,8 @@ class PackageSerializer(serializers.ModelSerializer):
 class PackageProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PackageProduct
-        fields = ('number', 'package', 'order_product', 'qty_weigh', 'crate_weight')
+        fields = ('number', 'package', 'product', 'order_product', 'qty_weigh', 'crate_weight')
+        read_only_fields = ('product',)
 
 
 class CustomerPriceSerializer(serializers.ModelSerializer):

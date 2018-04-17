@@ -137,6 +137,10 @@ class PackageProduct(models.Model):
     def __str__(self):
         return 'items for ' + str(self.package)
 
+    @property
+    def product(self):
+        return self.order_product.product.id
+
     class Meta:
         verbose_name_plural = 'Packed Products'
 
