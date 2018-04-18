@@ -22,7 +22,7 @@
         <div class="col-sm-5 offset-sm-3">
             <p><sup>*</sup> fields are required</p>
             <br/>
-            <form method="post" id="formset">
+            <form method="post" id="formset" novalidate>
                 {% csrf_token %}
                 {{ form | crispy }}
                 <div>

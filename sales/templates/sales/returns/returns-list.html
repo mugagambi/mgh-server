@@ -23,7 +23,6 @@
         <thead>
         <tr>
             <th>Customer</th>
-            <th>Receipt No</th>
             <th>Product</th>
             <th>Qty</th>
             <th>Price</th>
@@ -37,17 +36,17 @@
         <tbody>
         {% for return in returns %}
             <tr>
-                <td>{{ return.receipt.customer.shop_name }}</td>
-                <td><a href="{% url 'sale-receipt' pk=return.receipt.number %}">{{ return.receipt.number }}</a></td>
+                <td>{{ return.customer.shop_name }}</td>
                 <td>{{ return.product.name }}</td>
                 <td>{{ return.qty }}</td>
                 <td>{{ return.price | intcomma }}</td>
-                <td>{{ return.reason }}</td>
+                <td>{{ return.get_reason_display }}</td>
                 <td>{{ return.date }}</td>
-                <td>Ksh. {{ return.credit_note | intcomma }}</td>
+                <td>Ksh. {{ return.credit_note |floatformat:2| intcomma }}</td>
                 <td>{{ return.approved }}</td>
                 <td>
-                    <button type="submit" class="btn btn-outline-success">Approve
+                    <button type="button" class="btn btn-outline-success" data-toggle="modal"
+                            data-target="#exampleModalCenter">Approve
                     </button>
                 </td>
             </tr>
@@ -56,7 +55,6 @@
         <tfoot>
         <tr>
             <th>Customer</th>
-            <th>Receipt</th>
             <th>Product</th>
             <th>Qty</th>
             <th>Price</th>
@@ -73,6 +71,64 @@
         <span data-feather="help-circle"> </span>
         View, record returns and approve them.
     </div>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Return Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped table-responsive-md">
+                        <tr>
+                            <th>Customer</th>
+                            <td>John</td>
+                        </tr>
+                        <tr>
+                            <th>Product</th>
+                            <td>Cavendish Long Banana</td>
+                        </tr>
+                        <tr>
+                            <th>Qty</th>
+                            <td>50.00</td>
+                        </tr>
+                        <tr>
+                            <th>Price</th>
+                            <td>ksh. 50</td>
+                        </tr>
+                        <tr>
+                            <th>Reason</th>
+                            <td>Un Edible</td>
+                        </tr>
+                        <tr>
+                            <th>Date</th>
+                            <td>April 16, 2018, 10:14 p.m.</td>
+                        </tr>
+                        <tr>
+                            <th>Credit Note</th>
+                            <td>Ksh. 2,500.00</td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus libero molestias quasi
+                                quia quidem vitae? Cumque expedita fugiat itaque odio quae quam qui quia quis
+                                repellendus sed. Aspernatur fuga, molestiae.
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <a href="" class="btn btn-outline-success">Approve</a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                xading
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block scripts %}
     <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
@@ -87,7 +143,7 @@
                 'info': true,
                 'autoWidth': true,
                 "columnDefs": [{
-                    "targets": 9,
+                    "targets": 8,
                     "orderable": false,
                     "searchable": false
                 }]
@@ -107,5 +163,8 @@
             event.preventDefault();
             alert("Not deactivated");
         }
-    }</script>
+    }
+
+
+    </script>
 {% endblock %}

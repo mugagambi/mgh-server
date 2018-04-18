@@ -298,7 +298,7 @@ class ReturnsRejectsFilterSet(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = models.Return
-        fields = ('product', 'receipt', 'customer', 'date', 'date_between')
+        fields = ('product', 'customer', 'date', 'date_between')
 
 
 class ReturnsRejectsViewSet(viewsets.ModelViewSet):

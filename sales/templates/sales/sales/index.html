@@ -38,8 +38,6 @@
                 <td>
                     <a class="btn btn-outline-success btn-sm" href="{% url 'sale-receipt' pk=receipt.number %}">view
                         receipt</a>
-                    <a class="btn btn-outline-success btn-sm" href="{% url 'record-return' receipt=receipt.number %}">record
-                        return</a>
                 </td>
                 {% empty %}
                 <td class="text-center"><b>No data available in table</b></td>
@@ -55,6 +53,7 @@
                 {% if sales.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
@@ -92,6 +91,7 @@
 
 
 
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -99,6 +99,7 @@
                 {% if sales.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 

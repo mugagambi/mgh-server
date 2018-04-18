@@ -352,30 +352,16 @@ class Return(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search product name')
     qty = models.DecimalField(decimal_places=2, max_digits=8)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.0)
-    receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE, help_text='search receipt no')
     customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE,
                                  help_text='search by customer number, shop name and nick name')
     description = models.TextField(blank=True)
     date = models.DateTimeField(default=now)
     approved = models.BooleanField(default=False)
     reason = models.CharField(max_length=1, choices=REASON)
+    approved_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return 'return number ' + str(self.number)
-
-    def clean(self):
-        if not ReceiptParticular.objects.filter(receipt=self.receipt).filter(product=self.product).exists():
-            raise ValidationError({'product': ['Can not return non purchased products']})
-        qty = ReceiptParticular.objects.filter(receipt=self.receipt).filter(product=self.product).first().qty
-        if qty <= self.qty:
-            raise ValidationError({'qty': ['Can not return more than purchased.%s was purchased' % qty]})
-
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        particular = ReceiptParticular.objects.filter(receipt=self.receipt).filter(product=self.product).first()
-        self.price = particular.price
-        super(Return, self).save(force_insert=False, force_update=False, using=None,
-                                 update_fields=None)
 
 
 class Reject(models.Model):

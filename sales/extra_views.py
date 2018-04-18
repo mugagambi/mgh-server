@@ -18,17 +18,17 @@ class ReturnsList(LoginRequiredMixin, ListView):
 
 
 @login_required()
-def record_return(request, receipt):
-    receipt = get_object_or_404(models.Receipt, pk=receipt)
+def record_return(request, customer):
+    customer = get_object_or_404(models.Customer, pk=customer)
     if request.method == 'POST':
         form = forms.ReturnForm(request.POST)
         if form.is_valid():
             returns = form.save(commit=False)
             returns.number = generate_unique_id(request.user.id)
-            returns.customer = receipt.customer
+            returns.approved_by = request.user
             returns.save()
             messages.success(request, 'Return recorded')
             return redirect('returns')
     else:
-        form = forms.ReturnForm(initial={'receipt': receipt})
-    return render(request, 'sales/returns/create_returns.html', {'form': form, 'receipt': receipt})
+        form = forms.ReturnForm(initial={'customer': customer})
+    return render(request, 'sales/returns/create_returns.html', {'form': form, 'customer': customer})
