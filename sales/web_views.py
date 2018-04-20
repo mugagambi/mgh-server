@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Func
 from django.forms import modelformset_factory
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
@@ -133,8 +133,10 @@ class SalesFilterSet(FilterSet):
 
 @login_required()
 def sales_list(request):
-    sale_list = models.Receipt.objects.select_related('customer',
-                                                      'served_by').filter(receiptpayment__isnull=False).distinct()
+    sale_list = models.Receipt.objects. \
+        select_related('customer', 'served_by') \
+        .filter(receiptpayment__isnull=False).distinct() \
+        .order_by('-date')
     sale_filter = SalesFilterSet(request.GET, queryset=sale_list)
     sale_list = sale_filter.qs
     paginator = Paginator(sale_list, 50)
@@ -484,7 +486,9 @@ class CashSalesFilterSet(FilterSet):
 
 @login_required()
 def cash_sales_list(request):
-    sales = models.CashReceipt.objects.all()
+    sales = models.CashReceipt.objects.all() \
+        .annotate(cash_sale_date=Func(F('date'), function='DATE')) \
+        .distinct('cash_sale_date').values('cash_sale_date')
     paginator = Paginator(sales, 50)
     page = request.GET.get('page', 1)
     try:
@@ -494,22 +498,6 @@ def cash_sales_list(request):
     except EmptyPage:
         sales = paginator.page(paginator.num_pages)
     return render(request, 'sales/sales/cash-sale.html', {'sales': sales})
-
-
-@login_required()
-def cash_receipt(request, pk):
-    cash = models.CashReceipt.objects.get(pk=pk)
-    particulars = models.CashReceiptParticular.objects.filter(cash_receipt=cash).select_related('product').annotate(
-        total_sum=F('price') * F('qty')
-    )
-    total_qty = particulars.aggregate(sum=Sum('qty'))
-    total_amount = particulars.aggregate(total=Sum(F('qty') * F('price')))
-    return render(request, 'sales/sales/cash-receipt.html', {
-        'receipt': cash,
-        'particulars': particulars,
-        'total_qty': total_qty,
-        'total_amount': total_amount
-    })
 
 
 @login_required()

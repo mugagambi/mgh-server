@@ -1,5 +1,7 @@
+import datetime
+
 from django.contrib import messages
-from django.db.models import F
+from django.db.models import F, Sum
 
 from sales import models
 from django.shortcuts import render, get_object_or_404, redirect
@@ -32,3 +34,22 @@ def record_return(request, customer):
     else:
         form = forms.ReturnForm(initial={'customer': customer})
     return render(request, 'sales/returns/create_returns.html', {'form': form, 'customer': customer})
+
+
+@login_required()
+def cash_receipt(request, day):
+    day_from_date = datetime.datetime.strptime(day, '%Y-%m-%d').date()
+    date_from = datetime.datetime.combine(day_from_date, datetime.time(0, 0))
+    date_to = datetime.datetime.combine(day_from_date, datetime.time(23, 59))
+    particulars = models.CashReceiptParticular.objects.filter(
+        cash_receipt__date__range=(date_from, date_to)).select_related('product').annotate(
+        total_sum=F('price') * F('qty')
+    )
+    total_qty = particulars.aggregate(sum=Sum('qty'))
+    total_amount = particulars.aggregate(total=Sum(F('qty') * F('price')))
+    return render(request, 'sales/sales/cash-receipt.html', {
+        'particulars': particulars,
+        'total_qty': total_qty,
+        'total_amount': total_amount,
+        'day': day_from_date
+    })
