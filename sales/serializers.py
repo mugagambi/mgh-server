@@ -156,15 +156,10 @@ class BBFSerializer(serializers.ModelSerializer):
 
 
 class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
-    approved_by = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        default=serializers.CurrentUserDefault()
-    )
-
     class Meta:
         model = models.Return
         fields = ('number'
-                  , 'product', 'qty', 'customer', 'description', 'date', 'price', 'reason', 'approved_by', 'approved')
+                  , 'product', 'qty', 'customer', 'description', 'date', 'price', 'reason', 'approved')
 
 
 class BbfAccountSerializer(serializers.Serializer):

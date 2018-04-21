@@ -321,6 +321,8 @@ class BBF(models.Model):
     )
     receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.SET_NULL,
                                 help_text='search by receipt no.', null=True)
+    returns = models.ForeignKey('Return', on_delete=models.SET_NULL,
+                                null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2,
                                  help_text='(-) are amounts the customer owes Meru Greens'
                                            ' and (+) are amounts that Meru Greens owes the'
@@ -361,7 +363,7 @@ class Return(models.Model):
     date = models.DateTimeField(default=now)
     approved = models.BooleanField(default=False)
     reason = models.CharField(max_length=1, choices=REASON)
-    approved_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return 'return number ' + str(self.number)
