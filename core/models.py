@@ -45,9 +45,13 @@ class AggregationCenterProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     qty = models.DecimalField(decimal_places=2, max_digits=8, help_text='in kgs.')
     date = models.DateField(default=now)
+    remaining = models.DecimalField(decimal_places=2, max_digits=8, help_text='in kgs.', default=0)
 
     def __str__(self):
         return str(self.product) + ' at ' + str(self.aggregation_center)
+
+    class Meta:
+        unique_together = ('aggregation_center', 'product')
 
 
 class CrateType(models.Model):

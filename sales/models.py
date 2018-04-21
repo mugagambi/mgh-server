@@ -115,6 +115,9 @@ class OrderDistributionPoint(models.Model):
     def __str__(self):
         return str(self.center)
 
+    class Meta:
+        unique_together = ('center', 'order_product')
+
 
 class Package(models.Model):
     order = models.ForeignKey(Order, to_field='number', on_delete=models.CASCADE)

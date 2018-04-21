@@ -5,13 +5,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import modelformset_factory
-from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
+from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse_lazy, reverse
 from django.views.generic import UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django_select2.forms import Select2Widget
 
 from core import models
+from core import forms
 
 
 class CentersList(LoginRequiredMixin, ListView):
@@ -91,12 +92,31 @@ class DeleteProduct(LoginRequiredMixin, DeleteView):
 
 
 @login_required()
+def product_availability_list(request, center):
+    center = get_object_or_404(models.AggregationCenter, pk=center)
+    day = request.GET.get('day', None)
+    if day:
+        day = datetime.strptime(day, "%Y-%m-%d").date()
+    else:
+        day = datetime.now().date()
+    product_availability_list_items = models.AggregationCenterProduct.objects.filter(aggregation_center=center,
+                                                                                     date=day)
+    return render(request, 'core/centers/product-availabilty.html', {
+        'products': product_availability_list_items,
+        'center': center,
+        'day': day
+    })
+
+
+@login_required()
 def product_availability(request, center):
     """used to indicate amount of products for sale in a center"""
     center_product_formset = modelformset_factory(models.AggregationCenterProduct, fields=('product', 'qty'),
                                                   widgets={'product': Select2Widget}, extra=10, min_num=1,
                                                   can_delete=True)
     center = models.AggregationCenter.objects.get(pk=center)
+    product_ids = [center_product.product.id for center_product in center.aggregationcenterproduct_set.all()]
+    products = models.Product.objects.exclude(pk__in=product_ids)
     dt = datetime.now()
     if request.method == 'POST':
         formset = center_product_formset(request.POST)
@@ -108,13 +128,30 @@ def product_availability(request, center):
             for obj in formset.deleted_objects:
                 obj.delete()
             messages.success(request, 'Product availability in %s updated successfully!' % center.name)
-            return redirect(reverse_lazy('centers-list'))
+            return redirect(reverse('product-availability-list', kwargs={'center': center.id}))
     else:
         formset = center_product_formset(
-            queryset=models.AggregationCenterProduct.objects.select_related('product').filter(
-                aggregation_center=center, date=datetime.now()))
+            queryset=models.AggregationCenterProduct.objects.none())
+        for form in formset:
+            form.fields['product'].queryset = products
     return render(request, 'crud/formset-create.html', {'formset': formset,
                                                         "center": center,
-                                                        'create_name': center.name + ' product availability for ' + dt.strftime(
-                                                            '%a %B %d, %Y'),
+                                                        'create_name': 'Products available in ' + center.name + ' on '
+                                                                       + dt.strftime('%a %B %d, %Y'),
                                                         'create_sub_name': 'quantities'})
+
+
+@login_required()
+def update_available_product(request, pk):
+    product = get_object_or_404(models.AggregationCenterProduct, pk=pk)
+    if request.method == 'POST':
+        form = forms.AvailableProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'updated successfully')
+            return redirect(reverse('product-availability-list', kwargs={'center': product.aggregation_center.id}))
+    else:
+        form = forms.AvailableProductForm(instance=product)
+    return render(request, 'core/centers/update-product-availability.html', {
+        'product': product, 'form': form
+    })

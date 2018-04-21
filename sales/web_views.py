@@ -353,11 +353,6 @@ def place_order(request, pk, date_given):
                     order.discounts = discounts
                 main_order.save()
                 order.save()
-                distribution_point = models.OrderDistributionPoint()
-                distribution_point.order_product = order
-                distribution_point.qty = order.qty
-                distribution_point.center = settings.main_distribution
-                distribution_point.save()
             for obj in formset.deleted_objects:
                 obj.delete()
             messages.success(request, format_html(
@@ -417,11 +412,6 @@ def add_more_products(request, order):
                 if discounts:
                     order.discounts = discounts
                 item.save()
-                distribution_point = models.OrderDistributionPoint()
-                distribution_point.order_product = item
-                distribution_point.qty = item.qty
-                distribution_point.center = settings.main_distribution
-                distribution_point.save()
             for obj in formset.deleted_objects:
                 obj.delete()
             messages.success(request, format_html(

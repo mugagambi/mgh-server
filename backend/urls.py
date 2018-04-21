@@ -49,7 +49,7 @@ urlpatterns = [
     ),
     path('core/', include('core.web_urls')),
     path('sales/', include('sales.web_urls')),
-    path('system-settings/', include('system_settings.urls')),
+    path('system/', include('system_settings.urls')),
     path('resources/sales/', include('sales.resource_urls')),
     path('reports/', include('reports.urls')),
     path('api/core/', include('core.urls')),

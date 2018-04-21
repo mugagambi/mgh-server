@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block styles %}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
 {% endblock %}
 {% block content %}
     <h4 class="text-center">Aggregation Centers</h4>
@@ -25,7 +25,7 @@
                 <td>{{ center.name }}</td>
                 <td>{{ center.location }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm" href="{% url 'product-availability' center=center.id %}">Product
+                    <a class="btn btn-outline-success btn-sm" href="{% url 'product-availability-list' center=center.id %}">Product
                         Availability</a>
                     <a class="btn btn-outline-success btn-sm" href="{% url 'update-center' pk=center.id %}">Edit</a>
                     <a class="btn btn-outline-danger btn-sm" href="{% url 'delete-center' pk=center.id %}">Remove</a>
