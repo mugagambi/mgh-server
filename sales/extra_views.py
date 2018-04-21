@@ -17,6 +17,7 @@ class ReturnsList(LoginRequiredMixin, ListView):
     template_name = 'sales/returns/returns-list.html'
     context_object_name = 'returns'
     queryset = models.Return.objects.annotate(credit_note=F('qty') * F('price'))
+    paginate_by = 50
 
 
 @login_required()

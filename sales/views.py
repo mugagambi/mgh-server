@@ -285,8 +285,6 @@ class BBFView(CreateAPIView):
 
     def perform_create(self, serializer):
         bbf = serializer.save()
-        bbf.bbf_type = 'p'
-        bbf.save()
         account, created = models.BbfBalance.objects.get_or_create(customer=bbf.customer)
         account.balance = account.balance + bbf.amount
         account.save()
