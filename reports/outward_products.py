@@ -60,4 +60,6 @@ def outward_product_summary_report(request, date_0, date_1):
                         'total_sale': total_sale})
         print(outward)
     return render(request, 'reports/outward-products/report.html',
-                  {'outwards': outward})
+                  {'outwards': outward,
+                   'date_0': date_0_datetime,
+                   'date_1': date_1_datetime})
