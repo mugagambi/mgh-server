@@ -23,7 +23,7 @@ def distribute_order(sender, instance, created, **kwargs):
     if created:
         for center in centers:
             if AggregationCenterProduct.objects.filter(date=datetime.datetime.today(),
-                                                       product=instance.product).first().exist():
+                                                       product=instance.product).exists():
                 center_product = AggregationCenterProduct.objects.filter(date=datetime.datetime.today(),
                                                                          product=instance.product).first()
                 if center_product.remaining > 0:
@@ -44,7 +44,7 @@ def distribute_order(sender, instance, created, **kwargs):
         to_distribute = instance.qty - current_distribution['total']
         for center in centers:
             if AggregationCenterProduct.objects.filter(date=datetime.datetime.today(),
-                                                       product=instance.product).first().exist():
+                                                       product=instance.product).exists():
                 center_product = AggregationCenterProduct.objects.filter(date=datetime.datetime.today(),
                                                                          product=instance.product).first()
                 if center_product.remaining > 0:
