@@ -159,3 +159,13 @@ def generate_unique_id(id):
     sqstring = str(sqlist).replace(':', '').replace('\'', '').replace(',', '').replace(' ', '').replace('.', ''). \
         replace('[', '').replace(']', '')
     return sqstring[:6] + str(id)
+
+
+def main_generate_unique_id():
+    current_time = datetime.datetime.now().time()
+    sqstring = '1234567890AQWERTYUIOPSDFGHJKLZXCVBNM' + str(current_time)
+    sqlist = list(sqstring)
+    random.shuffle(sqlist)
+    sqstring = str(sqlist).replace(':', '').replace('\'', '').replace(',', '').replace(' ', '').replace('.', ''). \
+        replace('[', '').replace(']', '')
+    return sqstring[:10]

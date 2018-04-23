@@ -1,4 +1,4 @@
-import uuid
+from utils import main_generate_unique_id
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -6,12 +6,14 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
+from django.template import loader
+from django.urls import reverse_lazy, reverse
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
-
+from django.contrib.auth.forms import PasswordChangeForm
 from system_settings import forms
 from system_settings import models
+from django.db import transaction
 
 
 # Create your views here.
@@ -46,14 +48,26 @@ class SystemUsersList(LoginRequiredMixin, ListView):
 
 
 @login_required()
+@transaction.atomic
 def create_user(request):
     if request.method == 'POST':
         form = forms.UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=True)
-            password = uuid.uuid4().hex
-            print(password)
+            password = main_generate_unique_id()
             user.set_password(password)
+            subject = 'Your login credentials to Meru Greens Horticulture Ltd System'
+            message = 'You need a email mail client that supports html messages to read this email'
+            html_message = loader.render_to_string(
+                'system_settings/user_addition_email.html',
+                {
+                    'username': user.username,
+                    'login_link': request.build_absolute_uri(reverse('sign-in')),
+                    'password': password,
+                    'password_link': request.build_absolute_uri(reverse('change_password'))
+                }
+            )
+            user.email_user(subject=subject, message=message, html_message=html_message)
             user.save()
             return redirect('users')
     else:
@@ -78,3 +92,20 @@ def deactivate_user(request):
         messages.success(request, 'user de-activated successfully.This user can'
                                   ' not log in to the system from now until activated again')
     return redirect('users')
+
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('change_password')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'system_settings/change_password.html', {
+        'form': form
+    })
