@@ -58,7 +58,6 @@ def outward_product_summary_report(request, date_0, date_1):
                         'customer': total_customer['total'],
                         'cash': total_cash['total'],
                         'total_sale': total_sale})
-        print(outward)
     return render(request, 'reports/outward-products/report.html',
                   {'outwards': outward,
                    'date_0': date_0_datetime,

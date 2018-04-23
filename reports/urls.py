@@ -13,4 +13,6 @@ urlpatterns = [
          name='outward_product_report'),
     path('sales/outward_stock/period/', outward_stock_summary.outward_stock_summary_period,
          name='outward_stock_period'),
+    path('sales/outward_stock/<str:date_0>/<str:date_1>/', outward_stock_summary.outward_stock_summary_report,
+         name='outward_stock_report'),
 ]

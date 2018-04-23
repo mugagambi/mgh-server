@@ -64,7 +64,7 @@ class OrderProductsViewSet(viewsets.ModelViewSet):
     queryset = models.OrderProduct.objects.all()
     serializer_class = serializers.OrderProductsSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('order', 'product')
+    filter_fields = ('order', 'product', 'order__date_delivery')
     ordering_fields = ('qty', 'price')
 
 
