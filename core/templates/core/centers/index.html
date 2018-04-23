@@ -6,10 +6,12 @@
 {% block content %}
     <h4 class="text-center">Aggregation Centers</h4>
     <p>
-        <a class="btn btn-outline-success" href="{% url 'create-center' %}">
-            <span data-feather="plus"></span>
-            New Centers
-        </a>
+        {% if perms.core.add_aggregationcenter %}
+            <a class="btn btn-outline-success" href="{% url 'create-center' %}">
+                <span data-feather="plus"></span>
+                New Centers
+            </a>
+        {% endif %}
     </p>
     <table id="centers" class="table table-striped" style="width:100%">
         <thead>
@@ -25,9 +27,12 @@
                 <td>{{ center.name }}</td>
                 <td>{{ center.location }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm" href="{% url 'product-availability-list' center=center.id %}">Product
+                    <a class="btn btn-outline-success btn-sm"
+                       href="{% url 'product-availability-list' center=center.id %}">Product
                         Availability</a>
-                    <a class="btn btn-outline-success btn-sm" href="{% url 'update-center' pk=center.id %}">Edit</a>
+                    {% if perms.core.core.change_aggregationcenter %}
+                        <a class="btn btn-outline-success btn-sm" href="{% url 'update-center' pk=center.id %}">Edit</a>
+                    {% endif %}
                     <a class="btn btn-outline-danger btn-sm" href="{% url 'delete-center' pk=center.id %}">Remove</a>
                 </td>
             </tr>

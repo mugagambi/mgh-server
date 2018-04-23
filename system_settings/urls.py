@@ -13,5 +13,5 @@ urlpatterns = [
             auth_views.password_reset_confirm, name='main-password_reset_confirm'),
     path('reset/done/', auth_views.password_reset_complete, name='main-password_reset_complete'),
     path('change-password/', views.change_password, name='change_password'),
-    path('user/<str:username>/permission', views.assign_permissions, name='assign-permission')
+    path('users/<str:username>/permission', views.assign_permissions, name='assign-permission')
 ]

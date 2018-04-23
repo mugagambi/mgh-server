@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3 class="text-center">Permission Denied</h3>
+    <p class="text-center">{{ exception.get_message }}</p>
+    <button class="btn btn-outline-dark" onclick="f()">Go Back</button>
+{% endblock %}
+{% block scripts %}
+    <script>
+        function f(event) {
+            window.history.back();
+        }
+    </script>
+{% endblock %}

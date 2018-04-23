@@ -13,6 +13,8 @@ from django_select2.forms import Select2Widget
 
 from core import models
 from core import forms
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
 class CentersList(LoginRequiredMixin, ListView):
@@ -21,6 +23,7 @@ class CentersList(LoginRequiredMixin, ListView):
 
 
 @login_required()
+@permission_required('core.add_aggregation_center', raise_exception=True)
 def create_centers(request):
     center_formset = modelformset_factory(models.AggregationCenter, exclude=('is_active',), max_num=10)
     if request.method == 'POST':
@@ -34,8 +37,9 @@ def create_centers(request):
     return render(request, 'core/centers/create.html', {'formset': formset})
 
 
-class UpdateCenter(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class UpdateCenter(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
     model = models.AggregationCenter
+    permission_required = 'core.change_aggregationcenter'
     fields = ['name', 'location']
     template_name = 'sales/regions/update.html'
     success_url = reverse_lazy('centers-list')

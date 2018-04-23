@@ -115,7 +115,7 @@ def change_password(request):
 @login_required()
 def assign_permissions(request, username):
     user = get_object_or_404(get_user_model(), username=username)
-    his_permissions = user.get_all_permissions()
+    his_permissions = user.user_permissions.all()
     permission = Permission.objects.exclude(codename__in=(
         # Has no admin interface:
         'add_permission',
@@ -139,8 +139,8 @@ def assign_permissions(request, username):
     ))
     if request.method == 'POST':
         selected_permissions = request.POST.getlist('permissions[]')
-        selected_permissions = Permission.objects.filter(id__in=selected_permissions)
-        user.user_permissions.set(selected_permissions)
+        selected_permissions_objects = Permission.objects.filter(id__in=selected_permissions)
+        user.user_permissions.set(selected_permissions_objects)
         return redirect('users')
     return render(request, 'system_settings/permissions.html', {'permission': permission,
                                                                 'his_permission': his_permissions,
