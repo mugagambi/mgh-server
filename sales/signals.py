@@ -5,6 +5,7 @@ from sales.models import OrderProduct, OrderDistributionPoint
 from system_settings.models import Settings
 from django.dispatch import receiver
 from .models import CustomerPrice
+import datetime
 
 
 @receiver(post_save, sender=Product)
@@ -22,8 +23,8 @@ def distribute_order(sender, instance, created, **kwargs):
     if created:
         for center in centers:
             try:
-                center_product = AggregationCenterProduct.objects.get(aggregation_center=center,
-                                                                      product=instance.product)
+                center_product = AggregationCenterProduct.objects.get(date=datetime.datetime.today(),
+                                                                      product=instance.product).first()
                 if center_product.remaining > 0:
                     center_product.remaining = center_product.remaining - instance.qty
                     center_product.save()
@@ -43,8 +44,8 @@ def distribute_order(sender, instance, created, **kwargs):
         to_distribute = instance.qty - current_distribution['total']
         for center in centers:
             try:
-                center_product = AggregationCenterProduct.objects.get(aggregation_center=center,
-                                                                      product=instance.product)
+                center_product = AggregationCenterProduct.objects.get(date=datetime.datetime.today(),
+                                                                      product=instance.product).first()
                 if center_product.remaining > 0:
                     center_product.remaining = center_product.remaining - to_distribute
                     center_product.save()
