@@ -50,9 +50,6 @@ class AggregationCenterProduct(models.Model):
     def __str__(self):
         return str(self.product) + ' at ' + str(self.aggregation_center)
 
-    class Meta:
-        unique_together = ('aggregation_center', 'product')
-
 
 class CrateType(models.Model):
     name = models.CharField(max_length=100)
