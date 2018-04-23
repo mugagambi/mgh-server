@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/multi-select.dist.css' %}">
+{% endblock %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'users' %}">system users</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add User</li>
+        </ol>
+    </nav>
+
+{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Update {{ user.first_name }} {{ user.last_name }} Permissions</h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <br/>
+            <form method="post" id="formset">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="exampleFormControlSelect2">Assign permissions</label>
+                    <select id='pre-selected-options' multiple="multiple"
+                            name="permissions[]"
+                            class="form-control"
+                            id="exampleFormControlSelect2">
+                        {% for permission in permission %}
+                            <option value="{{ permission.id }}" {% if permission in his_permission %} selected
+                            {% endif %}>{{ permission.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/jquery.multi-select.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#pre-selected-options').multiSelect();
+        })
+    </script>
+{% endblock %}

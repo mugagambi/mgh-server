@@ -45,6 +45,9 @@
                 <td>{{ user.is_active }}</td>
                 {% if user.is_active %}
                     <td>
+                        <a class="btn btn-outline-success mb-1"
+                           href="{% url 'assign-permission' username=user.username %}">Update
+                            Permissions</a>
                         <form action="{% url 'deactivate-users' %}"
                               method="post" style="display: inline;" onsubmit="window.deactivate()">
                             {% csrf_token %}

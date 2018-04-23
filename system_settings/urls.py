@@ -12,5 +12,6 @@ urlpatterns = [
     re_path(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
             auth_views.password_reset_confirm, name='main-password_reset_confirm'),
     path('reset/done/', auth_views.password_reset_complete, name='main-password_reset_complete'),
-    path('change-password/', views.change_password, name='change_password')
+    path('change-password/', views.change_password, name='change_password'),
+    path('user/<str:username>/permission', views.assign_permissions, name='assign-permission')
 ]

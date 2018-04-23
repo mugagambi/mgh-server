@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth.models import Permission
+
 from core.models import AggregationCenter
 from django.contrib.auth import get_user_model
 
@@ -11,3 +13,27 @@ class UserCreationForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ('username', 'first_name', 'last_name', 'email', 'phone_number')
+
+
+class PermissionForm(forms.Form):
+    permissions = forms.ModelMultipleChoiceField(queryset=Permission.objects.exclude(codename__in=(
+        # Has no admin interface:
+        'add_permission',
+        'change_permission',
+        'delete_permission',
+        'delete_church',
+        'add_church',
+
+        'add_contenttype',
+        'change_contenttype',
+        'delete_contenttype',
+
+        'add_session',
+        'delete_session',
+        'change_session',
+
+        # django.contrib.admin
+        'add_logentry',
+        'change_logentry',
+        'delete_logentry',
+    )))

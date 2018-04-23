@@ -115,7 +115,8 @@ def product_availability(request, center):
                                                   widgets={'product': Select2Widget}, extra=10, min_num=1,
                                                   can_delete=True)
     center = models.AggregationCenter.objects.get(pk=center)
-    product_ids = [center_product.product.id for center_product in center.aggregationcenterproduct_set.all()]
+    product_ids = [center_product.product.id for center_product in
+                   center.aggregationcenterproduct_set.filter(date=datetime.today())]
     products = models.Product.objects.exclude(pk__in=product_ids)
     dt = datetime.now()
     if request.method == 'POST':

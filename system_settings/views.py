@@ -14,6 +14,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from system_settings import forms
 from system_settings import models
 from django.db import transaction
+from django.contrib.auth.models import Permission
 
 
 # Create your views here.
@@ -109,3 +110,38 @@ def change_password(request):
     return render(request, 'system_settings/change_password.html', {
         'form': form
     })
+
+
+@login_required()
+def assign_permissions(request, username):
+    user = get_object_or_404(get_user_model(), username=username)
+    his_permissions = user.get_all_permissions()
+    permission = Permission.objects.exclude(codename__in=(
+        # Has no admin interface:
+        'add_permission',
+        'change_permission',
+        'delete_permission',
+        'delete_church',
+        'add_church',
+
+        'add_contenttype',
+        'change_contenttype',
+        'delete_contenttype',
+
+        'add_session',
+        'delete_session',
+        'change_session',
+
+        # django.contrib.admin
+        'add_logentry',
+        'change_logentry',
+        'delete_logentry',
+    ))
+    if request.method == 'POST':
+        selected_permissions = request.POST.getlist('permissions[]')
+        selected_permissions = Permission.objects.filter(id__in=selected_permissions)
+        user.user_permissions.set(selected_permissions)
+        return redirect('users')
+    return render(request, 'system_settings/permissions.html', {'permission': permission,
+                                                                'his_permission': his_permissions,
+                                                                'user': user})
