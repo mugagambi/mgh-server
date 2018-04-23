@@ -1,6 +1,11 @@
 <nav class="nav nav-pills nav-fill">
-    <a class="nav-item nav-link active" href="#">Cash Receipts</a>
-    <a class="nav-item nav-link" href="#">Paybill Receipts</a>
+    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'cash-sales-summary' %}
+            active {% endif %}"
+       href="{% url 'cash-sales-summary' date_0=date_0|date:'Y-m-d'  date_1=date_1|date:'Y-m-d' %}">Cash Receipts</a>
+    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'paybill-sales-summary' %}
+            active {% endif %}"
+       href="{% url 'paybill-sales-summary' date_0=date_0|date:'Y-m-d'  date_1=date_1|date:'Y-m-d' %}">Paybill
+        Receipts</a>
     <a class="nav-item nav-link" href="#">Cheque receipts</a>
     <a class="nav-item nav-link " href="#">Bank Transfer Receipts</a>
 </nav>
