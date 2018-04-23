@@ -32,7 +32,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderProductsSerializer(serializers.ModelSerializer):
-    distributing_qty = serializers.DecimalField(decimal_places=2, max_digits=7)
+    distributing_qty = serializers.DecimalField(decimal_places=2, max_digits=7, allow_null=True)
 
     class Meta:
         model = models.OrderProduct
