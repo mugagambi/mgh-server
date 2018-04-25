@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block styles %}
+    {{ form.media.css }}
+{% endblock %}
 {% block breadcrump %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -21,4 +25,7 @@
             </form>
         </div>
     </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
 {% endblock %}

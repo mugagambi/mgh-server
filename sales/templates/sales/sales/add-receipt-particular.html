@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block styles %}
+    {{ form.media.css }}
+{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Add particular for receipt no. {{ receipt.number }}</h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <p><sup>*</sup> fields are required</p>
+            <br/>
+            <form method="post" id="formset">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+            <br/>
+            <div class="alert alert-info" role="alert">
+                <span data-feather="help-circle"> </span>
+               Add Receipt Particular
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ form.media.js }}
+{% endblock %}

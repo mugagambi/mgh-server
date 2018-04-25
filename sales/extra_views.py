@@ -1,14 +1,16 @@
 import datetime
 
 from django.contrib import messages
-from django.db.models import F, Sum
-
-from sales import models
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import F, Sum
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView
+
+from core.models import Product
 from sales import forms
+from sales import models
 from utils import generate_unique_id
 
 
@@ -54,3 +56,23 @@ def cash_receipt(request, day):
         'total_amount': total_amount,
         'day': day_from_date
     })
+
+
+@login_required()
+@permission_required('sales.add_receiptparticular', raise_exception=True)
+def add_receipt_particular(request, pk):
+    receipt = get_object_or_404(models.Receipt, pk=pk)
+    product_ids = [receipt.product.id for receipt in receipt.receiptparticular_set.all()]
+    products = Product.objects.exclude(pk__in=product_ids)
+    if request.method == 'POST':
+        form = forms.ReceiptParticularForm(request.POST)
+        if form.is_valid():
+            particular = form.save(commit=False)
+            particular.receipt = receipt
+            particular.save()
+            messages.success(request, 'Item added successfully.Totals have been re-calculated')
+            return redirect('sale-receipt', pk=receipt.pk)
+    else:
+        form = forms.ReceiptParticularForm()
+        form.fields['product'].queryset = products
+    return render(request, 'sales/sales/add-receipt-particular.html', {'form': form})

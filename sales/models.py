@@ -17,6 +17,10 @@ class Region(models.Model):
 
 
 class Customer(models.Model):
+    NOTIFICATION = (
+        ('e', 'Email'),
+        ('p', 'Phone')
+    )
     email = models.EmailField(null=True, blank=True)
     number = models.CharField(max_length=10, unique=True, primary_key=True)
     shop_name = models.CharField(max_length=100, unique=True)
@@ -25,11 +29,23 @@ class Customer(models.Model):
     phone_number = models.CharField(max_length=15, blank=True)
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     region = models.ForeignKey(Region, on_delete=models.CASCADE, help_text='search by region name')
+    notification_by = models.CharField(max_length=1, choices=NOTIFICATION, blank=True,
+                                       help_text='This is how notification will be sent to the customer,'
+                                                 'in case of debt settlement alerts or customer statement sending')
     created_at = models.DateTimeField(default=now)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return 'Shop name ' + str(self.shop_name) + ' , nick_name ' + str(self.nick_name)
+
+    def clean(self):
+        print(self.notification_by)
+        if self.notification_by == 'e':
+            if not self.email:
+                raise ValidationError({'email': 'You need to enter email address'})
+        elif self.notification_by == 'p':
+            if not self.phone_number:
+                raise ValidationError({'phone_number': 'You need to enter phone number'})
 
 
 class Order(models.Model):
@@ -198,7 +214,7 @@ class ReceiptParticular(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2, help_text='This is the unit'
                                                                           'price for each quantity')
     discount = models.DecimalField(max_digits=5, decimal_places=2,
-                                   help_text='% discount', null=True)
+                                   help_text='% discount', null=True, blank=True)
     receipt = models.ForeignKey(Receipt, to_field='number', on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
 

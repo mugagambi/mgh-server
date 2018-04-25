@@ -240,7 +240,7 @@ class DeleteCustomer(LoginRequiredMixin, DeleteView):
 
 class UpdateCustomer(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = models.Customer
-    fields = ['shop_name', 'nick_name', 'location', 'phone_number', 'region']
+    form_class = forms.CustomerForm
     template_name = 'sales/customers/update.html'
     success_url = reverse_lazy('customers')
     success_message = 'Customer updated successfully'

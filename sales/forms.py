@@ -14,7 +14,7 @@ class RegionForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = models.Customer
-        fields = ('shop_name', 'nick_name', 'location', 'phone_number', 'email', 'region')
+        fields = ('shop_name', 'nick_name', 'location', 'phone_number', 'email', 'notification_by', 'region')
         widgets = {'region': Select2Widget}
 
 
@@ -51,3 +51,10 @@ class ReturnForm(forms.ModelForm):
         model = models.Return
         fields = ('customer', 'product', 'qty', 'reason', 'description')
         widgets = {'product': Select2Widget, 'customer': forms.HiddenInput}
+
+
+class ReceiptParticularForm(forms.ModelForm):
+    class Meta:
+        model = models.ReceiptParticular
+        fields = ('type', 'product', 'qty', 'price', 'discount')
+        widgets = {'product': Select2Widget}
