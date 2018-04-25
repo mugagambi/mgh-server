@@ -17,6 +17,7 @@
                     <th scope="col">Qty</th>
                     <th scope="col">@ (Ksh)</th>
                     <th scope="col">Sub Total (Ksh)</th>
+                    <th>Time</th>
                 </tr>
                 </thead>
                 {% for particular in particulars %}
@@ -25,6 +26,7 @@
                         <td>{{ particular.qty }}</td>
                         <td>{{ particular.price | intcomma }}</td>
                         <td>{{ particular.total_sum | floatformat:2 | intcomma }}</td>
+                        <td>{{ particular.cash_receipt.date }}</td>
                     </tr>
                 {% endfor %}
             </table>
