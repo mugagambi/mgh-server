@@ -17,11 +17,9 @@
     <h5 class="text-center">Receipt Particulars</h5>
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            {% if perms.sales.add_receiptparticular %}
                 <a class="btn btn-outline-success mb-1" href="{% url 'add-sale-receipt' pk=receipt.number %}">add
                     particular
                 </a>
-            {% endif %}
             <table class="table table-responsive-md">
                 <thead class="thead-dark">
                 <tr>
