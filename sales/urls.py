@@ -24,6 +24,7 @@ router.register(r'returns-rejects', views.ReturnsRejectsViewSet)
 router.register(r'orderless-package', views.OrderlessPackage)
 router.register(r'market-return', views.MarketReturnView)
 router.register(r'customer-deposits', views.CustomerDepositViewSet)
+router.register(r'receipt-misc', views.ReceiptMiscViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

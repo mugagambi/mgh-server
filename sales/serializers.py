@@ -191,3 +191,9 @@ class CustomerDepositSerializer(serializers.ModelSerializer):
         fields = (
             'number', 'customer', 'amount', 'date', 'via', 'phone_number', 'transaction_id', 'cheque_number',
             'received_by')
+
+
+class ReceiptMiscSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ReceiptMisc
+        fields = ('balance', 'receipt')

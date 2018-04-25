@@ -460,6 +460,7 @@ class CustomerAccount(models.Model):
 class CustomerAccountBalance(models.Model):
     customer = models.OneToOneField(Customer, on_delete=models.SET_NULL, null=True)
     balance = models.DecimalField(max_digits=13, decimal_places=2, default=0)
+    last_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.customer)
@@ -484,3 +485,12 @@ class CustomerDeposit(models.Model):
 
     def __str__(self):
         return self.number
+
+
+class ReceiptMisc(models.Model):
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0,
+                                  help_text='The balance before a receipt payment was made')
+    receipt = models.OneToOneField(Receipt, on_delete=models.CASCADE, help_text='Receipt can have only one balance')
+
+    def __str__(self):
+        return self.receipt

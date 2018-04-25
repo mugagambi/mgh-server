@@ -370,3 +370,8 @@ class MarketReturnView(viewsets.ModelViewSet):
 class CustomerDepositViewSet(viewsets.ModelViewSet):
     queryset = models.CustomerDeposit.objects.all()
     serializer_class = serializers.CustomerDepositSerializer
+
+
+class ReceiptMiscViewSet(viewsets.ModelViewSet):
+    queryset = models.ReceiptMisc.objects.all()
+    serializer_class = serializers.ReceiptMiscSerializer
