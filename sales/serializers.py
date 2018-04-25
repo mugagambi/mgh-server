@@ -5,7 +5,7 @@ from sales import models
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Region
-        fields = ('name',)
+        fields = ('id', 'name',)
 
 
 class CustomerSerializer(serializers.ModelSerializer):
