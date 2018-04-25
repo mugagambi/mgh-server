@@ -65,7 +65,18 @@ class OrderProductsViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.OrderProductsSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_fields = ('order', 'product', 'order__date_delivery')
-    ordering_fields = ('qty', 'price')
+    ordering_fields = ('qty',)
+
+    def perform_create(self, serializer):
+        product = serializer.validated_data['product']
+        order = serializer.validated_data['order']
+        serializer.validated_data.pop('distributing_qty')
+        price = models.CustomerPrice.objects.get(product=product, customer=order.customer)
+        try:
+            discount = models.CustomerDiscount.objects.get(product=product, customer=order.customer)
+        except models.CustomerDiscount.DoesNotExist:
+            discount = None
+        return serializer.save(price=price, discount=discount)
 
 
 class PackageFilterSet(django_filters.rest_framework.FilterSet):

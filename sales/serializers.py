@@ -32,11 +32,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderProductsSerializer(serializers.ModelSerializer):
-    distributing_qty = serializers.DecimalField(decimal_places=2, max_digits=7, default=0)
+    distributing_qty = serializers.DecimalField(decimal_places=2, max_digits=7, default=0, read_only=True)
 
     class Meta:
         model = models.OrderProduct
-        fields = ('number', 'order', 'product', 'qty', 'price', 'distributing_qty')
+        fields = ('number', 'order', 'product', 'qty', 'price', 'discount', 'distributing_qty')
+        read_only_fields = ('price', 'discount')
 
 
 class PackageSerializer(serializers.ModelSerializer):
