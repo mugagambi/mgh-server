@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
-from core.models import AggregationCenter
+from core.models import AggregationCenter, Product
 from sales import models
 from sales import serializers
 
@@ -38,6 +38,13 @@ class CustomerViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = CustomerFilterSet
     ordering_fields = ('created_at', 'updated_at')
+
+    def perform_create(self, serializer):
+        customer = serializer.save()
+        products = Product.objects.all()
+        customer_prices = [models.CustomerPrice(product=product, price=product.common_price, customer=customer) for
+                           product in products]
+        models.CustomerPrice.objects.bulk_create(customer_prices)
 
 
 class OrderFilterSet(django_filters.rest_framework.FilterSet):
