@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Add Receipt</h1>
+    </div>
+    <div id="app">
+        <form>
+            <div class="row">
+                <div class="col-md-8 offset-2">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1"></label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                               placeholder="Enter email">
+                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                            else.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/vue.js' %}"></script>
+    <script>
+        new Vue({
+            el: '#app'
+        })
+    </script>
+{% endblock %}

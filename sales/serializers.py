@@ -178,3 +178,16 @@ class MarketReturnSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MarketReturn
         fields = ('number', 'product', 'qty', 'date')
+
+
+class CustomerDepositSerializer(serializers.ModelSerializer):
+    received_by = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = models.CustomerDeposit
+        fields = (
+            'number', 'customer', 'amount', 'date', 'via', 'phone_number', 'transaction_id', 'cheque_number',
+            'received_by')

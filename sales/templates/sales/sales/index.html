@@ -9,15 +9,15 @@
     <hr/>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">Total Customer Sales</h1>
+        <a class="btn btn-outline-success btn-sm" href="{% url 'create-sale-receipt' %}">
+            <span data-feather="plus"></span>
+            Add Receipt
+        </a>
         <button class="btn btn-outline-success btn-sm" data-toggle="modal"
                 data-target="#export-data">
             <span data-feather="database"></span>
             Export Data
         </button>
-        <a class="btn btn-outline-success btn-sm" href="{% url 'create-customer' %}">
-            <span data-feather="activity"></span>
-            Reports
-        </a>
     </div>
     {% include 'includes/filter_by.html' %}
     <table id="customers" class="table table-striped table-responsive-md" style="width:100%">
@@ -63,6 +63,7 @@
 
 
 
+
                                 {{ sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                            aria-label="Previous">
                             <span aria-hidden="true">Previous</span>
@@ -92,6 +93,7 @@
 
 
 
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -99,6 +101,7 @@
                 {% if sales.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 

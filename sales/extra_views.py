@@ -75,4 +75,10 @@ def add_receipt_particular(request, pk):
     else:
         form = forms.ReceiptParticularForm()
         form.fields['product'].queryset = products
-    return render(request, 'sales/sales/add-receipt-particular.html', {'form': form})
+    return render(request, 'sales/sales/add-receipt-particular.html', {'form': form, 'receipt': receipt})
+
+
+@login_required()
+@permission_required('sales.add_receipt', raise_exception=True)
+def add_receipt(request):
+    return render(request, 'sales/sales/add_receipt.html')

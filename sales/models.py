@@ -426,3 +426,61 @@ class Invoices(Receipt):
         proxy = True
         verbose_name = 'Invoice'
         verbose_name_plural = 'Invoices'
+
+
+class CustomerAccount(models.Model):
+    VIA = (
+        ('M', 'M-pesa'),
+        ('B', 'Bank Transfer'),
+        ('C', 'Cash'),
+        ('Q', 'Cheque')
+    )
+    TYPE = (
+        ('R', 'Return'),
+        ('P', 'Purchase'),
+        ('D', 'Deposit'),
+        ('P', 'Payment')
+    )
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    date = models.DateTimeField(default=now)
+    type = models.CharField(max_length=1, choices=TYPE)
+    via = models.CharField(max_length=1, choices=VIA)
+    receipt = models.ForeignKey(Receipt, on_delete=models.SET_NULL, null=True)
+    returns = models.ForeignKey(Return, on_delete=models.SET_NULL, null=True)
+    phone_number = models.CharField(max_length=10, blank=True)
+    transaction_id = models.CharField(max_length=10, blank=True)
+    cheque_number = models.CharField(max_length=100, blank=True)
+
+    def __str__(self):
+        return self.number
+
+
+class CustomerAccountBalance(models.Model):
+    customer = models.OneToOneField(Customer, on_delete=models.SET_NULL, null=True)
+    balance = models.DecimalField(max_digits=13, decimal_places=2, default=0)
+
+    def __str__(self):
+        return str(self.customer)
+
+
+class CustomerDeposit(models.Model):
+    VIA = (
+        ('M', 'M-pesa'),
+        ('B', 'Bank Transfer'),
+        ('C', 'Cash'),
+        ('Q', 'Cheque')
+    )
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    date = models.DateTimeField(default=now)
+    via = models.CharField(max_length=1, choices=VIA)
+    phone_number = models.CharField(max_length=10, blank=True)
+    transaction_id = models.CharField(max_length=10, blank=True)
+    cheque_number = models.CharField(max_length=100, blank=True)
+    received_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.number

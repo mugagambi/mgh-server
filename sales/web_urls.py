@@ -16,6 +16,7 @@ urlpatterns = [
     path('all/bbfs/', web_views.bbf_accounts, name='bbfs'),
     path('all/bbfs/<str:customer>/', web_views.customer_bbfs, name='customer-bbfs'),
     path('all/customers/receipt/<str:pk>/', web_views.receipt_detail, name='sale-receipt'),
+    path('all/receipt/create/', extra_views.add_receipt, name='create-sale-receipt'),
     path('all/cash/', web_views.cash_sales_list, name='cash-sales'),
     path('all/cash/<str:day>/', extra_views.cash_receipt, name='cash-receipt'),
     path('customers/<str:pk>/prices/', web_views.customer_prices, name='customer_prices'),

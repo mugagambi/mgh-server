@@ -365,3 +365,8 @@ class OrderlessPackage(viewsets.ModelViewSet):
 class MarketReturnView(viewsets.ModelViewSet):
     queryset = models.MarketReturn.objects.all()
     serializer_class = serializers.MarketReturnSerializer
+
+
+class CustomerDepositViewSet(viewsets.ModelViewSet):
+    queryset = models.CustomerDeposit.objects.all()
+    serializer_class = serializers.CustomerDepositSerializer
