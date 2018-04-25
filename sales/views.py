@@ -337,3 +337,8 @@ def bbf_account_balance_list(request):
     balance = models.BBF.objects.values('customer').annotate(balance=Sum('amount'))
     serializer = serializers.BbfAccountSerializer(balance, many=True)
     return Response(serializer.data)
+
+
+class OrderlessPackage(viewsets.ModelViewSet):
+    queryset = models.OrderlessPackage.objects.all()
+    serializer_class = serializers.OrderlessPackageSerializer

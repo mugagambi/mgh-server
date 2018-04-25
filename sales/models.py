@@ -146,6 +146,16 @@ class Package(models.Model):
         return 'package no. ' + str(self.number)
 
 
+class OrderlessPackage(models.Model):
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    qty = models.DecimalField(decimal_places=2, max_digits=8)
+    date = models.DateField(default=now)
+
+    def __str__(self):
+        return self.number
+
+
 class PackageProduct(models.Model):
     number = models.CharField(max_length=10, unique=True, primary_key=True)
     package = models.ForeignKey(Package, to_field='number', on_delete=models.CASCADE)

@@ -165,3 +165,9 @@ class ReturnsOrRejectsSerializer(serializers.ModelSerializer):
 class BbfAccountSerializer(serializers.Serializer):
     customer = serializers.CharField()
     balance = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+
+class OrderlessPackageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.OrderlessPackage
+        fields = ('number', 'product', 'qty', 'date')
