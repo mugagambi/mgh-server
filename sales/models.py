@@ -25,7 +25,7 @@ class Customer(models.Model):
     phone_number = models.CharField(max_length=15, blank=True)
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     region = models.ForeignKey(Region, on_delete=models.CASCADE, help_text='search by region name')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=now)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

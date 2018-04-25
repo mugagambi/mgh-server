@@ -30,7 +30,7 @@
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'product-availability-list' center=center.id %}">Product
                         Availability</a>
-                    {% if perms.core.core.change_aggregationcenter %}
+                    {% if perms.core.change_aggregationcenter %}
                         <a class="btn btn-outline-success btn-sm" href="{% url 'update-center' pk=center.id %}">Edit</a>
                     {% endif %}
                     <a class="btn btn-outline-danger btn-sm" href="{% url 'delete-center' pk=center.id %}">Remove</a>
