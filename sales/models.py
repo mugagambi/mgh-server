@@ -315,6 +315,16 @@ class CashReceiptPayment(models.Model):
         return str(self.cash_receipt)
 
 
+class MarketReturn(models.Model):
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    qty = models.DecimalField(decimal_places=2, max_digits=8)
+    date = models.DateField(default=now)
+
+    def __str__(self):
+        return self.number
+
+
 class CreditSettlement(models.Model):
     TYPES = (
         (1, 'Cheque'),

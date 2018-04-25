@@ -342,3 +342,8 @@ def bbf_account_balance_list(request):
 class OrderlessPackage(viewsets.ModelViewSet):
     queryset = models.OrderlessPackage.objects.all()
     serializer_class = serializers.OrderlessPackageSerializer
+
+
+class MarketReturnView(viewsets.ModelViewSet):
+    queryset = models.MarketReturn.objects.all()
+    serializer_class = serializers.MarketReturnSerializer

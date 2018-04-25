@@ -171,3 +171,9 @@ class OrderlessPackageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OrderlessPackage
         fields = ('number', 'product', 'qty', 'date')
+
+
+class MarketReturnSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MarketReturn
+        fields = ('number', 'product', 'qty', 'date')
