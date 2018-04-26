@@ -6,7 +6,7 @@ from django.dispatch import receiver
 
 from core.models import Product, AggregationCenterProduct, AggregationCenter
 from sales.models import OrderProduct, OrderDistributionPoint, CustomerAccount, CustomerAccountBalance, \
-    ReceiptParticular
+    ReceiptParticular, BBF
 from system_settings.models import Settings
 from utils import main_generate_unique_id
 from .models import CustomerPrice
@@ -81,3 +81,13 @@ def particular_account(sender, instance, created, **kwargs):
                                        date=instance.receipt.date,
                                        type='P',
                                        receipt=instance.receipt)
+
+
+@receiver(post_save, sender=BBF)
+def bbf_account(sender, instance, created, **kwargs):
+    if created:
+        CustomerAccount.objects.create(number=main_generate_unique_id(),
+                                       customer=instance.customer,
+                                       amount=instance.amount,
+                                       date=instance.date,
+                                       type='B')

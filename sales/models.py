@@ -365,6 +365,7 @@ class BBF(models.Model):
                                            'customer')
     bbf_type = models.CharField(max_length=1, choices=BFF_TYPE)
     customer = models.ForeignKey(Customer, to_field='number', on_delete=models.SET_NULL, null=True)
+    date = models.DateTimeField(default=now)
 
     def __str__(self):
         return 'balance ' + str(self.receipt)
@@ -439,7 +440,8 @@ class CustomerAccount(models.Model):
         ('R', 'Return'),
         ('P', 'Purchase'),
         ('D', 'Deposit'),
-        ('A', 'Payment')
+        ('A', 'Payment'),
+        ('B', 'BBF')
     )
     number = models.CharField(unique=True, max_length=10, primary_key=True)
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
