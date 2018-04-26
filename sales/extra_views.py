@@ -94,3 +94,12 @@ def trade_debtors(request):
         'credit_total': credit_total,
         'debit_total': debit_total
     })
+
+
+@login_required()
+def customer_statement(request, customer):
+    customer = get_object_or_404(models.Customer, pk=customer)
+    account = models.CustomerAccount.objects.filter(customer=customer)
+    balance = models.CustomerAccountBalance.objects.get(customer=customer)
+    return render(request, 'sales/sales/customer_statement.html',
+                  {'customer': customer, 'account': account, 'balance': balance})

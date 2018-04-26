@@ -32,7 +32,7 @@
                 {% endif %}
                 <td>
                     <a class="btn btn-outline-success btn-sm"
-                       href="{% url 'customer-bbfs' customer=balance.customer.number %}" data-toggle="tooltip"
+                       href="{% url 'customer_statement'  customer=balance.customer.number %}" data-toggle="tooltip"
                        data-placement="top"
                        title="View  {{ balance.customer.shop_name }}  statement">View Customer Statement</a>
                 </td>

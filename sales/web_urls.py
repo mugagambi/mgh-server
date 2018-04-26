@@ -20,6 +20,7 @@ urlpatterns = [
     path('all/receipt/create/', extra_views.add_receipt, name='create-sale-receipt'),
     path('all/cash/', web_views.cash_sales_list, name='cash-sales'),
     path('all/cash/<str:day>/', extra_views.cash_receipt, name='cash-receipt'),
+    path('all/debtors/<str:customer>/', extra_views.customer_statement, name='customer_statement'),
     path('customers/<str:pk>/prices/', web_views.customer_prices, name='customer_prices'),
     path('customers/<str:pk>/bbf/', web_views.add_bbf, name='add-customer-bff'),
     path('customers/<str:customer>/prices/<int:pk>/', web_views.update_price, name='update_customer_price'),
