@@ -12,6 +12,9 @@
     <a class="nav-item nav-link {% if 'bbfs' in request.path %}
                         active
                         {% endif %}" href="{% url 'bbfs' %}">BBF Balance</a>
+    <a class="nav-item nav-link {% if 'debtors' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'trade-debtors' %}">Trade Debtors</a>
     <a class="nav-item nav-link {% if 'returns' in request.path %}
                         active
                         {% endif %}" href="{% url 'returns' %}">Returns</a>
