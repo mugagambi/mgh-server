@@ -21,7 +21,7 @@
         {% for balance in debtors %}
             <tr>
                 <td>
-                    <a href="{% url 'update-customer' pk=balance.customer.number %}">{{ balance.customer.shop_name }}</a>
+                    {{ balance.customer.shop_name }}
                 </td>
                 {% if balance.amount < 0 %}
                     <td></td>
@@ -58,6 +58,8 @@
                 {% if balances.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
@@ -117,6 +119,8 @@
 
 
 
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -124,6 +128,8 @@
                 {% if balances.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
