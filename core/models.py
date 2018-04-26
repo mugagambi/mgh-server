@@ -32,7 +32,7 @@ class Product(models.Model):
     """
     Items that the company sells
     """
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     common_price = models.DecimalField(max_digits=9, decimal_places=2, default=0.0, help_text='price in Ksh.')
 
     def __str__(self):
