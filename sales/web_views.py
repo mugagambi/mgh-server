@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
-from django.db.models import Sum, F, Func
+from django.db.models import Sum, F, Func, Max
 from django.forms import modelformset_factory
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
@@ -429,6 +429,7 @@ def add_more_products(request, order):
                                                                 'order': order})
 
 
+@login_required()
 def update_particular_item(request, order, pk):
     particular = models.OrderProduct.objects.get(order__pk=order, pk=pk)
     if request.method == 'POST':
@@ -441,6 +442,7 @@ def update_particular_item(request, order, pk):
     return render(request, 'sales/orders/update-order-product.html', {'form': form})
 
 
+@login_required()
 @require_http_methods(['POST'])
 def remove_order_product(request, order):
     item_id = request.POST['item_id']
@@ -530,7 +532,8 @@ def distribute_order(request, order_product):
 
 @login_required()
 def bbf_accounts(request):
-    customer_balances = models.BbfBalance.objects.all()
+    customer_balances = models.BBF.objects.values('customer__shop_name', 'amount', 'customer__number').annotate(
+        max_date=Max('receipt__date')).filter(receipt__date=F('max_date')).order_by('amount')
     paginator = Paginator(customer_balances, 50)
     page = request.GET.get('page', 1)
     try:

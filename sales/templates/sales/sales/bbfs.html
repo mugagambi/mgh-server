@@ -23,12 +23,12 @@
         {% for balance in balances %}
             <tr>
                 <td>
-                    <a href="{% url 'update-customer' pk=balance.customer.number %}">{{ balance.customer.shop_name }}</a>
+                    {{ balance.customer__shop_name }}
                 </td>
-                <td>{{ balance.balance | intcomma }}</td>
+                <td>{{ balance.amount | intcomma }}</td>
                 <td>
                     <a class="btn btn-outline-success btn-sm"
-                       href="{% url 'customer-bbfs' customer=balance.customer.number %}" data-toggle="tooltip"
+                       href="{% url 'customer-bbfs' customer=balance.customer__number %}" data-toggle="tooltip"
                        data-placement="top"
                        title="View all {{ balance.customer.shop_name }} the bbf amounts">Details</a>
                 </td>
