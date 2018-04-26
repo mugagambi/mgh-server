@@ -1,11 +1,15 @@
+import datetime
+
 from django.db.models import Sum
 from django.db.models.signals import post_save
-from core.models import Product, AggregationCenterProduct, AggregationCenter
-from sales.models import OrderProduct, OrderDistributionPoint
-from system_settings.models import Settings
 from django.dispatch import receiver
+
+from core.models import Product, AggregationCenterProduct, AggregationCenter
+from sales.models import OrderProduct, OrderDistributionPoint, CustomerAccount, CustomerAccountBalance, \
+    ReceiptParticular
+from system_settings.models import Settings
+from utils import main_generate_unique_id
 from .models import CustomerPrice
-import datetime
 
 
 @receiver(post_save, sender=Product)
@@ -58,3 +62,22 @@ def distribute_order(sender, instance, created, **kwargs):
                     except OrderDistributionPoint.DoesNotExist:
                         pass
             break
+
+
+@receiver(post_save, sender=CustomerAccount)
+def update_customer_balance(sender, instance, created, **kwargs):
+    if created:
+        balance, created = CustomerAccountBalance.objects.get_or_create(customer=instance.customer)
+        balance.balance = balance.balance + instance.amount
+        balance.save()
+
+
+@receiver(post_save, sender=ReceiptParticular)
+def particular_account(sender, instance, created, **kwargs):
+    if created:
+        CustomerAccount.objects.create(number=main_generate_unique_id(),
+                                       customer=instance.receipt.customer,
+                                       amount=-(instance.qty * instance.price),
+                                       date=instance.receipt.date,
+                                       type='P',
+                                       receipt=instance.receipt)

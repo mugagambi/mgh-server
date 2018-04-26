@@ -350,11 +350,9 @@ def distributed_order_product(request, date, center):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-def bbf_account_balance_list(request):
-    balance = models.BBF.objects.values('customer').annotate(balance=Sum('amount'))
-    serializer = serializers.BbfAccountSerializer(balance, many=True)
-    return Response(serializer.data)
+class CustomerAccountBalanceViewset(viewsets.ReadOnlyModelViewSet):
+    queryset = models.CustomerAccountBalance.objects.all()
+    serializer_class = serializers.CustomerAccountBalance
 
 
 class OrderlessPackage(viewsets.ModelViewSet):

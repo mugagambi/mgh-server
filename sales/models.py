@@ -439,7 +439,7 @@ class CustomerAccount(models.Model):
         ('R', 'Return'),
         ('P', 'Purchase'),
         ('D', 'Deposit'),
-        ('P', 'Payment')
+        ('A', 'Payment')
     )
     number = models.CharField(unique=True, max_length=10, primary_key=True)
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
@@ -459,11 +459,11 @@ class CustomerAccount(models.Model):
 
 class CustomerAccountBalance(models.Model):
     customer = models.OneToOneField(Customer, on_delete=models.SET_NULL, null=True)
-    balance = models.DecimalField(max_digits=13, decimal_places=2, default=0)
+    amount = models.DecimalField(max_digits=13, decimal_places=2, default=0)
     last_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.customer)
+        return self.pk
 
 
 class CustomerDeposit(models.Model):

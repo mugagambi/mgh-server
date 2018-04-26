@@ -24,11 +24,10 @@ router.register(r'returns-rejects', views.ReturnsRejectsViewSet)
 router.register(r'orderless-package', views.OrderlessPackage)
 router.register(r'market-return', views.MarketReturnView)
 router.register(r'customer-deposits', views.CustomerDepositViewSet)
-router.register(r'receipt-misc', views.ReceiptMiscViewSet)
+router.register(r'receipt-misc', views.ReceiptMiscViewSet),
+router.register(r'customer-balance', views.CustomerAccountBalanceViewset)
 
 urlpatterns = [
     path('', include(router.urls)),
     path('order-products/<str:date>/<int:center>/', views.distributed_order_product),
-    path('bbfs/', views.BBFView.as_view()),
-    path('bbfs/accounts/', views.bbf_account_balance_list)
 ]
