@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 from core.models import Product, AggregationCenterProduct, AggregationCenter
 from sales.models import OrderProduct, OrderDistributionPoint, CustomerAccount, CustomerAccountBalance, \
-    ReceiptParticular, BBF, Return
+    ReceiptParticular, BBF, Return, ReceiptPayment
 from system_settings.models import Settings
 from utils import main_generate_unique_id
 from .models import CustomerPrice
@@ -103,3 +103,43 @@ def return_account(sender, instance, created, **kwargs):
                                        date=instance.date,
                                        type='R',
                                        returns=instance)
+
+
+@receiver(post_save, sender=ReceiptPayment)
+def receipt_payment_account(sender, instance, created, **kwargs):
+    if created:
+        if instance.type == 1:
+            type = 'Q'
+            cheque_number = instance.check_number
+            transaction_id = ''
+            phone_number = ''
+        elif instance.type == 2:
+            type = 'M'
+            cheque_number = ''
+            transaction_id = instance.transaction_id
+            phone_number = instance.mobile_number
+        elif instance.type == 3:
+            type = 'C'
+            cheque_number = ''
+            transaction_id = ''
+            phone_number = ''
+        elif instance.type == 5:
+            type = 'B'
+            cheque_number = ''
+            transaction_id = ''
+            phone_number = ''
+        else:
+            type = ''
+            cheque_number = ''
+            transaction_id = ''
+            phone_number = ''
+        if instance.type != 4:
+            CustomerAccount.objects.create(number=main_generate_unique_id(),
+                                           customer=instance.customer,
+                                           amount=instance.amount,
+                                           date=instance.receipt.date,
+                                           type=type,
+                                           receipt=instance.receipt,
+                                           cheque_number=cheque_number,
+                                           transaction_id=transaction_id,
+                                           phone_number=phone_number)
