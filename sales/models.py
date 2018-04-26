@@ -446,7 +446,7 @@ class CustomerAccount(models.Model):
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     date = models.DateTimeField(default=now)
     type = models.CharField(max_length=1, choices=TYPE)
-    via = models.CharField(max_length=1, choices=VIA)
+    via = models.CharField(max_length=1, choices=VIA, blank=True)
     receipt = models.ForeignKey(Receipt, on_delete=models.SET_NULL, null=True)
     returns = models.ForeignKey(Return, on_delete=models.SET_NULL, null=True)
     phone_number = models.CharField(max_length=10, blank=True)

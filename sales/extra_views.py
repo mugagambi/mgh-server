@@ -1,5 +1,5 @@
 import datetime
-
+from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
@@ -82,3 +82,15 @@ def add_receipt_particular(request, pk):
 @permission_required('sales.add_receipt', raise_exception=True)
 def add_receipt(request):
     return render(request, 'sales/sales/add_receipt.html')
+
+
+@login_required()
+def trade_debtors(request):
+    debtors = models.CustomerAccountBalance.objects.all()
+    credit_total = debtors.filter(amount__gt=Decimal('0.0')).aggregate(total=Sum('amount'))
+    debit_total = debtors.filter(amount__lt=Decimal('0.0')).aggregate(total=Sum('amount'))
+    return render(request, 'sales/sales/customer_accounts.html', {
+        'debtors': debtors,
+        'credit_total': credit_total,
+        'debit_total': debit_total
+    })

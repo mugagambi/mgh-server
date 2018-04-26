@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.admindocs',
     'import_export',
     'django_select2',
+    'mathfilters',
     'core.apps.CoreConfig',
     'sales.apps.SalesConfig',
     'reports.apps.ReportsConfig',
