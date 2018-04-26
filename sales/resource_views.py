@@ -27,7 +27,7 @@ class GeneratePDF(View):
         particulars = models.CashReceiptParticular.objects.filter(
             cash_receipt__date__range=(date_from, date_to)).select_related('product').annotate(
             total_sum=F('price') * F('qty')
-        )
+        ).order_by('-cash_receipt__date')
         total_qty = particulars.aggregate(sum=Sum('qty'))
         total_amount = particulars.aggregate(total=Sum(F('qty') * F('price')))
         template = get_template('sales/resources/cash_sale.html')
