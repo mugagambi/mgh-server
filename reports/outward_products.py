@@ -32,7 +32,7 @@ def outward_product_summary_report(request, date_0, date_1):
     date_0_datetime = datetime.datetime.combine(date_0, datetime.time(0, 0))
     date_1_datetime = datetime.datetime.combine(date_1, datetime.time(23, 59))
     outward = []
-    for product in Product.objects.all():
+    for product in Product. objects.all():
         total_ordered = models.OrderProduct.objects. \
             filter(product=product, order__date_delivery__range=(date_0, date_1)). \
             aggregate(total=Sum('qty'))

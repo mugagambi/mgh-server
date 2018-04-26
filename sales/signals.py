@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 
 from django.db.models import Sum
 from django.db.models.signals import post_save
@@ -6,7 +7,7 @@ from django.dispatch import receiver
 
 from core.models import Product, AggregationCenterProduct, AggregationCenter
 from sales.models import OrderProduct, OrderDistributionPoint, CustomerAccount, CustomerAccountBalance, \
-    ReceiptParticular, BBF
+    ReceiptParticular, BBF, Return
 from system_settings.models import Settings
 from utils import main_generate_unique_id
 from .models import CustomerPrice
@@ -91,3 +92,14 @@ def bbf_account(sender, instance, created, **kwargs):
                                        amount=instance.amount,
                                        date=instance.date,
                                        type='B')
+
+
+@receiver(post_save, sender=Return)
+def return_account(sender, instance, created, **kwargs):
+    if created:
+        CustomerAccount.objects.create(number=main_generate_unique_id(),
+                                       customer=instance.customer,
+                                       amount=Decimal(instance.qty) * Decimal(instance.price),
+                                       date=instance.date,
+                                       type='R',
+                                       returns=instance)
