@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 from core.models import Product, AggregationCenterProduct, AggregationCenter
 from sales.models import OrderProduct, OrderDistributionPoint, CustomerAccount, CustomerAccountBalance, \
-    ReceiptParticular, BBF, Return, ReceiptPayment
+    ReceiptParticular, BBF, Return, ReceiptPayment, CustomerDeposit
 from system_settings.models import Settings
 from utils import main_generate_unique_id
 from .models import CustomerPrice
@@ -135,11 +135,26 @@ def receipt_payment_account(sender, instance, created, **kwargs):
             phone_number = ''
         if instance.type != 4:
             CustomerAccount.objects.create(number=main_generate_unique_id(),
-                                           customer=instance.customer,
+                                           customer=instance.receipt.customer,
                                            amount=instance.amount,
                                            date=instance.receipt.date,
-                                           type=type,
+                                           type='A',
+                                           via=type,
                                            receipt=instance.receipt,
                                            cheque_number=cheque_number,
                                            transaction_id=transaction_id,
                                            phone_number=phone_number)
+
+
+@receiver(post_save, sender=CustomerDeposit)
+def deposit_account(sender, instance, created, **kwargs):
+    if created:
+        CustomerAccount.objects.create(number=main_generate_unique_id(),
+                                       customer=instance.customer,
+                                       amount=instance.amount,
+                                       date=instance.date,
+                                       type='D',
+                                       via=instance.via,
+                                       cheque_number=instance.cheque_number,
+                                       transaction_id=instance.transaction_id,
+                                       phone_number=instance.phone_number)

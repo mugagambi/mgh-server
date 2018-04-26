@@ -86,7 +86,7 @@ def add_receipt(request):
 
 @login_required()
 def trade_debtors(request):
-    debtors = models.CustomerAccountBalance.objects.all()
+    debtors = models.CustomerAccountBalance.objects.all().order_by('customer__shop_name')
     credit_total = debtors.filter(amount__gt=Decimal('0.0')).aggregate(total=Sum('amount'))
     debit_total = debtors.filter(amount__lt=Decimal('0.0')).aggregate(total=Sum('amount'))
     return render(request, 'sales/sales/customer_accounts.html', {
