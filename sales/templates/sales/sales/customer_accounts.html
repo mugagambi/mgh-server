@@ -32,7 +32,7 @@
                 {% endif %}
                 <td>
                     <a class="btn btn-outline-success btn-sm"
-                       href="#" data-toggle="tooltip"
+                       href="{% url 'customer_statement' customer=balance.customer.number %}" data-toggle="tooltip"
                        data-placement="top"
                        title="View  {{ balance.customer.shop_name }}  statement">View Customer Statement</a>
                 </td>
@@ -58,6 +58,7 @@
                 {% if balances.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
@@ -121,6 +122,7 @@
 
 
 
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -128,6 +130,7 @@
                 {% if balances.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
