@@ -47,6 +47,13 @@ class Customer(models.Model):
             if not self.phone_number:
                 raise ValidationError({'phone_number': 'You need to enter phone number'})
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        self.shop_name = self.shop_name.lower()
+        self.nick_name = self.nick_name.lower()
+        super(Customer, self).save(force_insert=False, force_update=False, using=None,
+                                   update_fields=None)
+
 
 class Order(models.Model):
     customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE,
