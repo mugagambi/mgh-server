@@ -94,7 +94,7 @@ def deactivate_user(request):
                                   ' not log in to the system from now until activated again')
     return redirect('users')
 
-
+@login_required()
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
