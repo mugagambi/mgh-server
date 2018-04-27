@@ -39,5 +39,7 @@ urlpatterns = [
     path('all/returns/record/<str:customer>/', extra_views.record_return, name='record-return'),
     path('all/customers/receipt/<str:pk>/add-particular', extra_views.add_receipt_particular,
          name='add-sale-receipt'),
+    path('all/customers/receipt/particular/<str:item>/update/', extra_views.update_particular,
+         name='update-receipt-particular'),
     path('resources/cash_sale/<str:day>/', resource_views.GeneratePDF.as_view(), name='pdf-cash')
 ]

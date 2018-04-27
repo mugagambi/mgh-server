@@ -11,7 +11,7 @@ from django.views.generic import ListView
 from core.models import Product
 from sales import forms
 from sales import models
-from utils import generate_unique_id
+from utils import generate_unique_id, main_generate_unique_id
 
 
 class ReturnsList(LoginRequiredMixin, ListView):
@@ -114,3 +114,33 @@ def customer_statement(request, customer):
     balance = models.CustomerAccountBalance.objects.get(customer=customer)
     return render(request, 'sales/sales/customer_statement.html',
                   {'customer': customer, 'account': account, 'balance': balance})
+
+
+@login_required()
+@permission_required('sales.change_receiptparticular')
+def update_particular(request, item):
+    item = get_object_or_404(models.ReceiptParticular, pk=item)
+    old_total = item.qty * item.price
+    if request.method == 'POST':
+        form = forms.ReceiptParticularForm(request.POST, instance=item)
+        if form.is_valid():
+            item = form.save()
+            new_total = item.qty * item.price
+            diff = new_total - old_total
+            models.CustomerAccount.objects.create(number=main_generate_unique_id(),
+                                                  customer=item.receipt.customer,
+                                                  amount=-diff,
+                                                  date=item.receipt.date,
+                                                  type='P',
+                                                  receipt=item.receipt)
+            messages.success(request, 'Item updated successfully')
+            return redirect('sale-receipt', pk=item.receipt.number)
+    else:
+        form = forms.ReceiptParticularForm(instance=item)
+    return render(request, 'sales/sales/add-receipt-particular.html', {'form': form, 'item': item})
+
+
+@login_required()
+@permission_required('sales.delete_receipt')
+def delete_receipt(request, pk):
+    pass

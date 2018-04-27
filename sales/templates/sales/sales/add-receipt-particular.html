@@ -6,7 +6,11 @@
 {% endblock %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2">Add particular for receipt no. {{ receipt.number }}</h1>
+        {% if not item %}
+            <h1 class="h2">Add particular for receipt no. {{ receipt.number }}</h1>
+        {% else %}
+            <h1 class="h2">Update particular for receipt no. {{ item.receipt.number }}</h1>
+        {% endif %}
     </div>
     <div class="row">
         <div class="col-sm-5 offset-sm-3">
@@ -20,10 +24,6 @@
                 </div>
             </form>
             <br/>
-            <div class="alert alert-info" role="alert">
-                <span data-feather="help-circle"> </span>
-               Add Receipt Particular
-            </div>
         </div>
     </div>
 {% endblock %}

@@ -7,8 +7,10 @@ from django.utils.timezone import now
 
 from core.models import User, Product, Crate, AggregationCenter
 
-
 # Create your models here.
+from utils import main_generate_unique_id
+
+
 class Region(models.Model):
     name = models.CharField(max_length=100)
 
@@ -218,6 +220,36 @@ class Receipt(models.Model):
 
     def has_credit(self):
         return self.receiptpayment_set.filter(type=4).exists()
+
+
+class CustomerAccount(models.Model):
+    VIA = (
+        ('M', 'M-pesa'),
+        ('B', 'Bank Transfer'),
+        ('C', 'Cash'),
+        ('Q', 'Cheque')
+    )
+    TYPE = (
+        ('R', 'Return'),
+        ('P', 'Purchase'),
+        ('D', 'Deposit'),
+        ('A', 'Payment'),
+        ('B', 'BBF')
+    )
+    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    date = models.DateTimeField(default=now)
+    type = models.CharField(max_length=1, choices=TYPE)
+    via = models.CharField(max_length=1, choices=VIA, blank=True)
+    receipt = models.ForeignKey(Receipt, on_delete=models.SET_NULL, null=True)
+    returns = models.ForeignKey('Return', on_delete=models.SET_NULL, null=True)
+    phone_number = models.CharField(max_length=10, blank=True)
+    transaction_id = models.CharField(max_length=10, blank=True)
+    cheque_number = models.CharField(max_length=100, blank=True)
+
+    def __str__(self):
+        return self.number
 
 
 class ReceiptParticular(models.Model):
@@ -434,36 +466,6 @@ class Invoices(Receipt):
         proxy = True
         verbose_name = 'Invoice'
         verbose_name_plural = 'Invoices'
-
-
-class CustomerAccount(models.Model):
-    VIA = (
-        ('M', 'M-pesa'),
-        ('B', 'Bank Transfer'),
-        ('C', 'Cash'),
-        ('Q', 'Cheque')
-    )
-    TYPE = (
-        ('R', 'Return'),
-        ('P', 'Purchase'),
-        ('D', 'Deposit'),
-        ('A', 'Payment'),
-        ('B', 'BBF')
-    )
-    number = models.CharField(unique=True, max_length=10, primary_key=True)
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
-    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    date = models.DateTimeField(default=now)
-    type = models.CharField(max_length=1, choices=TYPE)
-    via = models.CharField(max_length=1, choices=VIA, blank=True)
-    receipt = models.ForeignKey(Receipt, on_delete=models.SET_NULL, null=True)
-    returns = models.ForeignKey(Return, on_delete=models.SET_NULL, null=True)
-    phone_number = models.CharField(max_length=10, blank=True)
-    transaction_id = models.CharField(max_length=10, blank=True)
-    cheque_number = models.CharField(max_length=100, blank=True)
-
-    def __str__(self):
-        return self.number
 
 
 class CustomerAccountBalance(models.Model):

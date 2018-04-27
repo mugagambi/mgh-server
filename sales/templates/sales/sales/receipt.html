@@ -31,6 +31,7 @@
                     <th scope="col">Discount (%)</th>
                     <th scope="col">Sub Total (Ksh)</th>
                     <th scope="col">Type</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 {% for particular in particulars %}
@@ -41,6 +42,12 @@
                         <td>{{ particular.discount }}</td>
                         <td>{{ particular.total | intcomma }}</td>
                         <td>{{ particular.get_type_display }}</td>
+                        <td>
+                            {% if perms.sales.change_receiptparticular %}
+                                <a href="{% url 'update-receipt-particular' item=particular.id %}"
+                                   class="btn btn-outline-success mb-1">update</a>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
 
