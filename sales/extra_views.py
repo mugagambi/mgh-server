@@ -81,7 +81,18 @@ def add_receipt_particular(request, pk):
 @login_required()
 @permission_required('sales.add_receipt', raise_exception=True)
 def add_receipt(request):
-    return render(request, 'sales/sales/add_receipt.html')
+    if request.method == 'POST':
+        form = forms.ReceiptForm(request.POST)
+        if form.is_valid():
+            receipt = form.save(commit=False)
+            receipt.number = generate_unique_id(request.user.id)
+            receipt.served_by = request.user
+            receipt.save()
+            messages.success(request, 'Receipt added successfully')
+            return redirect('sale-receipt', pk=receipt.number)
+    else:
+        form = forms.ReceiptForm()
+    return render(request, 'sales/sales/add_receipt.html', {'form': form})
 
 
 @login_required()

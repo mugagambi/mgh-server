@@ -59,7 +59,9 @@ class ReceiptParticularForm(forms.ModelForm):
         fields = ('type', 'product', 'qty', 'price', 'discount')
         widgets = {'product': Select2Widget}
 
+
 class ReceiptForm(forms.ModelForm):
     class Meta:
         model = models.Receipt
-        fields = ()
+        fields = ('customer', 'date')
+        widgets = {'customer': Select2Widget}
