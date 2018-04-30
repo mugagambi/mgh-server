@@ -28,15 +28,16 @@ def distribute_order(sender, instance, created, **kwargs):
     if created:
         for center in centers:
             if AggregationCenterProduct.objects.filter(date=datetime.datetime.today(),
-                                                       product=instance.product).exists():
+                                                       product=instance.product,
+                                                       aggregation_center=center).exists():
                 center_product = AggregationCenterProduct.objects.filter(date=datetime.datetime.today(),
                                                                          product=instance.product).first()
                 if center_product.remaining > 0:
                     center_product.remaining = center_product.remaining - instance.qty
                     center_product.save()
-                    OrderDistributionPoint.objects.create(order_product=instance,
-                                                          qty=instance.qty,
-                                                          center=center)
+                    order_distribution = OrderDistributionPoint.objects.create(order_product=instance,
+                                                                               qty=instance.qty,
+                                                                               center=center)
                     break
         if not OrderDistributionPoint.objects.filter(order_product=instance).exists():
             main_center = Settings.objects.all().first().main_distribution
@@ -49,7 +50,8 @@ def distribute_order(sender, instance, created, **kwargs):
         to_distribute = instance.qty - current_distribution['total']
         for center in centers:
             if AggregationCenterProduct.objects.filter(date=datetime.datetime.today(),
-                                                       product=instance.product).exists():
+                                                       product=instance.product,
+                                                       aggregation_center=center).exists():
                 center_product = AggregationCenterProduct.objects.filter(date=datetime.datetime.today(),
                                                                          product=instance.product).first()
                 if center_product.remaining > 0:
