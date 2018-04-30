@@ -50,6 +50,10 @@ class AggregationCenterProduct(models.Model):
     def __str__(self):
         return str(self.product) + ' at ' + str(self.aggregation_center)
 
+    class Meta:
+        verbose_name = 'Product Availability'
+        verbose_name_plural = 'Product Availability'
+
 
 class CrateType(models.Model):
     name = models.CharField(max_length=100)

@@ -25,7 +25,7 @@ class CentersList(LoginRequiredMixin, ListView):
 @login_required()
 @permission_required('core.add_aggregation_center', raise_exception=True)
 def create_centers(request):
-    center_formset = modelformset_factory(models.AggregationCenter, exclude=('is_active',), max_num=10)
+    center_formset = modelformset_factory(models.AggregationCenter, exclude=('is_active',), extra=0, min_num=1)
     if request.method == 'POST':
         formset = center_formset(request.POST)
         if formset.is_valid():
@@ -63,7 +63,7 @@ class ProductList(LoginRequiredMixin, ListView):
 
 @login_required()
 def create_product(request):
-    product_formset = modelformset_factory(models.Product, fields=('name', 'common_price'), max_num=10)
+    product_formset = modelformset_factory(models.Product, fields=('name', 'common_price'), extra=0, min_num=1)
     if request.method == 'POST':
         formset = product_formset(request.POST)
         if formset.is_valid():
@@ -72,9 +72,9 @@ def create_product(request):
             return redirect(reverse_lazy('products-list'))
     else:
         formset = product_formset(queryset=models.Product.objects.none())
-    return render(request, 'crud/formset-create.html', {'formset': formset,
-                                                        'create_name': 'Products',
-                                                        'create_sub_name': 'product'})
+    return render(request, 'core/products/create.html', {'formset': formset,
+                                                         'create_name': 'Products',
+                                                         'create_sub_name': 'product'})
 
 
 class UpdateProduct(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -99,6 +99,9 @@ class DeleteProduct(LoginRequiredMixin, DeleteView):
 def product_availability_list(request, center):
     center = get_object_or_404(models.AggregationCenter, pk=center)
     day = request.GET.get('day', None)
+    if request.method == 'POST':
+        day = request.POST['products_day']
+        return redirect('add-product-availability', center=center.id, day=day)
     if day:
         day = datetime.strptime(day, "%Y-%m-%d").date()
     else:
@@ -113,16 +116,16 @@ def product_availability_list(request, center):
 
 
 @login_required()
-def product_availability(request, center):
+def product_availability(request, center, day):
     """used to indicate amount of products for sale in a center"""
+    dt = datetime.strptime(day, "%Y-%m-%d").date()
     center_product_formset = modelformset_factory(models.AggregationCenterProduct, fields=('product', 'qty'),
                                                   widgets={'product': Select2Widget}, extra=10, min_num=1,
                                                   can_delete=True)
     center = models.AggregationCenter.objects.get(pk=center)
     product_ids = [center_product.product.id for center_product in
-                   center.aggregationcenterproduct_set.filter(date=datetime.today())]
+                   center.aggregationcenterproduct_set.filter(date=dt)]
     products = models.Product.objects.exclude(pk__in=product_ids)
-    dt = datetime.now()
     if request.method == 'POST':
         formset = center_product_formset(request.POST)
         if formset.is_valid():

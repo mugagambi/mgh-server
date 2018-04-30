@@ -30,7 +30,7 @@ class AggregationCenterViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.AggregationCenterSerializer
 
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     """
            retrieve:
            Return the given product.
@@ -45,7 +45,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductSerializer
 
 
-class AggregationCenterProductViewSet(viewsets.ModelViewSet):
+class AggregationCenterProductViewSet(viewsets.ReadOnlyModelViewSet):
     """
                retrieve:
                Return the given aggregation center product.
