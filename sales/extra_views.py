@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F, Sum
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
@@ -111,9 +112,21 @@ def trade_debtors(request):
 def customer_statement(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
     account = models.CustomerAccount.objects.filter(customer=customer)
-    balance = models.CustomerAccountBalance.objects.get(customer=customer)
+    paginator = Paginator(account, 50)
+    page = request.GET.get('page', 1)
+    try:
+        account = paginator.page(page)
+    except PageNotAnInteger:
+        account = paginator.page(1)
+    except EmptyPage:
+        account = paginator.page(paginator.num_pages)
+    try:
+        balance = models.CustomerAccountBalance.objects.get(customer=customer)
+    except models.CustomerAccountBalance.DoesNotExist:
+        balance = None
     return render(request, 'sales/sales/customer_statement.html',
-                  {'customer': customer, 'account': account, 'balance': balance})
+                  {'customer': customer, 'account': account, 'balance': balance,
+                   'paginator': paginator})
 
 
 @login_required()
