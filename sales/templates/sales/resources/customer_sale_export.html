@@ -1,0 +1,101 @@
+{% load humanize %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Customer Sales export from {{ date_0_datetime }} to {{ date_1_datetime }} Pdf</title>
+    <style>
+        #customers {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #customers tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #customers tr:hover {
+            background-color: #ddd;
+        }
+
+        #customers th {
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<h4 style="text-align: center"><u>Customer Sales from {{ date_0_datetime }} to {{ date_1_datetime }}</u></h4>
+{% for receipt in receipts %}
+    <h4 style="text-align: center"><u>Receipt Number {{ receipt.number }}</u></h4>
+    <div>
+        <div>
+            <p style="text-align: center"><b>Customer: </b>{{ receipt.customer.shop_name }}</p>
+            <p style="text-align: center"><b>Served By: </b>{{ receipt.served_by.username }}</p>
+            <p style="text-align: center"><b>Date: </b>{{ receipt.date }}</p>
+        </div>
+    </div>
+    <h5 style="text-align: center"><u>Receipt Particulars</u></h5>
+    <table id="customers">
+        <thead>
+        <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Qty</th>
+            <th scope="col">@ (Ksh)</th>
+            <th scope="col">Discount (%)</th>
+            <th scope="col">Sub Total (Ksh)</th>
+            <th scope="col">Type</th>
+        </tr>
+        </thead>
+        {% for particular in receipt.receiptparticular_set.all %}
+            <tr>
+                <td>{{ particular.product.name }}</td>
+                <td>{{ particular.qty }}</td>
+                <td>{{ particular.price | intcomma }}</td>
+                <td>{{ particular.discount }}</td>
+                <td>{{ particular.total | intcomma }}</td>
+                <td>{{ particular.get_type_display }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% if not receipt.has_credit %}
+        <div style="float: right;">
+            <p><b>Total Qty: </b>{{ receipt.total_qty | intcomma }}</p>
+            <p><b>Total Amount: </b>Ksh. {{ receipt.sub_total | intcomma }}</p>
+            {% if receipt.receiptmisc.balance %}
+                <p data-toggle="tooltip" data-placement="top" title="Account Balance Brought Forward">
+                    <b>Account Balance: </b>Ksh.{{ receipt.receiptmisc.balance | intcomma }}</p>
+            {% endif %}
+        </div>
+    {% endif %}
+    <div class="float-left">
+        <h6 class="text-center"><u>Payments</u></h6>
+        {% for payment in receipt.receiptpayment_set.all %}
+            <p><b>Payment Type : </b>{{ payment.get_type_display }}</p>
+            <p><b>Amount : </b>Ksh. {{ payment.amount | intcomma }}</p>
+            {% if payment.type == 1 %}
+                <p><b>Cheque Number : </b> {{ payment.check_number }}</p>
+            {% elif payment.type == 2 %}
+                <p><b>Mobile No. :</b> {{ payment.mobile_number }}</p>
+                <p><b>Transaction Id : </b>{{ payment.transaction_id }}</p>
+            {% elif payment.type == 4 %}
+                <p><b>Invoice Number: </b>{{ receipt.id }}</p>
+                <p><b>Date to Pay : </b> {{ payment.date_to_pay }}</p>
+                <a href="#" class="button">View Invoice</a>
+            {% elif payment.type == 5 %}
+                <p><b>Transfer Code : </b>{{ payment.transfer_code }}</p>
+            {% endif %}
+        {% empty %}
+            <p><b>No Payments have been made yet.</b></p>
+        {% endfor %}
+    </div>
+{% endfor %}
+<hr/>
+</body>
+</html>
