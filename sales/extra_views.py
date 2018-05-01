@@ -157,3 +157,20 @@ def update_particular(request, item):
 @permission_required('sales.delete_receipt')
 def delete_receipt(request, pk):
     pass
+
+
+@login_required()
+@permission_required('sales.add_receiptpayment')
+def add_payment(request, receipt):
+    receipt = get_object_or_404(models.Receipt, pk=receipt)
+    if request.method == 'POST':
+        form = forms.ReceiptPaymentForm(request.POST)
+        if form.is_valid():
+            payment = form.save(commit=False)
+            payment.receipt = receipt
+            payment.save()
+            messages.success(request, 'payment added successfully')
+            return redirect('sale-receipt', pk=receipt.number)
+    else:
+        form = forms.ReceiptPaymentForm()
+    return render(request, 'sales/sales/receipt_payment.html', {'form': form, 'receipt': receipt})

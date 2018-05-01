@@ -66,6 +66,8 @@
             {% endif %}
             <div class="float-left">
                 <h6 class="text-center">Receipt Payments</h6>
+                <a href="{% url 'add-sale-payment' receipt=receipt.number %}" class="btn btn-outline-success">Add
+                    payment</a>
                 {% for payment in payments %}
                     <p><b>Payment Type : </b>{{ payment.get_type_display }}</p>
                     <p><b>Amount : </b>Ksh. {{ payment.amount | intcomma }}</p>

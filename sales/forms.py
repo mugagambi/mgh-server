@@ -65,3 +65,9 @@ class ReceiptForm(forms.ModelForm):
         model = models.Receipt
         fields = ('customer', 'date')
         widgets = {'customer': Select2Widget}
+
+
+class ReceiptPaymentForm(forms.ModelForm):
+    class Meta:
+        model = models.ReceiptPayment
+        fields = ['amount', 'type', 'check_number', 'mobile_number', 'transfer_code']
