@@ -345,7 +345,6 @@ class CashReceiptPayment(models.Model):
     check_number = models.CharField(max_length=50, blank=True)
     transaction_id = models.CharField(max_length=15, blank=True)
     mobile_number = models.CharField(max_length=15, blank=True)
-    date_to_pay = models.DateField(null=True)
     transfer_code = models.CharField(max_length=50, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
