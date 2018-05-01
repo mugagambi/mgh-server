@@ -19,7 +19,6 @@
             <th>Receipt</th>
             <th>Returns</th>
             <th>Phone Number</th>
-            <th>Transaction Id</th>
             <th>Cheque Number</th>
         </tr>
         </thead>
@@ -52,16 +51,6 @@
                 {% endif %}
                 {% if item.phone_number %}
                     <td>{{ item.phone_number }}</td>
-                {% else %}
-                    <td>-</td>
-                {% endif %}
-                {% if item.phone_number %}
-                    <td>{{ item.transaction_id }}</td>
-                {% else %}
-                    <td>-</td>
-                {% endif %}
-                {% if item.phone_number %}
-                    <td>{{ item.transaction_id }}</td>
                 {% else %}
                     <td>-</td>
                 {% endif %}
