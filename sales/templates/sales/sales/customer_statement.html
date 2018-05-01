@@ -45,7 +45,7 @@
                 {% else %}
                     <td>-</td>
                 {% endif %}
-                {% if item.return %}
+                {% if item.returns %}
                     <td><a href="{% url  'return' pk=item.returns.number %}">View return</a></td>
                 {% else %}
                     <td>-</td>
