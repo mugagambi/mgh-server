@@ -9,15 +9,18 @@
         <a href="{% url 'outward_product_period' %}" class="btn btn-outline-success">Change Period</a>
     </div>
     <p>All totals in respective units</p>
-    <table id="customers" class="table table-striped table-responsive-md" style="width:100%">
+    <table id="customers" class="table table-striped table-bordered table-responsive-md" style="width:100%">
         <thead class="thead-dark">
         <tr>
             <th>Product</th>
-            <th>Total Ordered</th>
-            <th>Total Packaged</th>
-            <th>Total Customer Sales</th>
-            <th>Total Cash Sales</th>
+            <th>Ordered</th>
+            <th>Customer Dispatch</th>
+            <th>Orderless Dispatch</th>
+            <th>Total Dispatch</th>
+            <th>Customer Sales</th>
+            <th>Cash Sales</th>
             <th>Total Sales</th>
+            <th>Returns</th>
         </tr>
         </thead>
         <tbody>
@@ -26,9 +29,12 @@
                 <td>{{ outward.product }}</td>
                 <td>{{ outward.ordered | intcomma }}</td>
                 <td>{{ outward.packaged | intcomma }}</td>
+                <td>{{ outward.orderless | intcomma }}</td>
+                <td>{{ outward.total_dispatch | intcomma }}</td>
                 <td>{{ outward.customer | intcomma }}</td>
                 <td>{{ outward.cash | intcomma }}</td>
                 <td>{{ outward.total_sale | intcomma }}</td>
+                <td>{{ outward.total_return | intcomma }}</td>
                 {% empty %}
                 <td class="text-center"><b>No data available in table</b></td>
             </tr>

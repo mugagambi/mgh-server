@@ -32,7 +32,7 @@ def outward_product_summary_report(request, date_0, date_1):
     date_0_datetime = datetime.datetime.combine(date_0, datetime.time(0, 0))
     date_1_datetime = datetime.datetime.combine(date_1, datetime.time(23, 59))
     outward = []
-    for product in Product. objects.all():
+    for product in Product.objects.all():
         total_ordered = models.OrderProduct.objects. \
             filter(product=product, order__date_delivery__range=(date_0, date_1)). \
             aggregate(total=Sum('qty'))
@@ -42,22 +42,37 @@ def outward_product_summary_report(request, date_0, date_1):
             filter(order_product__product=product,
                    order_product__order__date_delivery__range=(date_0, date_1)). \
             aggregate(total=Sum('qty_weigh'))
+        total_orderless = models.OrderlessPackage.objects. \
+            filter(product=product,
+                   date__range=(date_0, date_1)). \
+            aggregate(total=Sum('qty'))
         total_customer = models.ReceiptParticular.objects. \
             filter(product=product, receipt__date__range=(date_0_datetime, date_1_datetime)). \
             aggregate(total=Sum('qty'))
         total_cash = models.CashReceiptParticular.objects. \
             filter(product=product, cash_receipt__date__range=(date_0_datetime, date_1_datetime)). \
             aggregate(total=Sum('qty'))
+        total_return = models.MarketReturn.objects. \
+            filter(product=product, date__range=(date_0_datetime, date_1_datetime)). \
+            aggregate(total=Sum('qty'))
         if not total_customer['total']:
             total_customer['total'] = 0
         if not total_cash['total']:
             total_cash['total'] = 0
+        if not total_packaged['total']:
+            total_packaged['total'] = 0
+        if not total_orderless['total']:
+            total_orderless['total'] = 0
+        total_dispatch = total_packaged['total'] + total_orderless['total']
         total_sale = total_customer['total'] + total_cash['total']
         outward.append({'product': product.name, 'ordered': total_ordered['total'],
                         'packaged': total_packaged['total'],
+                        'orderless': total_orderless['total'],
+                        'total_dispatch': total_dispatch,
                         'customer': total_customer['total'],
                         'cash': total_cash['total'],
-                        'total_sale': total_sale})
+                        'total_sale': total_sale,
+                        'total_return': total_return['total']})
     return render(request, 'reports/outward-products/report.html',
                   {'outwards': outward,
                    'date_0': date_0_datetime,

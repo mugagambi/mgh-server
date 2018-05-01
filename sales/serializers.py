@@ -133,7 +133,7 @@ class CashReceiptPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CashReceiptPayment
         fields = (
-            'cash_receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
+            'cash_receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number',
             'transfer_code', 'created_at', 'updated_at')
 
 

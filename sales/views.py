@@ -266,14 +266,12 @@ class CashReceiptParticularViewSet(viewsets.ModelViewSet):
 
 
 class CashReceiptPaymentsFilterSet(django_filters.rest_framework.FilterSet):
-    date_to_pay_between = django_filters.DateFromToRangeFilter(name='date_to_pay',
-                                                               label='Date to pay (Between)')
     created_at_between = django_filters.DateFromToRangeFilter(name='created_at',
                                                               label='Created at (Between)')
 
     class Meta:
         model = models.CashReceiptPayment
-        fields = ('cash_receipt', 'date_to_pay', 'type', 'created_at', 'date_to_pay_between', 'created_at_between')
+        fields = ('cash_receipt', 'type', 'created_at', 'created_at_between')
 
 
 class CashReceiptPaymentViewSet(viewsets.ModelViewSet):
@@ -281,7 +279,7 @@ class CashReceiptPaymentViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CashReceiptPaymentSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = CashReceiptPaymentsFilterSet
-    ordering_fields = ('created_at', 'amount', 'date_to_pay')
+    ordering_fields = ('created_at', 'amount')
 
     def get_serializer(self, *args, **kwargs):
         """ if an array is passed, set serializer to many """
