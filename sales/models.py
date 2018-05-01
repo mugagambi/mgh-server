@@ -423,10 +423,11 @@ class BbfBalance(models.Model):
 
 class Return(models.Model):
     REASON = (
-        ('R', 'Reject'),
+        ('R', 'Rotten'),
         ('U', 'Unripe'),
-        ('C', 'Can\'t Ripen'),
-        ('S', 'Un Edible')
+        ('O', 'Overripe'),
+        ('P', 'Poor Quality'),
+        ('E', 'Excess')
     )
     number = models.CharField(unique=True, max_length=10, primary_key=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search product name')
