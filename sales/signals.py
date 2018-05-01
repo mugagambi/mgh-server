@@ -99,12 +99,13 @@ def bbf_account(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Return)
 def return_account(sender, instance, created, **kwargs):
     if created:
-        CustomerAccount.objects.create(number=main_generate_unique_id(),
-                                       customer=instance.customer,
-                                       amount=Decimal(instance.qty) * Decimal(instance.price),
-                                       date=instance.date,
-                                       type='R',
-                                       returns=instance)
+        if not instance.replaced:
+            CustomerAccount.objects.create(number=main_generate_unique_id(),
+                                           customer=instance.customer,
+                                           amount=Decimal(instance.qty) * Decimal(instance.price),
+                                           date=instance.date,
+                                           type='R',
+                                           returns=instance)
 
 
 @receiver(post_save, sender=ReceiptPayment)

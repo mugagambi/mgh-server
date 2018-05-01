@@ -439,6 +439,7 @@ class Return(models.Model):
     approved = models.BooleanField(default=False)
     reason = models.CharField(max_length=1, choices=REASON)
     approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    replaced = models.BooleanField(default=False)
 
     def __str__(self):
         return 'return number ' + str(self.number)

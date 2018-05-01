@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load humanize %}
+{% block styles %}
+{% endblock %}
+{% block breadcrump %}
+    {% include 'includes/nav.html' %}
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'returns' %}">Returns</a></li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">{{ return.customer.shop_name }}, {{ return.product.name }} return details</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <table id="customers" class="table table-bordered table-responsive-md" style="width:100%">
+                <tr>
+                    <th>Return Number:</th>
+                    <td>{{ return.number }}</td>
+                </tr>
+                <tr>
+                    <th>Customer:</th>
+                    <td>{{ return.customer.shop_name }}</td>
+                </tr>
+                <tr>
+                    <th>Product:</th>
+                    <td>{{ return.product.name }}</td>
+                </tr>
+                <tr>
+                    <th>Qty:</th>
+                    <td>{{ return.qty }}</td>
+                </tr>
+                <tr>
+                    <th>Price:</th>
+                    <td>Ksh. {{ return.price }}</td>
+                </tr>
+                <tr>
+                    <th>Reason:</th>
+                    <td>{{ return.get_reason_display }}</td>
+                </tr>
+                <tr>
+                    <th>Description:</th>
+                    <td>{{ reason.description }}</td>
+                </tr>
+                <tr data-toggle="tooltip" data-placement="top" title="If the return was replaced
+                    right there in the market or carried to the next sale and the credit note added to the
+                    customer account">
+                    <th>Replaced?</th>
+                    <td>{{ return.replaced }}</td>
+                </tr>
+                <tr>
+                    <th>Received By:</th>
+                    <td>{{ return.approved_by }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <br/>
+{% endblock %}
+{% block scripts %}
+
+{% endblock %}

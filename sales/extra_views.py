@@ -175,3 +175,9 @@ def add_payment(request, receipt):
     else:
         form = forms.ReceiptPaymentForm()
     return render(request, 'sales/sales/receipt_payment.html', {'form': form, 'receipt': receipt})
+
+
+@login_required()
+def return_details(request, pk):
+    returns = get_object_or_404(models.Return, pk=pk)
+    return render(request, 'sales/returns/return.html', {'return': returns})
