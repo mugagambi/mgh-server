@@ -327,11 +327,6 @@ class ReturnsRejectsViewSet(viewsets.ModelViewSet):
         if returns.approved:
             returns.approved_by = self.request.user
             returns.save()
-            credit_note = returns.qty * returns.price
-            models.BBF.objects.create(returns=returns,
-                                      amount=credit_note,
-                                      bbf_type='r',
-                                      customer=returns.customer)
 
 
 @api_view(['GET'])
