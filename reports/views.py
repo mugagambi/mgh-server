@@ -83,13 +83,13 @@ def mpesa_sale_summary_report(request, date_0, date_1):
     date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0 = datetime.datetime.combine(date_0, datetime.time(0, 0))
     date_1 = datetime.datetime.combine(date_1, datetime.time(23, 59))
-    customer_report = models.ReceiptPayment.objects.filter(receipt__date__range=(date_0, date_1), type=2)
+    customer_report = models.CustomerAccount.objects.filter(via='M', date__range=(date_0, date_1))
     if customer_report.exists():
         customer_total_amount_cash = customer_report.aggregate(total_amount=Sum('amount'))
     else:
         customer_total_amount_cash = {'total_amount': 0}
     customer_receipts = customer_report.values(
-        'receipt__number', 'transaction_id', 'mobile_number').annotate(total_amount=Sum('amount')).order_by(
+        'receipt__number', 'phone_number', 'customer__number').annotate(total_amount=Sum('amount')).order_by(
         '-total_amount')
     customer_page = request.GET.get('customer_page', 1)
     paginator = Paginator(customer_receipts, 5)

@@ -14,8 +14,7 @@
         <thead class="thead-dark">
         <tr>
             <th scope="col">Invoice Number</th>
-            <th>Transaction Id</th>
-            <th>Mobile Number</th>
+            <th>Phone Number</th>
             <th scope="col">Amount</th>
         </tr>
         </thead>
@@ -23,10 +22,17 @@
         {% for customer_receipt in customer_receipts %}
             <tr>
                 <td>
-                    <a href="{% url 'sale-receipt' pk=customer_receipt.receipt__number %}"> {{ customer_receipt.receipt__number }}</a>
+                    {% if customer_receipt.receipt__number %}
+                        <a href="{% url 'sale-receipt' pk=customer_receipt.receipt__number %}"
+                           data-toggle="tooltip" data-placement="top" title="View the invoice">
+                            {{ customer_receipt.receipt__number }}</a>
+                    {% else %}
+                        <a href="{% url 'customer_statement' customer=customer_receipt.customer__number %}"
+                           data-toggle="tooltip" data-placement="top" title="View account statement">
+                            Deposit</a>
+                    {% endif %}
                 </td>
-                <td>{{ customer_receipt.transaction_id }}</td>
-                <td>0{{ customer_receipt.mobile_number }}</td>
+                <td>{{ customer_receipt.phone_number }}</td>
                 <td>{{ customer_receipt.total_amount | intcomma }}</td>
             </tr>
         {% endfor %}
@@ -42,6 +48,7 @@
                     {% if customer_receipts.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?customer_page=
+
 
 
 
@@ -96,6 +103,7 @@
 
 
 
+
                                                          {{ customer_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                  aria-label="Previous">
                             <span aria-hidden="true">&hellip;</span>
@@ -110,6 +118,7 @@
                             </li>
                         {% elif i > customer_receipts.number|add:'-5' and i < customer_receipts.number|add:'5' %}
                             <li class="page-item"><a class="page-link" href="?customer_page=
+
 
 
 
@@ -150,6 +159,7 @@
 
 
 
+
                                                          {{ customer_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                  aria-label="Previous">
                             <span aria-hidden="true">&hellip;</span>
@@ -159,6 +169,7 @@
                     {% if customer_receipts.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?customer_page=
+
 
 
 
