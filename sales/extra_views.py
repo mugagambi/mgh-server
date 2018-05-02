@@ -42,21 +42,17 @@ def record_return(request, customer):
 
 
 @login_required()
-def cash_receipt(request, day):
-    day_from_date = datetime.datetime.strptime(day, '%Y-%m-%d').date()
-    date_from = datetime.datetime.combine(day_from_date, datetime.time(0, 0))
-    date_to = datetime.datetime.combine(day_from_date, datetime.time(23, 59))
-    particulars = models.CashReceiptParticular.objects.filter(
-        cash_receipt__date__range=(date_from, date_to)).select_related('product').annotate(
-        total_sum=F('price') * F('qty')
-    ).order_by('-cash_receipt__date')
+def cash_receipt(request, pk):
+    receipt = get_object_or_404(models.CashReceipt, pk=pk)
+    particulars = models.CashReceiptParticular.objects.filter(cash_receipt=receipt).select_related('product'). \
+        annotate(total_sum=F('price') * F('qty')).order_by('-cash_receipt__date')
     total_qty = particulars.aggregate(sum=Sum('qty'))
     total_amount = particulars.aggregate(total=Sum(F('qty') * F('price')))
     return render(request, 'sales/sales/cash-receipt.html', {
         'particulars': particulars,
         'total_qty': total_qty,
         'total_amount': total_amount,
-        'day': day_from_date
+        'receipt': receipt
     })
 
 
