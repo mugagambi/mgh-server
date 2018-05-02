@@ -2,6 +2,14 @@
 {% block title %}
     Reports dashboard
 {% endblock %}
+{% block styles %}
+    <style>
+        .card {
+            min-height: 170px;
+            max-height: 170px;
+        }
+    </style>
+{% endblock %}
 {% block breadcrump %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -11,11 +19,51 @@
     </nav>
 {% endblock %}
 {% block content %}
-    <a class="btn btn-outline-success mb-1 mr-1" href="{% url 'sales-summary' %}">Payments Summary Report</a>
-    <a class="btn btn-outline-success mb-1 mr-1" href="{% url 'outward_product_period' %}">Outward Products Summary
-        Report</a>
-    <a class="btn btn-outline-success mb-1 mr-1" href="{% url 'outward_stock_period' %}">Outward Stock Summary
-        Report</a>
-    <a class="btn btn-outline-success mb-1 mr-1" href="{% url 'sales_summary_period' %}">Sales Summary
-        Report</a>
+    <div class="row">
+        <div class="col-md-2">
+            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
+                <a href="{% url 'sales-summary' %}" style="color: white;text-decoration: none;">
+                    <div class="card-body">
+                        <h5 class="card-title">Payments Summary Report</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
+                <a href="{% url 'outward_product_period' %}" style="color: white;text-decoration: none;">
+                    <div class="card-body">
+                        <h5 class="card-title">Outward Products Summary Report</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
+                <a href="{% url 'outward-product-per-customer-period' %}" style="color: white;text-decoration: none;">
+                    <div class="card-body">
+                        <h5 class="card-title">Outward Products Summary Report Per Customer</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
+                <a href="{% url 'outward_stock_period' %}" style="color: white;text-decoration: none;">
+                    <div class="card-body">
+                        <h5 class="card-title">Outward Stock Summary Report</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
+                <a href="{% url 'outward_stock_period' %}" style="color: white;text-decoration: none;">
+                    <div class="card-body">
+                        <h5 class="card-title">Sales Summary Report</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -4,6 +4,7 @@ from reports import sales_summary
 from . import views
 from . import outward_products
 from . import outward_stock_summary
+from . import product_customer
 
 urlpatterns = [
     path('index/', views.index, name='report-index'),
@@ -18,6 +19,11 @@ urlpatterns = [
          name='outward_product_report'),
     path('sales/outward_stock/period/', outward_stock_summary.outward_stock_summary_period,
          name='outward_stock_period'),
+    path('sales/outward-customer-product/period/', product_customer.outward_product_customer_summary_period,
+         name='outward-product-per-customer-period'),
+    path('sales/outward-customer-product/<str:date_0>/<str:date_1>/<int:product_id>/',
+         product_customer.outward_product_summary_report,
+         name='outward-product-per-customer'),
     path('sales/outward_stock/<str:date_0>/<str:date_1>/', outward_stock_summary.outward_stock_summary_report,
          name='outward_stock_report'),
     path('sales/sales_summary/period/', sales_summary.sales_summary_schedule,

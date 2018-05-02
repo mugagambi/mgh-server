@@ -13,6 +13,7 @@
         <thead class="thead-dark">
         <tr>
             <th>Product</th>
+            <th>Available</th>
             <th>Ordered</th>
             <th>Customer Dispatch</th>
             <th>Orderless Dispatch</th>
@@ -21,12 +22,19 @@
             <th>Cash Sales</th>
             <th>Total Sales</th>
             <th>Returns</th>
+            <th>Variance</th>
         </tr>
         </thead>
         <tbody>
         {% for outward in outwards %}
             <tr>
                 <td>{{ outward.product }}</td>
+                <td>
+                    {% for item in outward.available %}
+                        {{ item.aggregation_center.name }} : {{ item.total }}<br/>
+                    {% endfor %}
+                    total: {{ outward.total_available | intcomma }}
+                </td>
                 <td>{{ outward.ordered | intcomma }}</td>
                 <td>{{ outward.packaged | intcomma }}</td>
                 <td>{{ outward.orderless | intcomma }}</td>
@@ -35,6 +43,9 @@
                 <td>{{ outward.cash | intcomma }}</td>
                 <td>{{ outward.total_sale | intcomma }}</td>
                 <td>{{ outward.total_return | intcomma }}</td>
+                <td><a href="#" data-toggle="tooltip" data-placement="top"
+                       title="Click to view the variances for this product for
+                        all the customers">{{ outward.diff | intcomma }}</a></td>
                 {% empty %}
                 <td class="text-center"><b>No data available in table</b></td>
             </tr>

@@ -5,7 +5,7 @@ from django.db.models import Sum
 from django.shortcuts import redirect, render
 
 from reports import forms
-from core.models import Product
+from core.models import Product, AggregationCenterProduct
 from sales import models
 
 
@@ -52,9 +52,19 @@ def outward_product_summary_report(request, date_0, date_1):
         total_cash = models.CashReceiptParticular.objects. \
             filter(product=product, cash_receipt__date__range=(date_0_datetime, date_1_datetime)). \
             aggregate(total=Sum('qty'))
+        available = AggregationCenterProduct.objects.filter(product=product,
+                                                            date__range=(date_0_datetime, date_1_datetime)). \
+            annotate(total=Sum('qty'))
+        total_available = AggregationCenterProduct.objects.filter(product=product,
+                                                                  date__range=(date_0_datetime, date_1_datetime)). \
+            aggregate(total=Sum('qty'))
+        if not total_available['total']:
+            total_available['total'] = 0
         total_return = models.MarketReturn.objects. \
             filter(product=product, date__range=(date_0_datetime, date_1_datetime)). \
             aggregate(total=Sum('qty'))
+        if not total_return['total']:
+            total_return['total'] = 0
         if not total_customer['total']:
             total_customer['total'] = 0
         if not total_cash['total']:
@@ -65,6 +75,8 @@ def outward_product_summary_report(request, date_0, date_1):
             total_orderless['total'] = 0
         total_dispatch = total_packaged['total'] + total_orderless['total']
         total_sale = total_customer['total'] + total_cash['total']
+        total_outward = total_sale + total_return['total']
+        diff = total_outward - total_dispatch
         outward.append({'product': product.name, 'ordered': total_ordered['total'],
                         'packaged': total_packaged['total'],
                         'orderless': total_orderless['total'],
@@ -72,6 +84,9 @@ def outward_product_summary_report(request, date_0, date_1):
                         'customer': total_customer['total'],
                         'cash': total_cash['total'],
                         'total_sale': total_sale,
+                        'available': available,
+                        'total_available': total_available['total'],
+                        'diff': diff,
                         'total_return': total_return['total']})
     return render(request, 'reports/outward-products/report.html',
                   {'outwards': outward,
