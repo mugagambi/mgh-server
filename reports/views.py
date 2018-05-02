@@ -137,3 +137,34 @@ def cheque_sale_summary_report(request, date_0, date_1):
         'date_1': date_1
     }
     return render(request, 'reports/cheque_sale_summary.html', args)
+
+
+@login_required()
+def bank_transfer_sale_summary_report(request, date_0, date_1):
+    date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
+    date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
+    date_0 = datetime.datetime.combine(date_0, datetime.time(0, 0))
+    date_1 = datetime.datetime.combine(date_1, datetime.time(23, 59))
+    customer_report = models.CustomerAccount.objects.filter(via='B', date__range=(date_0, date_1))
+    if customer_report.exists():
+        customer_total_amount_cash = customer_report.aggregate(total_amount=Sum('amount'))
+    else:
+        customer_total_amount_cash = {'total_amount': 0}
+    customer_receipts = customer_report.values(
+        'receipt__number', 'customer__number').annotate(total_amount=Sum('amount')).order_by(
+        '-total_amount')
+    customer_page = request.GET.get('customer_page', 1)
+    paginator = Paginator(customer_receipts, 5)
+    try:
+        customer_receipts = paginator.page(customer_page)
+    except PageNotAnInteger:
+        customer_receipts = paginator.page(1)
+    except EmptyPage:
+        customer_receipts = paginator.page(paginator.num_pages)
+    args = {
+        'customer_total_amount_cash': customer_total_amount_cash,
+        'customer_receipts': customer_receipts,
+        'date_0': date_0,
+        'date_1': date_1
+    }
+    return render(request, 'reports/bank_transfer_sale_summary.html', args)

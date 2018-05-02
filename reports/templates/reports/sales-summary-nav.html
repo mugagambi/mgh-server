@@ -10,6 +10,9 @@
             active {% endif %}"
        href="{% url 'cheque-sales-summary' date_0=date_0|date:'Y-m-d'  date_1=date_1|date:'Y-m-d' %}">Cheque
         receipts</a>
-    <a class="nav-item nav-link " href="#">Bank Transfer Receipts</a>
+    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'bank-sales-summary' %}
+            active {% endif %}"
+       href="{% url 'bank-sales-summary' date_0=date_0|date:'Y-m-d'  date_1=date_1|date:'Y-m-d' %}">Bank Transfer
+        Receipts</a>
 </nav>
 <br/>

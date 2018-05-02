@@ -11,6 +11,7 @@ urlpatterns = [
     path('sales/cash/<str:date_0>/<str:date_1>/', views.cash_sale_summary_report, name='cash-sales-summary'),
     path('sales/paybill/<str:date_0>/<str:date_1>/', views.mpesa_sale_summary_report, name='paybill-sales-summary'),
     path('sales/cheque/<str:date_0>/<str:date_1>/', views.cheque_sale_summary_report, name='cheque-sales-summary'),
+    path('sales/bank/<str:date_0>/<str:date_1>/', views.bank_transfer_sale_summary_report, name='bank-sales-summary'),
     path('sales/outward_product/period/', outward_products.outward_product_summary_period,
          name='outward_product_period'),
     path('sales/outward_product/<str:date_0>/<str:date_1>/', outward_products.outward_product_summary_report,
