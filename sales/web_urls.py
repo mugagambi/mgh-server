@@ -1,7 +1,7 @@
 from django.urls import path
-from sales import web_views
+
 from sales import extra_views
-from sales import resource_views
+from sales import web_views
 
 urlpatterns = [
     path('regions/', web_views.RegionList.as_view(), name='regions'),
@@ -44,5 +44,4 @@ urlpatterns = [
          name='add-sale-payment'),
     path('all/customers/receipt/particular/<str:item>/update/', extra_views.update_particular,
          name='update-receipt-particular'),
-    path('resources/cash_sale/<str:day>/', resource_views.GeneratePDF.as_view(), name='pdf-cash')
 ]

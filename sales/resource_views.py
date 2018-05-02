@@ -31,7 +31,7 @@ def export_cash_sales_period(request):
         if form.is_valid():
             date_0 = form.cleaned_data['date_0']
             date_1 = form.cleaned_data['date_1']
-            return redirect('export-customer-sales',
+            return redirect('pdf-cash',
                             date_0=date_0, date_1=date_1)
     else:
         form = SaleSummaryDate(initial={'date_0': datetime.date.today(),
@@ -57,13 +57,14 @@ class GeneratePDF(LoginRequiredMixin, View):
             "particulars": particulars,
             "total_qty": total_qty,
             'total_amount': total_amount,
-            'day': day_from_date
+            'date_0_datetime': date_0_datetime,
+            'date_1_datetime': date_1_datetime,
         }
         html = template.render(context)
         pdf = render_to_pdf('sales/resources/cash_sale.html', context)
         if pdf:
             response = HttpResponse(pdf, content_type='application/pdf')
-            filename = "cash_sale_%s.pdf" % day
+            filename = "cash_sale_from_%s_to_%s.pdf" % (date_0, date_1)
             content = "inline; filename='%s'" % filename
             download = request.GET.get("download")
             if download:
