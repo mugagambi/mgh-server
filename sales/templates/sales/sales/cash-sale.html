@@ -5,7 +5,10 @@
 {% endblock %}
 {% block content %}
     {% include 'includes/nav.html' %}
-    <h4 class="text-center">Cash Sale</h4>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h4 class="text-center">Cash Sales</h4>
+        <a href="#" class="btn btn-outline-success">Export as PDF</a>
+    </div>
     <table class="table table-striped table-responsive-sm" style="width:100%">
         <thead class="thead-dark">
         <tr>
@@ -22,7 +25,7 @@
                 <td>{{ sale.date }}</td>
                 <td>{{ sale.served_by.username }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm" href="#">view
+                    <a class="btn btn-outline-success btn-sm" href="{% url 'cash-receipt' pk=sale.number %}">view
                         cash
                         sale</a>
                 </td>
@@ -38,6 +41,8 @@
                 {% if sales.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
@@ -83,6 +88,8 @@
 
 
 
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -90,6 +97,8 @@
                 {% if sales.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
