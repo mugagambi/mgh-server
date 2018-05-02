@@ -31,6 +31,7 @@ def sale_summary_report(request):
 
 @login_required()
 def cash_sale_summary_report(request, date_0, date_1):
+    #re implement this report
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0 = datetime.datetime.combine(date_0, datetime.time(0, 0))
