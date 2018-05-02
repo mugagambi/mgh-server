@@ -36,17 +36,18 @@ def export_cash_sales_period(request):
     else:
         form = SaleSummaryDate(initial={'date_0': datetime.date.today(),
                                         'date_1': datetime.date.today()})
-    return render(request, 'sales/resources/cash_sale.html',
+    return render(request, 'sales/resources/cash_sale_period.html',
                   {'form': form})
 
 
 class GeneratePDF(LoginRequiredMixin, View):
-    def get(self, request, day, *args, **kwargs):
-        day_from_date = datetime.datetime.strptime(day, '%Y-%m-%d').date()
-        date_from = datetime.datetime.combine(day_from_date, datetime.time(0, 0))
-        date_to = datetime.datetime.combine(day_from_date, datetime.time(23, 59))
+    def get(self, request, date_0, date_1, *args, **kwargs):
+        date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
+        date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
+        date_0_datetime = datetime.datetime.combine(date_0, datetime.time(0, 0))
+        date_1_datetime = datetime.datetime.combine(date_1, datetime.time(23, 59))
         particulars = models.CashReceiptParticular.objects.filter(
-            cash_receipt__date__range=(date_from, date_to)).select_related('product').annotate(
+            cash_receipt__date__range=(date_0_datetime, date_1_datetime)).select_related('product').annotate(
             total_sum=F('price') * F('qty')
         ).order_by('-cash_receipt__date')
         total_qty = particulars.aggregate(sum=Sum('qty'))
