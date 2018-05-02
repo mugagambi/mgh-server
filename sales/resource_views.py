@@ -24,6 +24,22 @@ def export_customers(request):
     return response
 
 
+@login_required()
+def export_cash_sales_period(request):
+    if request.method == 'POST':
+        form = SaleSummaryDate(request.POST)
+        if form.is_valid():
+            date_0 = form.cleaned_data['date_0']
+            date_1 = form.cleaned_data['date_1']
+            return redirect('export-customer-sales',
+                            date_0=date_0, date_1=date_1)
+    else:
+        form = SaleSummaryDate(initial={'date_0': datetime.date.today(),
+                                        'date_1': datetime.date.today()})
+    return render(request, 'sales/resources/cash_sale.html',
+                  {'form': form})
+
+
 class GeneratePDF(LoginRequiredMixin, View):
     def get(self, request, day, *args, **kwargs):
         day_from_date = datetime.datetime.strptime(day, '%Y-%m-%d').date()
