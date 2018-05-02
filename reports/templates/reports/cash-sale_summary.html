@@ -24,7 +24,15 @@
                 {% for customer_receipt in customer_receipts %}
                     <tr>
                         <td>
-                            <a href="{% url 'sale-receipt' pk=customer_receipt.receipt__number %}"> {{ customer_receipt.receipt__number }}</a>
+                            {% if customer_receipt.receipt__number %}
+                                <a href="{% url 'sale-receipt' pk=customer_receipt.receipt__number %}"
+                                   data-toggle="tooltip" data-placement="top" title="View the invoice">
+                                    {{ customer_receipt.receipt__number }}</a>
+                            {% else %}
+                                <a href="{% url 'customer_statement' customer=customer_receipt.customer__number %}"
+                                   data-toggle="tooltip" data-placement="top" title="View account statement">
+                                    Deposit</a>
+                            {% endif %}
                         </td>
                         <td>{{ customer_receipt.total_amount | intcomma }}</td>
                     </tr>
@@ -33,13 +41,23 @@
                 </tbody>
             </table>
             <hr/>
-            <p><b>Showing {{ customer_receipts.start_index }} to {{ customer_receipts.end_index }} of {{ customer_receipts.paginator.count }} customer receipts</b>
+            <p><b>Showing {{ customer_receipts.start_index }} to {{ customer_receipts.end_index }}
+                of {{ customer_receipts.paginator.count }} customer receipts</b>
                 {% if customer_receipts.has_other_pages %}
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             {% if customer_receipts.has_previous %}
                                 <li class="page-item">
                                     <a class="page-link" href="?customer_page=
+
+
+
+
+
+
+
+
+
 
 
 
@@ -82,6 +100,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
                                                                  {{ customer_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                          aria-label="Previous">
                                     <span aria-hidden="true">&hellip;</span>
@@ -96,6 +123,15 @@
                                     </li>
                                 {% elif i > customer_receipts.number|add:'-5' and i < customer_receipts.number|add:'5' %}
                                     <li class="page-item"><a class="page-link" href="?customer_page=
+
+
+
+
+
+
+
+
+
 
 
 
@@ -124,6 +160,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
                                                                  {{ customer_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                          aria-label="Previous">
                                     <span aria-hidden="true">&hellip;</span>
@@ -133,6 +178,15 @@
                             {% if customer_receipts.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?customer_page=
+
+
+
+
+
+
+
+
+
 
 
 
@@ -176,7 +230,9 @@
                 <tbody>
                 {% for cash_receipt in cash_receipts %}
                     <tr>
-                        <td>{{ cash_receipt.cash_receipt__number }}</td>
+                        <td>
+                            <a href="{% url 'cash-receipt' pk=cash_receipt.cash_receipt__number %}"> {{ cash_receipt.cash_receipt__number }}</a>
+                        </td>
                         <td>{{ cash_receipt.total_amount | floatformat:2 | intcomma }}</td>
                     </tr>
                 {% endfor %}
@@ -192,6 +248,15 @@
                             {% if cash_receipts.has_previous %}
                                 <li class="page-item">
                                     <a class="page-link" href="?cash_page=
+
+
+
+
+
+
+
+
+
 
 
 
@@ -223,6 +288,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
                                                                  {{ cash_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'cash_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                          aria-label="Previous">
                                     <span aria-hidden="true">&hellip;</span>
@@ -243,6 +317,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
                                             {{ i }}{% for key, value in request.GET.items %}{% if key != 'cash_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                                     </li>
                                 {% endif %}
@@ -250,6 +333,15 @@
                             {% if cash_receipts.paginator.num_pages > cash_receipts.number|add:'4' %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?cash_page=
+
+
+
+
+
+
+
+
+
 
 
 
@@ -263,6 +355,15 @@
                             {% if cash_receipts.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?cash_page=
+
+
+
+
+
+
+
+
+
 
 
 
