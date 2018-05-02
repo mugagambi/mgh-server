@@ -31,12 +31,11 @@ def sale_summary_report(request):
 
 @login_required()
 def cash_sale_summary_report(request, date_0, date_1):
-    #re implement this report
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0 = datetime.datetime.combine(date_0, datetime.time(0, 0))
     date_1 = datetime.datetime.combine(date_1, datetime.time(23, 59))
-    customer_report = models.ReceiptPayment.objects.filter(receipt__date__range=(date_0, date_1), type=3)
+    customer_report = models.CustomerAccount.objects.filter(via='C', receipt__date__range=(date_0, date_1))
     if customer_report.exists():
         customer_total_amount_cash = customer_report.aggregate(total_amount=Sum('amount'))
     else:

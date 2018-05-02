@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load mathfilters %}
 {% load humanize %}
 {% load static %}
 {% block content %}
@@ -57,11 +58,17 @@
                 <div class="float-right">
                     <p><b>Total Qty: </b>{{ total_qty | intcomma }}</p>
                     <p><b>Total Amount: </b>Ksh. {{ total_amount | intcomma }}</p>
-                    <p data-toggle="tooltip" data-placement="top" title="Balance Brought Forward">
-                        <b>BBF Account Balance: </b>Ksh.{{ receipt.bbf_balance | intcomma }}</p>
+                    <p data-toggle="tooltip" data-placement="top" title="Balance Brought Forward before the invoice
+                    for this sale was created">
+                        {% if receipt.receiptmisc.balance %}
+                            <b>BBF Account Balance: </b>Ksh. {{ receipt.receiptmisc.balance | intcomma }}</p>
+                        {% endif %}
+                    {% if receipt.receiptmisc.balance %}
+                        <p><b>Amount Payable: </b>Ksh. {{ total_amount|sub:receipt.receiptmisc.balance | intcomma }}</p>
+                    {% else %}
+                        <p><b>Amount Payable: </b>Ksh. {{ total_amount | intcomma }}</p>
+                    {% endif %}
                     <p><b>Amount Payed: </b>Ksh. {{ total_payment.sum  | intcomma }}</p>
-                    <p data-toggle="tooltip" data-placement="top" title="Balance Carried Forward">
-                        <b>BCF: </b>Ksh. {{ bcf.amount | intcomma }}</p>
                 </div>
             {% endif %}
             <div class="float-left">
@@ -77,8 +84,7 @@
                         <p><b>Mobile No. :</b> {{ payment.mobile_number }}</p>
                         <p><b>Transaction Id : </b>{{ payment.transaction_id }}</p>
                     {% elif payment.type == 4 %}
-                        <p><b>Invoice Number: </b>{{ receipt.id }}</p>
-                        <p><b>Date to Pay : </b> {{ payment.date_to_pay }}</p>
+                        <p><b>Invoice Number: </b>{{ receipt.number }}</p>
                         <a href="#" class="button">View Invoice</a>
                     {% elif payment.type == 5 %}
                         <p><b>Transfer Code : </b>{{ payment.transfer_code }}</p>
@@ -88,5 +94,12 @@
                 {% endfor %}
             </div>
         </div>
+    </div>
+    <div class="alert alert-info" role="alert">
+        <span data-feather="help-circle"> </span>
+        (-) BBF account balance means the customer owes Meru Greens and (+) BBF account balance means the Meru Greens
+        owe the customer.<br/>
+        (-) Amount Payable means the customer does not have to pay anything and that meru greens owes them money. (+)
+        Amount Payable is the total amount money the customer has to pay the invoice.
     </div>
 {% endblock %}

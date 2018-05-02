@@ -49,11 +49,14 @@
             <td>{{ particular.cash_receipt.date }}</td>
         </tr>
     {% endfor %}
+    <tr>
+        <td><b>Grand Total</b></td>
+        <td><b>{{ total_qty.sum | intcomma }}</b></td>
+        <td>-</td>
+        <td><b>Ksh. {{ total_amount.total | floatformat:2 | intcomma }}</b></td>
+        <td>-</td>
+
+    </tr>
 </table>
-<hr/>
-<div>
-    <p><b>Total Qty: </b>{{ total_qty.sum | intcomma }}</p>
-    <p><b>Total Amount: </b>Ksh. {{ total_amount.total | floatformat:2 | intcomma }}</p>
-</div>
 </body>
 </html>
