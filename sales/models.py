@@ -328,7 +328,7 @@ class CashReceiptParticular(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        amount = self.qty * self.price
+        amount = Decimal(self.qty) * Decimal(self.price)
         self.total = amount
         return super(CashReceiptParticular, self).save(force_insert=False, force_update=False, using=None,
                                                        update_fields=None)
