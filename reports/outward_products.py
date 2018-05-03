@@ -61,7 +61,7 @@ def outward_product_summary_report(request, date_0, date_1):
         if not total_available['total']:
             total_available['total'] = 0
         total_return = models.MarketReturn.objects. \
-            filter(product=product, date__range=(date_0_datetime, date_1_datetime)). \
+            filter(product=product, date__range=(date_0, date_1)). \
             aggregate(total=Sum('qty'))
         if not total_return['total']:
             total_return['total'] = 0
