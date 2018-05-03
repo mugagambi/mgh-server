@@ -102,10 +102,14 @@ def outward_product_summary_report(request, date_0, date_1, product_id):
     total_packaged = models.PackageProduct.objects.filter(order_product__product=product,
                                                           order_product__order__date_delivery__range=(
                                                               date_0, date_1)).aggregate(total=Sum('qty_weigh'))
+    if not total_packaged['total']:
+        total_packaged['total'] = 0
     total_sold = models.ReceiptParticular.objects.filter(product=product,
                                                          receipt__date__range=(
                                                              date_0_datetime, date_1_datetime)).aggregate(
         total=Sum('qty'))
+    if not total_sold['total']:
+        total_sold['total'] = 0
     total_return = models.Return.objects.filter(product=product,
                                                 date__range=(date_0_datetime, date_1_datetime)).aggregate(
         total=Sum('qty'))

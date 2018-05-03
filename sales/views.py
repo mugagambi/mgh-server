@@ -255,7 +255,7 @@ class CashReceiptParticularViewSet(viewsets.ModelViewSet):
     queryset = models.CashReceiptParticular.objects.all()
     serializer_class = serializers.CashReceiptParticularSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.OrderingFilter)
-    filter_fields = ('product', 'cash_receipt')
+    filter_fields = ('product', 'cash_receipt', 'cash_receipt__date')
     ordering_fields = ('qty', 'price')
 
     def get_serializer(self, *args, **kwargs):
