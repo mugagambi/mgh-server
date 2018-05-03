@@ -478,7 +478,7 @@ class CashSalesFilterSet(FilterSet):
 
 @login_required()
 def cash_sales_list(request):
-    sales = models.CashReceipt.objects.select_related('served_by').filter(cashreceiptparticular__isnull=False) \
+    sales = models.CashReceipt.objects.select_related('served_by').all() \
         .order_by(
         '-date')
     paginator = Paginator(sales, 50)
