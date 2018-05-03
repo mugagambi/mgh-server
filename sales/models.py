@@ -312,7 +312,7 @@ class CashReceipt(models.Model):
     served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return 'cash receipt no. ' + str(self.date)
+        return 'cash receipt no. ' + str(self.number)
 
     class Meta:
         ordering = ('-date',)
