@@ -126,6 +126,8 @@ def customer_statement(request, customer):
                     'date': payment['date']
                 })
                 continue
+            else:
+                break
         final_account.append({
             'purchase': total['amount__sum'],
             'payment': '-',
