@@ -15,6 +15,7 @@ from core.models import Product
 from sales import forms
 from sales import models
 from utils import generate_unique_id, main_generate_unique_id
+from django.db.models import Q
 
 
 class ReturnsList(LoginRequiredMixin, ListView):
@@ -96,7 +97,7 @@ def add_receipt(request):
 
 @login_required()
 def trade_debtors(request):
-    debtors = models.CustomerAccountBalance.objects.all().order_by('customer__shop_name')
+    debtors = models.CustomerAccountBalance.objects.filter(~Q(amount=0.0)).order_by('customer__shop_name')
     credit_total = debtors.filter(amount__gt=Decimal('0.0')).aggregate(total=Sum('amount'))
     debit_total = debtors.filter(amount__lt=Decimal('0.0')).aggregate(total=Sum('amount'))
     return render(request, 'sales/sales/customer_accounts.html', {
@@ -110,30 +111,29 @@ def trade_debtors(request):
 def customer_statement(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
     account = models.CustomerAccount.objects.filter(customer=customer)
-    receipt_purchases_total = account.filter(type='P').values('receipt').annotate(Sum('amount'))
+    receipt_purchases_total = account.filter(type='P').values('receipt', 'date').annotate(Sum('amount'))
+    receipt_payments_total = account.filter(type='A').values('receipt', 'date').annotate(Sum('amount'))
     account = account.exclude(type='P')
     final_account = []
+    for total in receipt_purchases_total:
+        for payment in receipt_payments_total:
+            if total['receipt'] == payment['receipt']:
+                final_account.append({
+                    'purchase': total['amount__sum'],
+                    'payment': payment['amount__sum'],
+                    'receipt_id': payment['receipt'],
+                    'return_id': None,
+                    'date': payment['date']
+                })
+                continue
+        final_account.append({
+            'purchase': total['amount__sum'],
+            'payment': '-',
+            'receipt_id': '-',
+            'return_id': None,
+            'date': total['date']
+        })
     for acc in account:
-        for total in receipt_purchases_total:
-            if acc.receipt:
-                if acc.type == 'A':
-                    if total['receipt'] == acc.receipt.number:
-                        final_account.append({
-                            'purchase': total['amount__sum'],
-                            'payment': acc.amount,
-                            'receipt_id': acc.receipt.number,
-                            'return_id': None,
-                            'date': acc.date
-                        })
-                        continue
-                else:
-                    final_account.append({
-                        'purchase': total['amount__sum'],
-                        'payment': '-',
-                        'receipt_id': acc.receipt.number,
-                        'return_id': None,
-                        'date': acc.date
-                    })
         if acc.type == 'R':
             final_account.append({
                 'purchase': '-',
@@ -165,8 +165,6 @@ def customer_statement(request, customer):
                 'date': acc.date
             })
         continue
-
-    print(final_account)
     try:
         balance = models.CustomerAccountBalance.objects.get(customer=customer)
     except models.CustomerAccountBalance.DoesNotExist:
@@ -220,6 +218,63 @@ def add_payment(request, receipt):
     else:
         form = forms.ReceiptPaymentForm()
     return render(request, 'sales/sales/receipt_payment.html', {'form': form, 'receipt': receipt})
+
+
+@login_required()
+@permission_required('sales.change_receiptpayment')
+def update_payment(request, receipt, payment):
+    receipt = get_object_or_404(models.Receipt, pk=receipt)
+    payment = get_object_or_404(models.ReceiptPayment, receipt=receipt, pk=payment)
+    old_amount = payment.amount
+    if request.method == 'POST':
+        form = forms.ReceiptPaymentForm(request.POST, instance=payment)
+        if form.is_valid():
+            payment = form.save()
+            new_amount = payment.amount
+            diff = new_amount - old_amount
+            if payment.type == 1:
+                type = 'Q'
+                cheque_number = payment.check_number
+                transaction_id = ''
+                phone_number = ''
+            elif payment.type == 2:
+                type = 'M'
+                cheque_number = ''
+                transaction_id = payment.transaction_id
+                phone_number = payment.mobile_number
+            elif payment.type == 3:
+                type = 'C'
+                cheque_number = ''
+                transaction_id = ''
+                phone_number = ''
+            elif payment.type == 5:
+                type = 'B'
+                cheque_number = ''
+                transaction_id = ''
+                phone_number = ''
+            else:
+                type = ''
+                cheque_number = ''
+                transaction_id = ''
+                phone_number = ''
+            if payment.type != 4:
+                models.CustomerAccount.objects.create(number=main_generate_unique_id(),
+                                                      customer=payment.receipt.customer,
+                                                      amount=diff,
+                                                      date=payment.receipt.date,
+                                                      type='A',
+                                                      via=type,
+                                                      receipt=payment.receipt,
+                                                      cheque_number=cheque_number,
+                                                      transaction_id=transaction_id,
+                                                      phone_number=phone_number)
+            messages.success(request, 'Payment updated and the customer account has been updated updated')
+            return redirect('sale-receipt', pk=receipt.number)
+    else:
+        form = forms.ReceiptPaymentForm(instance=payment)
+    return render(request, 'sales/sales/receipt_payment.html', {'form': form,
+                                                                'receipt': receipt,
+                                                                'payment': payment})
 
 
 @login_required()

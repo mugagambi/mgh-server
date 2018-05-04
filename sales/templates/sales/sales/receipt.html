@@ -73,11 +73,17 @@
             {% endif %}
             <div class="float-left">
                 <h6 class="text-center">Receipt Payments</h6>
-                <a href="{% url 'add-sale-payment' receipt=receipt.number %}" class="btn btn-outline-success">Add
-                    payment</a>
+                {% if perms.sales.add_receiptpayment %}
+                    <a href="{% url 'add-sale-payment' receipt=receipt.number %}" class="btn btn-outline-success">Add
+                        payment</a>
+                {% endif %}
                 {% for payment in payments %}
                     <p><b>Payment Type : </b>{{ payment.get_type_display }}</p>
                     <p><b>Amount : </b>Ksh. {{ payment.amount | intcomma }}</p>
+                    {% if perms.sales.change_receiptpayment %}
+                        <a href="{% url 'update-sale-payment' receipt=receipt.pk payment=payment.pk %}"
+                           class="btn btn-outline-success btn-sm mb-1">Update Payment</a>
+                    {% endif %}
                     {% if payment.type == 1 %}
                         <p><b>Cheque Number : </b> {{ payment.check_number }}</p>
                     {% elif payment.type == 2 %}

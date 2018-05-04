@@ -42,6 +42,8 @@ urlpatterns = [
          name='add-sale-receipt'),
     path('all/customers/receipt/<str:receipt>/add-payment', extra_views.add_payment,
          name='add-sale-payment'),
+    path('all/customers/receipt/<str:receipt>/update-payment/<int:payment>/', extra_views.update_payment,
+         name='update-sale-payment'),
     path('all/customers/receipt/particular/<str:item>/update/', extra_views.update_particular,
          name='update-receipt-particular'),
 ]

@@ -6,7 +6,7 @@
 {% endblock %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        {% if not item %}
+        {% if not payment %}
             <h1 class="h2">Add payment for receipt no. {{ receipt.number }} by {{ receipt.customer.shop_name }} on
                 {{ receipt.date }}</h1>
         {% else %}
