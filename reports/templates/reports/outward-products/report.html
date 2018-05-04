@@ -43,7 +43,10 @@
                 <td>{{ outward.cash | intcomma }}</td>
                 <td>{{ outward.total_sale | intcomma }}</td>
                 <td>{{ outward.total_return | intcomma }}</td>
-                <td><a href="#" data-toggle="tooltip" data-placement="top"
+                <td>
+                    <a href="{% url 'outward-product-per-customer' date_0=str_date_0 date_1=str_date_1 product_id=outward.product_id %}"
+                       data-toggle="tooltip"
+                       data-placement="top"
                        title="Click to view the variances for this product for
                         all the customers">{{ outward.diff | intcomma }}</a></td>
                 {% empty %}

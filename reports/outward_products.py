@@ -27,6 +27,8 @@ def outward_product_summary_period(request):
 
 @login_required()
 def outward_product_summary_report(request, date_0, date_1):
+    str_date_0 = date_0
+    str_date_1 = date_1
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0_datetime = datetime.datetime.combine(date_0, datetime.time(0, 0))
@@ -75,8 +77,7 @@ def outward_product_summary_report(request, date_0, date_1):
             total_orderless['total'] = 0
         total_dispatch = total_packaged['total'] + total_orderless['total']
         total_sale = total_customer['total'] + total_cash['total']
-        total_outward = total_sale + total_return['total']
-        diff = total_outward - total_dispatch
+        variance = total_dispatch - total_sale - total_return['total']
         outward.append({'product': product.name, 'ordered': total_ordered['total'],
                         'packaged': total_packaged['total'],
                         'orderless': total_orderless['total'],
@@ -86,9 +87,12 @@ def outward_product_summary_report(request, date_0, date_1):
                         'total_sale': total_sale,
                         'available': available,
                         'total_available': total_available['total'],
-                        'diff': diff,
-                        'total_return': total_return['total']})
+                        'diff': variance,
+                        'total_return': total_return['total'],
+                        'product_id': product.pk})
     return render(request, 'reports/outward-products/report.html',
                   {'outwards': outward,
                    'date_0': date_0_datetime,
-                   'date_1': date_1_datetime})
+                   'date_1': date_1_datetime,
+                   'str_date_0': str_date_0,
+                   'str_date_1': str_date_1})
