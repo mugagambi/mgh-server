@@ -87,8 +87,7 @@ def outward_product_summary_report(request, date_0, date_1, product_id):
             total=Sum('qty'))
         if not total_return['total']:
             total_return['total'] = 0
-        total_out = total_return['total'] - total_sold['total']
-        variance = total_packaged['total'] - total_out
+        variance = total_packaged['total'] - total_sold['total'] - total_return['total']
         outward.append({'customer': customer, 'ordered': total_ordered['total'],
                         'packaged': total_packaged['total'],
                         'total_sold': total_sold['total'],
