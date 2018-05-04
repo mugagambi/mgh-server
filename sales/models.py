@@ -3,6 +3,7 @@ from functools import reduce
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Sum
 from django.utils.timezone import now
 
 from core.models import User, Product, Crate, AggregationCenter

@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F, Sum
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.views.generic import ListView
 
 from core.models import Product
@@ -109,21 +110,69 @@ def trade_debtors(request):
 def customer_statement(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
     account = models.CustomerAccount.objects.filter(customer=customer)
-    paginator = Paginator(account, 50)
-    page = request.GET.get('page', 1)
-    try:
-        account = paginator.page(page)
-    except PageNotAnInteger:
-        account = paginator.page(1)
-    except EmptyPage:
-        account = paginator.page(paginator.num_pages)
+    receipt_purchases_total = account.filter(type='P').values('receipt').annotate(Sum('amount'))
+    account = account.exclude(type='P')
+    final_account = []
+    for acc in account:
+        for total in receipt_purchases_total:
+            if acc.receipt:
+                if acc.type == 'A':
+                    if total['receipt'] == acc.receipt.number:
+                        final_account.append({
+                            'purchase': total['amount__sum'],
+                            'payment': acc.amount,
+                            'receipt_id': acc.receipt.number,
+                            'return_id': None,
+                            'date': acc.date
+                        })
+                        continue
+                else:
+                    final_account.append({
+                        'purchase': total['amount__sum'],
+                        'payment': '-',
+                        'receipt_id': acc.receipt.number,
+                        'return_id': None,
+                        'date': acc.date
+                    })
+        if acc.type == 'R':
+            final_account.append({
+                'purchase': '-',
+                'payment': str(acc.amount) + '-return',
+                'receipt_id': None,
+                'return_id': acc.returns.number,
+                'date': acc.date
+            })
+            continue
+        if acc.type == 'D':
+            final_account.append({
+                'purchase': '-',
+                'payment': str(acc.amount) + ' -deposit',
+                'receipt_id': None,
+                'return_id': None,
+                'date': acc.date
+            })
+            continue
+        if acc.type == 'B':
+            if acc.amount < 0:
+                amount = -acc.amount
+            else:
+                amount = acc.amount
+            final_account.append({
+                'purchase': '-',
+                'payment': str(amount) + ' -BBF',
+                'receipt_id': None,
+                'return_id': None,
+                'date': acc.date
+            })
+        continue
+
+    print(final_account)
     try:
         balance = models.CustomerAccountBalance.objects.get(customer=customer)
     except models.CustomerAccountBalance.DoesNotExist:
         balance = None
     return render(request, 'sales/sales/customer_statement.html',
-                  {'customer': customer, 'account': account, 'balance': balance,
-                   'paginator': paginator})
+                  {'customer': customer, 'account': final_account, 'balance': balance})
 
 
 @login_required()

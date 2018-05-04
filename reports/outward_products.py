@@ -53,10 +53,10 @@ def outward_product_summary_report(request, date_0, date_1):
             filter(product=product, cash_receipt__date__range=(date_0_datetime, date_1_datetime)). \
             aggregate(total=Sum('qty'))
         available = AggregationCenterProduct.objects.filter(product=product,
-                                                            date__range=(date_0_datetime, date_1_datetime)). \
+                                                            date__range=(date_0, date_1)). \
             annotate(total=Sum('qty'))
         total_available = AggregationCenterProduct.objects.filter(product=product,
-                                                                  date__range=(date_0_datetime, date_1_datetime)). \
+                                                                  date__range=(date_0, date_1)). \
             aggregate(total=Sum('qty'))
         if not total_available['total']:
             total_available['total'] = 0
