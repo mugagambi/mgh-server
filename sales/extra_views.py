@@ -129,7 +129,7 @@ def customer_statement(request, customer):
         final_account.append({
             'purchase': total['amount__sum'],
             'payment': '-',
-            'receipt_id': '-',
+            'receipt_id': total['receipt'],
             'return_id': None,
             'date': total['date']
         })
