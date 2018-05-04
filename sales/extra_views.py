@@ -110,7 +110,7 @@ def trade_debtors(request):
 @login_required()
 def customer_statement(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
-    account = models.CustomerAccount.objects.filter(customer=customer)
+    account = models.CustomerAccount.objects.filter(customer=customer).order_by('-date')
     receipt_purchases_total = account.filter(type='P').values('receipt', 'date').annotate(Sum('amount'))
     receipt_payments_total = account.filter(type='A').values('receipt', 'date').annotate(Sum('amount'))
     account = account.exclude(type='P')
