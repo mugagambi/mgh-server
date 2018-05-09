@@ -113,9 +113,18 @@ def customer_statement(request, customer):
     account = models.CustomerAccount.objects.filter(customer=customer).order_by('-date')
     receipt_purchases_total = account.filter(type='P').values('receipt', 'date').annotate(Sum('amount'))
     receipt_payments_total = account.filter(type='A').values('receipt', 'date').annotate(Sum('amount'))
-    account = account.exclude(type='P')
+    account = account.exclude(type__in=['P', 'A'])
     final_account = []
     for total in receipt_purchases_total:
+        if not receipt_payments_total.exists():
+            final_account.append({
+                'purchase': total['amount__sum'],
+                'payment': '-',
+                'receipt_id': total['receipt'],
+                'return_id': None,
+                'date': total['date']
+            })
+            continue
         for payment in receipt_payments_total:
             if total['receipt'] == payment['receipt']:
                 final_account.append({
