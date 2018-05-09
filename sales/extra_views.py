@@ -127,14 +127,14 @@ def customer_statement(request, customer):
                 })
                 continue
             else:
-                break
-        final_account.append({
-            'purchase': total['amount__sum'],
-            'payment': '-',
-            'receipt_id': total['receipt'],
-            'return_id': None,
-            'date': total['date']
-        })
+                final_account.append({
+                    'purchase': total['amount__sum'],
+                    'payment': '-',
+                    'receipt_id': total['receipt'],
+                    'return_id': None,
+                    'date': total['date']
+                })
+                continue
     for acc in account:
         if acc.type == 'R':
             final_account.append({
@@ -155,13 +155,9 @@ def customer_statement(request, customer):
             })
             continue
         if acc.type == 'B':
-            if acc.amount < 0:
-                amount = -acc.amount
-            else:
-                amount = acc.amount
             final_account.append({
                 'purchase': '-',
-                'payment': str(amount) + ' -BBF',
+                'payment': str(acc.amount) + ' -BBF',
                 'receipt_id': None,
                 'return_id': None,
                 'date': acc.date
