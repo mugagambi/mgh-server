@@ -271,7 +271,7 @@ def update_price(request, customer, pk):
         'price': price,
         'form': form})
 
-
+# TODO make a discounts table
 @login_required()
 def add_discounts(request, pk):
     discounts_formset = modelformset_factory(models.CustomerDiscount, fields=('product', 'discount'),
