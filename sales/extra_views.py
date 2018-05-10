@@ -107,6 +107,7 @@ def trade_debtors(request):
     })
 
 
+# todo add the right permissions
 @login_required()
 def customer_statement(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
@@ -133,15 +134,6 @@ def customer_statement(request, customer):
                     'receipt_id': payment['receipt'],
                     'return_id': None,
                     'date': payment['date']
-                })
-                continue
-            else:
-                final_account.append({
-                    'purchase': total['amount__sum'],
-                    'payment': '-',
-                    'receipt_id': total['receipt'],
-                    'return_id': None,
-                    'date': total['date']
                 })
                 continue
     for acc in account:

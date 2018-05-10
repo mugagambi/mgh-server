@@ -104,6 +104,7 @@ class CustomerFilter(FilterSet):
         fields = ('region', 'added_by')
 
 
+# TODO add the required permissions
 @login_required()
 def customer_list(request):
     if request.method == 'POST':
@@ -115,7 +116,7 @@ def customer_list(request):
     else:
         form = forms.PlaceOrderModal(initial={'date_of_delivery': datetime.now() + timedelta(days=1),
                                               'customer_number': ''})
-    f = CustomerFilter(request.GET, queryset=models.Customer.objects.all())
+    f = CustomerFilter(request.GET, queryset=models.Customer.objects.select_related('region').all())
     return render(request, 'sales/customers/index.html', {'filter': f, 'form': form})
 
 
@@ -270,6 +271,7 @@ def update_price(request, customer, pk):
         'customer': customer,
         'price': price,
         'form': form})
+
 
 # TODO make a discounts table
 @login_required()
@@ -442,6 +444,8 @@ def update_particular_item(request, order, pk):
     return render(request, 'sales/orders/update-order-product.html', {'form': form})
 
 
+# TODO add the right permissions
+# TODO check if it exists before deleting
 @login_required()
 @require_http_methods(['POST'])
 def remove_order_product(request, order):

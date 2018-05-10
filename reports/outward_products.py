@@ -9,6 +9,7 @@ from core.models import Product, AggregationCenterProduct
 from sales import models
 
 
+# todo add the right permissions
 @login_required()
 def outward_product_summary_period(request):
     if request.method == 'POST':
@@ -25,8 +26,17 @@ def outward_product_summary_period(request):
                   {'form': form})
 
 
+# todo add the right permissions
+# todo a proposal, let a faster language like go, do the reports and use django to render the data.That should be later
+# todo for now, just try to aggregate on writes. Like calculating totals on save of an item
 @login_required()
 def outward_product_summary_report(request, date_0, date_1):
+    """
+    :param request:
+    :param date_0:
+    :param date_1:
+    :return:
+    """
     str_date_0 = date_0
     str_date_1 = date_1
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()

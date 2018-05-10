@@ -117,6 +117,7 @@ class CustomerDiscount(models.Model):
         return str(self.product) + ' for ' + str(self.discount) + '%'
 
 
+# todo on save re-calculate total qty and store it on the main order.This reduces aggregation time
 class OrderProduct(models.Model):
     number = models.CharField(max_length=10, unique=True, primary_key=True)
     order = models.ForeignKey(Order, to_field='number', on_delete=models.CASCADE, help_text='search by order no.')
@@ -166,6 +167,7 @@ class OrderlessPackage(models.Model):
         return self.number
 
 
+# todo on save re-calculate total qty for each package and reduce aggregation time
 class PackageProduct(models.Model):
     number = models.CharField(max_length=10, unique=True, primary_key=True)
     package = models.ForeignKey(Package, to_field='number', on_delete=models.CASCADE)
@@ -253,6 +255,7 @@ class CustomerAccount(models.Model):
         return self.number
 
 
+# todo on save re-calculate the totals and save them on the receipt.use signals
 class ReceiptParticular(models.Model):
     TYPE = (
         ('O', 'Ordered'),
