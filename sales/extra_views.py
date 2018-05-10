@@ -1,21 +1,18 @@
-import datetime
 from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F, Sum
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
 from django.views.generic import ListView
 
 from core.models import Product
 from sales import forms
 from sales import models
 from utils import generate_unique_id, main_generate_unique_id
-from django.db.models import Q
 
 
 class ReturnsList(LoginRequiredMixin, ListView):
@@ -111,7 +108,8 @@ def trade_debtors(request):
 @login_required()
 def customer_statement(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
-    account = models.CustomerAccount.objects.filter(customer=customer).order_by('-date')
+    account = models.CustomerAccount.objects.select_related('customer', 'receipt', 'returns').filter(
+        customer=customer).order_by('-date')
     receipt_purchases_total = account.filter(type='P').values('receipt', 'date').annotate(Sum('amount'))
     receipt_payments_total = account.filter(type='A').values('receipt', 'date').annotate(Sum('amount'))
     account = account.exclude(type__in=['P', 'A'])
