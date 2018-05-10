@@ -28,9 +28,9 @@ def outward_product_summary_period(request):
 
 # todo add the right permissions
 # todo a proposal, let a faster language like go, do the reports and use django to render the data.That should be later
-# todo for now, just try to aggregate on writes. Like calculating totals on save of an item
+# todo for now, just try to aggregate on writes. Like calculating totals on save of an item and read the main aggregates
 @login_required()
-def outward_product_summary_report(request, date_0, date_1):
+def outward_product_summary_report(request, date_0: str, date_1: str):
     """
     :param request:
     :param date_0:
@@ -64,10 +64,9 @@ def outward_product_summary_report(request, date_0, date_1):
         total_cash = models.CashReceiptParticular.objects. \
             filter(product=product, cash_receipt__date__range=(date_0_datetime, date_1_datetime)). \
             aggregate(total=Sum('qty'))
-        # TODO just show the totals for each of the centers
         available = AggregationCenterProduct.objects.filter(product=product,
                                                             date__range=(date_0, date_1)). \
-            annotate(total=Sum('qty'))
+            values('aggregation_center__name').annotate(total=Sum('qty'))
         total_available = AggregationCenterProduct.objects.filter(product=product,
                                                                   date__range=(date_0, date_1)). \
             aggregate(total=Sum('qty'))

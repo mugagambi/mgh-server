@@ -322,6 +322,7 @@ class CashReceipt(models.Model):
         ordering = ('-date',)
 
 
+# todo on save aggregate the totals for each cash receipt
 class CashReceiptParticular(models.Model):
     qty = models.DecimalField(decimal_places=2, max_digits=8)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

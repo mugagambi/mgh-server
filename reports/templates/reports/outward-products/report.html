@@ -31,7 +31,7 @@
                 <td>{{ outward.product }}</td>
                 <td>
                     {% for item in outward.available %}
-                        {{ item.aggregation_center.name }} : {{ item.total }}<br/>
+                        {{ item.aggregation_center__name }} : {{ item.total | intcomma }}<br/>
                     {% endfor %}
                     total: {{ outward.total_available | intcomma }}
                 </td>
