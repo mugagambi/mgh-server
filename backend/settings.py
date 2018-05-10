@@ -15,10 +15,9 @@ import os
 import datetime
 from decouple import config, Csv
 import dj_database_url
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.contrib import messages
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -141,8 +140,6 @@ STATICFILES_DIRS = [
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 AUTH_USER_MODEL = 'core.User'
 CORS_ORIGIN_WHITELIST = (
-    'google.com',
-    'hostname.example.com',
     'localhost:8080',
     '127.0.0.1:8080',
     'mgh-web.firebaseapp.com'

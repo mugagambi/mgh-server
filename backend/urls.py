@@ -27,6 +27,7 @@ urlpatterns = [
     path('sales/receipt/<int:pk>/', receipt, name='receipt'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', custom_admin_site.urls),
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
     path(
         'password_reset/',
         auth_views.PasswordResetView.as_view(),

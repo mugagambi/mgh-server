@@ -1,21 +1,23 @@
 import datetime
 
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Sum, DecimalField, F
+from django.db.models import Sum, F
 from django.shortcuts import render, redirect
 
-from core.models import Product
-from sales import models
-from django.contrib.auth.decorators import login_required
 from reports import forms
+from sales import models
 
 
 # Create your views here.
+# TODO add the right permissions
+# TODO come up with a plan to create programmable permissions on first deploy
 @login_required()
 def index(request):
     return render(request, 'reports/index.html')
 
 
+# TODO add the right permissions
 @login_required()
 def sale_summary_report(request):
     if request.method == 'POST':
@@ -29,6 +31,7 @@ def sale_summary_report(request):
     return render(request, 'reports/sales-summary.html', {'form': form})
 
 
+# TODO add the right permissions
 @login_required()
 def cash_sale_summary_report(request, date_0, date_1):
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
@@ -77,6 +80,7 @@ def cash_sale_summary_report(request, date_0, date_1):
     return render(request, 'reports/cash-sale_summary.html', args)
 
 
+# TODO add the right permissions
 @login_required()
 def mpesa_sale_summary_report(request, date_0, date_1):
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
@@ -108,6 +112,7 @@ def mpesa_sale_summary_report(request, date_0, date_1):
     return render(request, 'reports/mpesa_sale_summary.html', args)
 
 
+# TODO add the right permissions
 @login_required()
 def cheque_sale_summary_report(request, date_0, date_1):
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
@@ -139,6 +144,7 @@ def cheque_sale_summary_report(request, date_0, date_1):
     return render(request, 'reports/cheque_sale_summary.html', args)
 
 
+# TODO add the right permissions
 @login_required()
 def bank_transfer_sale_summary_report(request, date_0, date_1):
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()

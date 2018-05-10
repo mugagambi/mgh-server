@@ -12,6 +12,7 @@ from core import models
 User = get_user_model()
 
 
+# TODO add permissions serializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

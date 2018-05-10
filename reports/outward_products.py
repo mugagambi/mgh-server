@@ -54,6 +54,7 @@ def outward_product_summary_report(request, date_0, date_1):
         total_cash = models.CashReceiptParticular.objects. \
             filter(product=product, cash_receipt__date__range=(date_0_datetime, date_1_datetime)). \
             aggregate(total=Sum('qty'))
+        # TODO just show the totals for each of the centers
         available = AggregationCenterProduct.objects.filter(product=product,
                                                             date__range=(date_0, date_1)). \
             annotate(total=Sum('qty'))

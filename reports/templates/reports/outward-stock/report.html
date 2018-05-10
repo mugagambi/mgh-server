@@ -43,7 +43,7 @@
                 <td>{{ outward.total_sale_price_average | floatformat:2 |intcomma }}</td>
                 <td>{{ outward.total_sale_value | floatformat:2 | intcomma }}</td>
                 {% empty %}
-                <td class="text-center"><b>No data available in table</b></td>
+                <td class="text-center" colspan="10"><b>No data available in table</b></td>
             </tr>
         {% endfor %}
         <tr>

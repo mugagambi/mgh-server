@@ -7,6 +7,7 @@ from rest_framework import filters
 from core.serializers import UserSerializer
 
 
+# TODO send permissions short codes with the token payload
 def jwt_response_payload_handler(token, user=None, request=None):
     return {
         'token': token,
