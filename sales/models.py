@@ -3,13 +3,12 @@ from functools import reduce
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum
 from django.utils.timezone import now
 
 from core.models import User, Product, Crate, AggregationCenter
 
+
 # Create your models here.
-from utils import main_generate_unique_id
 
 
 class Region(models.Model):
@@ -73,11 +72,13 @@ class Order(models.Model):
     def __str__(self):
         return 'order no. ' + str(self.number) + ' for ' + str(self.customer.shop_name)
 
+    # todo remove this piece of code. It's not efficient
     def total_qty(self):
         if self.orderproduct_set.all().exists():
             return reduce((lambda x, y: x + y), [x.qty for x in self.orderproduct_set.all()])
         return 0
 
+    # todo remove this piece of code. It's not efficient
     def total_price(self):
         if self.orderproduct_set.all().exists():
             return reduce((lambda x, y: x + y), [x.price.price for x in self.orderproduct_set.all()])
@@ -287,6 +288,8 @@ class ReceiptParticular(models.Model):
                                                    update_fields=None)
 
 
+# todo introduce 2 fields on the main receipt to help in aggregation.
+# todo introduce total_paid field and total_credit. All defaults to 0
 class ReceiptPayment(models.Model):
     TYPES = (
         (1, 'Cheque'),
@@ -342,6 +345,7 @@ class CashReceiptParticular(models.Model):
                                                        update_fields=None)
 
 
+# todo introduce a field on the main receipt to help in aggregation.
 class CashReceiptPayment(models.Model):
     TYPES = (
         (1, 'Mpesa'),
@@ -361,6 +365,7 @@ class CashReceiptPayment(models.Model):
         return str(self.cash_receipt)
 
 
+# todo record each return and it's state
 class MarketReturn(models.Model):
     number = models.CharField(unique=True, max_length=10, primary_key=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -371,6 +376,8 @@ class MarketReturn(models.Model):
         return self.number
 
 
+# todo review the whole debt settlement process.
+# todo change the name to debt settlement
 class CreditSettlement(models.Model):
     TYPES = (
         (1, 'Cheque'),
@@ -417,6 +424,7 @@ class BBF(models.Model):
         return 'balance ' + str(self.receipt)
 
 
+# todo remove this model. It's not necessary anymore
 class BbfBalance(models.Model):
     customer = models.OneToOneField(Customer, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -454,6 +462,8 @@ class Return(models.Model):
         return 'return number ' + str(self.number)
 
 
+# todo review the necessity of this model at this time
+# todo if not relevant any longer, just remove it.
 class Reject(models.Model):
     number = models.CharField(unique=True, max_length=10, primary_key=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, help_text='search by product name')
@@ -470,6 +480,7 @@ class Reject(models.Model):
         return 'reject number ' + str(self.number)
 
 
+# todo remove this proxy model.
 class Invoices(Receipt):
     class Meta:
         proxy = True
@@ -486,6 +497,7 @@ class CustomerAccountBalance(models.Model):
         return self.pk
 
 
+# todo create a customer deposits interface.with all deposits by each customer
 class CustomerDeposit(models.Model):
     VIA = (
         ('M', 'M-pesa'),

@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
-from django.db.models import Sum, F, Func, Max
+from django.db.models import Sum, F, Max
 from django.forms import modelformset_factory
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
@@ -40,6 +40,7 @@ class OrdersFilter(FilterSet):
             'created_at_between')
 
 
+# todo add the required permissions
 @login_required()
 def order_list(request):
     order_list = models.Order.objects.select_related('customer', 'received_by').values('number', 'customer__shop_name',
@@ -61,11 +62,13 @@ def order_list(request):
     return render(request, 'sales/orders/index.html', args)
 
 
+# todo add the right permissions
 class RegionList(LoginRequiredMixin, ListView):
     model = models.Region
     template_name = 'sales/regions/index.html'
 
 
+# todo add the right permissions
 @login_required()
 def create_regions(request):
     region_formset = modelformset_factory(models.Region, fields=('name',), max_num=5, min_num=1)
@@ -300,6 +303,8 @@ def add_discounts(request, pk):
                                                         'create_sub_name': 'discount'})
 
 
+# todo add the required permissions
+# todo review the size of this function
 @login_required()
 def place_order(request, pk, date_given):
     date_given = datetime.strptime(date_given, '%Y-%m-%d').date()
@@ -373,6 +378,8 @@ def place_order(request, pk, date_given):
                                                                 'delivery': date_given})
 
 
+# todo add required permissions
+# todo review the size of this function
 @login_required()
 def add_more_products(request, order):
     order = get_object_or_404(models.Order, pk=order)
@@ -431,6 +438,7 @@ def add_more_products(request, order):
                                                                 'order': order})
 
 
+# todo add the right permissions
 @login_required()
 def update_particular_item(request, order, pk):
     particular = models.OrderProduct.objects.get(order__pk=order, pk=pk)
@@ -455,6 +463,8 @@ def remove_order_product(request, order):
     return redirect('order_detail', pk=order)
 
 
+# todo add the right permissions
+# todo review the policy on deleting items in this system
 class DeleteOrder(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         messages.success(request, 'Order removed!')
@@ -465,6 +475,7 @@ class DeleteOrder(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('orders')
 
 
+# todo add the right permissions
 @login_required()
 def order_detail(request, pk):
     order = get_object_or_404(models.Order, pk=pk)
@@ -480,6 +491,7 @@ class CashSalesFilterSet(FilterSet):
         fields = ('date',)
 
 
+# todo add the right permissions
 @login_required()
 def cash_sales_list(request):
     sales = models.CashReceipt.objects.select_related('served_by').filter(cashreceiptparticular__isnull=False) \
@@ -496,6 +508,7 @@ def cash_sales_list(request):
     return render(request, 'sales/sales/cash-sale.html', {'sales': sales})
 
 
+# todo add the right permissions
 @login_required()
 def order_distribution_list(request):
     order_products = models.OrderProduct.objects.none()
@@ -510,6 +523,7 @@ def order_distribution_list(request):
                                                                          })
 
 
+# todo add the required permissions
 @login_required()
 def distribute_order(request, order_product):
     order_distribution_formset = modelformset_factory(models.OrderDistributionPoint,
@@ -534,6 +548,7 @@ def distribute_order(request, order_product):
     return render(request, 'sales/orders/distribution-form.html', {'formset': formset, 'order_product': order_product})
 
 
+# todo add the required permissions
 @login_required()
 def bbf_accounts(request):
     customer_balances = models.BBF.objects.values('customer__shop_name', 'amount', 'customer__number').annotate(
@@ -549,6 +564,7 @@ def bbf_accounts(request):
     return render(request, 'sales/sales/bbfs.html', {'balances': balances})
 
 
+# todo add the required permissions
 @login_required()
 def add_bbf(request, pk):
     customer = get_object_or_404(models.Customer, pk=pk)
@@ -571,6 +587,7 @@ def add_bbf(request, pk):
     return render(request, 'sales/customers/add-bbf.html', {'form': form, 'customer': customer})
 
 
+# todo add the required permissions
 @login_required()
 def customer_bbfs(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)

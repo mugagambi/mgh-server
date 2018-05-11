@@ -5,10 +5,11 @@ from django.utils.html import format_html
 from import_export import resources
 from import_export.admin import ExportMixin
 from import_export.fields import Field
-from utils import admin_link
+
 from core.admin import custom_admin_site
 from sales import models
 from utils import InputFilter, generate_unique_id
+from utils import admin_link
 
 
 def generate_unique_number(obj, cls, context, request, form, change):
@@ -361,8 +362,6 @@ class InvoiceAdmin(admin.ModelAdmin):
 
 class ReceiptNumberFilter(NumberFilter):
     title = 'Receipt Number'
-
-
 
 
 class ReturnAdmin(admin.ModelAdmin):

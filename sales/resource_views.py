@@ -1,5 +1,5 @@
-from datetime import datetime
 import datetime
+from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,11 +10,12 @@ from django.template.loader import get_template
 from django.views import View
 
 from reports.forms import SaleSummaryDate
+from sales import models
 from sales import resources
 from .render_pdf import render_to_pdf
-from sales import models
 
 
+# todo add the right permissions
 @login_required()
 def export_customers(request):
     customer_resource = resources.CustomerResource()
@@ -24,6 +25,7 @@ def export_customers(request):
     return response
 
 
+# todo add the right permissions
 @login_required()
 def export_cash_sales_period(request):
     if request.method == 'POST':
@@ -40,6 +42,7 @@ def export_cash_sales_period(request):
                   {'form': form})
 
 
+# todo add the right permissions
 class GeneratePDF(LoginRequiredMixin, View):
     def get(self, request, date_0, date_1, *args, **kwargs):
         date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
@@ -74,6 +77,7 @@ class GeneratePDF(LoginRequiredMixin, View):
         return HttpResponse("Not found")
 
 
+# todo add the required permissions
 @login_required()
 def export_sales_period(request):
     if request.method == 'POST':
@@ -90,6 +94,7 @@ def export_sales_period(request):
                   {'form': form})
 
 
+# todo add the right permissions
 @login_required()
 def export_customer_sales(request, date_0, date_1):
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()

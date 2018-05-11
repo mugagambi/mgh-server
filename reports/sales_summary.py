@@ -4,10 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Sum, F
 from django.shortcuts import redirect, render
+
 from reports import forms
 from sales import models
 
 
+# todo add the required permissions
 @login_required()
 def sales_summary_schedule(request):
     if request.method == 'POST':
@@ -24,6 +26,8 @@ def sales_summary_schedule(request):
                   {'form': form})
 
 
+# todo add the required permissions
+# todo use the pre-aggregated data
 @login_required()
 def sales_summary_report(request, date_0, date_1):
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()

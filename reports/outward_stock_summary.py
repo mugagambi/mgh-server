@@ -26,6 +26,8 @@ def outward_stock_summary_period(request):
                   {'form': form})
 
 
+# todo add the required permissions
+# todo read the pre-aggregated data for each product
 @login_required()
 def outward_stock_summary_report(request, date_0, date_1):
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()

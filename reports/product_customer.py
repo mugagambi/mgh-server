@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.shortcuts import redirect, render, get_object_or_404
 
+from core.models import Product
 from reports import forms
-from core.models import Product, AggregationCenterProduct
 from sales import models
 
 
@@ -46,6 +46,8 @@ def items_exist(customer, product_id, date_0, date_1, datetime_0, datetime_1):
     return False
 
 
+# todo add the right permissions
+# todo use the sub aggregates already calculated
 @login_required()
 def outward_product_summary_report(request, date_0, date_1, product_id):
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()

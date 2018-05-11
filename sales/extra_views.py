@@ -1,8 +1,7 @@
 from decimal import Decimal
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Sum
 from django.db.models import Q
@@ -15,14 +14,17 @@ from sales import models
 from utils import generate_unique_id, main_generate_unique_id
 
 
+# todo add the right permissions
 class ReturnsList(LoginRequiredMixin, ListView):
     model = models.Return
     template_name = 'sales/returns/returns-list.html'
     context_object_name = 'returns'
-    queryset = models.Return.objects.annotate(credit_note=F('qty') * F('price'))
+    queryset = models.Return.objects.select_related('product', 'customer', 'approved_by').annotate(
+        credit_note=F('qty') * F('price'))
     paginate_by = 50
 
 
+# todo add the right permissions
 @login_required()
 def record_return(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
@@ -40,6 +42,7 @@ def record_return(request, customer):
     return render(request, 'sales/returns/create_returns.html', {'form': form, 'customer': customer})
 
 
+# todo add required permissions
 @login_required()
 def cash_receipt(request, pk):
     receipt = get_object_or_404(models.CashReceipt, pk=pk)
@@ -92,6 +95,7 @@ def add_receipt(request):
     return render(request, 'sales/sales/add_receipt.html', {'form': form})
 
 
+# todo add the required permissions
 @login_required()
 def trade_debtors(request):
     debtors = models.CustomerAccountBalance.objects.filter(~Q(amount=0.0)).order_by('customer__shop_name')
@@ -194,9 +198,22 @@ def update_particular(request, item):
     return render(request, 'sales/sales/add-receipt-particular.html', {'form': form, 'item': item})
 
 
+# todo remove all the particulars and payments from the account
 @login_required()
 @permission_required('sales.delete_receipt')
 def delete_receipt(request, pk):
+    """
+    on deleting a receipt, remove the total amount of in particulars in the customer account.Do this by adding an amount
+    with equal and opposite amount to the particular.
+    That wouldn't work also because the receipt will be deleted and it will be null.
+    Another approach is to ignore all the null values and only show the ones with the receipts.
+    These null values will affect the final account balance accordingly.
+    And this is the desired behaviour.
+    todo work on this approach. and do the same with removing receipt particular and a specific payment.
+    :param request:
+    :param pk:
+    :return:
+    """
     pass
 
 
@@ -274,6 +291,7 @@ def update_payment(request, receipt, payment):
                                                                 'payment': payment})
 
 
+# todo add the required the permissions
 @login_required()
 def return_details(request, pk):
     returns = get_object_or_404(models.Return, pk=pk)
