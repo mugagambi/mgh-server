@@ -2,6 +2,7 @@ from django.urls import path
 
 from sales import extra_views
 from sales import web_views
+from sales import more_views
 
 urlpatterns = [
     path('regions/', web_views.RegionList.as_view(), name='regions'),
@@ -28,7 +29,7 @@ urlpatterns = [
     path('customers/<str:pk>/discounts/', web_views.add_discounts, name='add-discounts'),
     path('customers/<str:pk>/place-order/<str:date_given>/', web_views.place_order, name='place-order'),
     path('orders/', web_views.order_list, name='orders'),
-    path('orders/distribute/', web_views.order_distribution_list, name='orders-distribute'),
+    path('order_distribute/', web_views.order_distribution_list, name='orders-distribute'),
     path('orders/distribute/<str:order_product>/', web_views.distribute_order, name='distribute-order'),
     path('orders/<str:order>/more/', web_views.add_more_products, name='more-items'),
     path('orders/<str:pk>/delete/', web_views.DeleteOrder.as_view(), name='delete-order'),
@@ -46,4 +47,5 @@ urlpatterns = [
          name='update-sale-payment'),
     path('all/customers/receipt/particular/<str:item>/update/', extra_views.update_particular,
          name='update-receipt-particular'),
+    path('orderless/dispatch/', more_views.orderless_dispatch, name='orderless_dispatch')
 ]

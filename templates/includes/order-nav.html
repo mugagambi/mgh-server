@@ -1,10 +1,23 @@
-<p>
-    <a class="btn btn-outline-success" href="{% url 'customers' %}">
+<nav class="nav nav-pills nav-fill">
+    <a class="nav-item nav-link" href="{% url 'customers' %}">
         <span data-feather="plus"></span>
         Place Orders
     </a>
-    <a class="btn btn-outline-success" href="{% url 'orders-distribute' %}">
+    <a class="nav-item nav-link {% if 'orders' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'orders' %}">
+        <span data-feather="shopping-bag"></span>
+        Order List</a>
+    <a class="nav-item nav-link {% if 'order_distribute' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'orders-distribute' %}">
         <span data-feather="truck"></span>
         Distribute Orders
     </a>
-</p>
+    <a class="nav-item nav-link {% if 'orderless' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'orderless_dispatch' %}">
+        <span data-feather="shopping-bag"></span>
+        Orderless Dispatch List
+    </a>
+</nav>
