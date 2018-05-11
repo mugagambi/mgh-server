@@ -1,5 +1,4 @@
 import datetime
-from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -104,10 +103,22 @@ def export_customer_sales(request, date_0, date_1):
     template = get_template('sales/resources/customer_sale_export.html')
     receipts = models.Receipt.objects.filter(date__range=(date_0_datetime, date_1_datetime)). \
         annotate(total_qty=Sum('receiptparticular__qty'), sub_total=Sum('receiptparticular__total'))
+    receipt_amount = receipts.aggregate(total=Sum('receiptparticular__total'))
+    total_balance = receipts.aggregate(total=Sum('receiptmisc__balance'))
+    total_amount_payable = (receipt_amount['total'] or 0) - (total_balance['total'] or 0)
+    total_payed = receipts.exclude(receiptpayment__type=4).aggregate(total=Sum('receiptpayment__amount'))
+    total_credit = receipts.filter(receiptpayment__type=4).aggregate(total=Sum('receiptpayment__amount'))
+    total_payed_amount = receipts.aggregate(total=Sum('receiptpayment__amount'))
     context = {
         'date_0_datetime': date_0_datetime,
         'date_1_datetime': date_1_datetime,
-        'receipts': receipts
+        'receipts': receipts,
+        'receipt_amount': (receipt_amount['total'] or 0),
+        'total_balance': (total_balance['total'] or 0),
+        'total_amount_payable': total_amount_payable,
+        'total_payed': (total_payed['total'] or 0),
+        'total_credit': (total_credit['total'] or 0),
+        'total_payed_amount': (total_payed_amount['total'] or 0)
     }
     html = template.render(context)
     pdf = render_to_pdf('sales/resources/customer_sale_export.html', context)

@@ -12,8 +12,9 @@
         }
 
         #customers td, #customers th {
-            border: 1px solid #ddd;
-            padding: 8px;
+            border: 0.5px solid #ddd;
+            padding: 2px;
+            text-align: center;
         }
 
         #customers tr:nth-child(even) {
@@ -28,31 +29,34 @@
             background-color: black;
             color: white;
         }
+
+        .receipt {
+            background-color: black !important;
+        }
     </style>
 </head>
 <body>
 <h4 style="text-align: center"><u>Customer Sales from {{ date_0_datetime }} to {{ date_1_datetime }}</u></h4>
-{% for receipt in receipts %}
-    <h4 style="text-align: center"><u>Receipt Number {{ receipt.number }}</u></h4>
-    <div>
-        <div>
-            <p style="text-align: center"><b>Customer: </b>{{ receipt.customer.shop_name }}</p>
-            <p style="text-align: center"><b>Served By: </b>{{ receipt.served_by.username }}</p>
-            <p style="text-align: center"><b>Date: </b>{{ receipt.date }}</p>
-        </div>
-    </div>
-    <h5 style="text-align: center"><u>Receipt Particulars</u></h5>
-    <table id="customers">
-        <thead>
-        <tr>
-            <th scope="col">Product</th>
-            <th scope="col">Qty</th>
-            <th scope="col">@ (Ksh)</th>
-            <th scope="col">Discount (%)</th>
-            <th scope="col">Sub Total (Ksh)</th>
-            <th scope="col">Type</th>
+<table id="customers">
+    <thead>
+    <tr>
+        <th scope="col">Product</th>
+        <th scope="col">Qty</th>
+        <th scope="col">@ (Ksh)</th>
+        <th scope="col">Discount (%)</th>
+        <th scope="col">Sub Total (Ksh)</th>
+        <th scope="col">Type</th>
+    </tr>
+    </thead>
+    {% for receipt in receipts %}
+        <tr class="receipt">
+            <td><b>Customer </b></td>
+            <td>{{ receipt.customer.shop_name }}</td>
+            <td><b>Served By </b></td>
+            <td>{{ receipt.served_by.username }}</td>
+            <td><b>Date </b></td>
+            <td>{{ receipt.date }}</td>
         </tr>
-        </thead>
         {% for particular in receipt.receiptparticular_set.all %}
             <tr>
                 <td>{{ particular.product.name }}</td>
@@ -63,39 +67,73 @@
                 <td>{{ particular.get_type_display }}</td>
             </tr>
         {% endfor %}
-    </table>
-    {% if not receipt.has_credit %}
-        <div style="float: right;">
-            <p><b>Total Qty: </b>{{ receipt.total_qty | intcomma }}</p>
-            <p><b>Total Amount: </b>Ksh. {{ receipt.sub_total | intcomma }}</p>
-            {% if receipt.receiptmisc.balance %}
-                <p data-toggle="tooltip" data-placement="top" title="Account Balance Brought Forward">
-                    <b>Account Balance: </b>Ksh.{{ receipt.receiptmisc.balance | intcomma }}</p>
-            {% endif %}
-        </div>
-    {% endif %}
-    <div class="float-left">
-        <h6 class="text-center"><u>Payments</u></h6>
-        {% for payment in receipt.receiptpayment_set.all %}
-            <p><b>Payment Type : </b>{{ payment.get_type_display }}</p>
-            <p><b>Amount : </b>Ksh. {{ payment.amount | intcomma }}</p>
-            {% if payment.type == 1 %}
-                <p><b>Cheque Number : </b> {{ payment.check_number }}</p>
-            {% elif payment.type == 2 %}
-                <p><b>Mobile No. :</b> {{ payment.mobile_number }}</p>
-                <p><b>Transaction Id : </b>{{ payment.transaction_id }}</p>
-            {% elif payment.type == 4 %}
-                <p><b>Invoice Number: </b>{{ receipt.id }}</p>
-                <p><b>Date to Pay : </b> {{ payment.date_to_pay }}</p>
-                <a href="#" class="button">View Invoice</a>
-            {% elif payment.type == 5 %}
-                <p><b>Transfer Code : </b>{{ payment.transfer_code }}</p>
-            {% endif %}
-        {% empty %}
-            <p><b>No Payments have been made yet.</b></p>
-        {% endfor %}
-    </div>
-{% endfor %}
-<hr/>
+        <tr>
+            <td><b>Grand Total</b></td>
+            <td>{{ receipt.total_qty | intcomma }}</td>
+            <td>-</td>
+            <td>-</td>
+            <td>{{ receipt.sub_total | intcomma }}</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td><b>Payments</b></td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+                {% if receipt.receiptmisc.balance %}
+                    <b>BBF:</b> {{ receipt.receiptmisc.balance }}<br/>
+                {% endif %}
+                {% for payment in receipt.receiptpayment_set.all %}
+                    <b>Payment Type : </b>{{ payment.get_type_display }}<br>
+                    <b>Amount : </b>Ksh. {{ payment.amount | intcomma }}<br/>
+                    {% if payment.type == 1 %}
+                        <b>Cheque Number : </b> {{ payment.check_number }}
+                    {% elif payment.type == 2 %}
+                        <b>Mobile No. :</b> {{ payment.mobile_number }}<br/>
+                        <b>Transaction Id : </b>{{ payment.transaction_id }}
+                    {% elif payment.type == 4 %}
+                        <b>Invoice Number: </b>{{ receipt.pk }}<br/>
+                    {% elif payment.type == 5 %}
+                        <b>Transfer Code : </b>{{ payment.transfer_code }}
+                    {% endif %}
+                {% empty %}
+                    <b>No Payments have been made yet.</b>
+                {% endfor %}
+            </td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td colspan="6"></td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td><b>Totals: </b></td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td><b>Amount Sold: </b>Ksh. {{ receipt_amount | intcomma }}
+            <br>
+            <b>Total BBF: </b> Ksh. {{ total_balance | intcomma }}<br/>
+            <b>Total Payable: </b> Ksh. {{ total_amount_payable | intcomma }}
+        </td>
+        <td>-</td>
+    </tr>
+<tr>
+    <td><b>Total Payments: </b></td>
+    <td>-</td>
+    <td>-</td>
+    <td>-</td>
+    <td><b>Payed: </b> Ksh.{{ total_payed | intcomma }}<br/>
+        <b>Debt: </b> Ksh.{{ total_credit | intcomma }}<br/>
+    <b>Total: </b> Ksh. {{ total_payed_amount | intcomma }}</td>
+    <td>-</td>
+</tr>
+</table>
+<p>Document reviewed by: <sub>_____________________________________________________________________________________________</sub>
+</p>
+<p>Signature: <sub>_____________________________________________________________________________________________</sub>
+</p>
+<p>Date: {% now "jS F Y h:i a" %}</p>
 </body>
 </html>
