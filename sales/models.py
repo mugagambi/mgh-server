@@ -461,6 +461,9 @@ class Return(models.Model):
     def __str__(self):
         return 'return number ' + str(self.number)
 
+    class Meta:
+        ordering = ('-date',)
+
 
 # todo review the necessity of this model at this time
 # todo if not relevant any longer, just remove it.
