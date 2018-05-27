@@ -79,7 +79,11 @@
                 {% endif %}
                 {% for payment in payments %}
                     <p><b>Payment Type : </b>{{ payment.get_type_display }}</p>
+                    {% if not receipt.has_credit %}
                     <p><b>Amount : </b>Ksh. {{ payment.amount | intcomma }}</p>
+                    {% else %}
+                    <p><b>Amount : </b>Ksh. {{ particulars_amount.sum | intcomma }}</p>
+                    {% endif %}
                     {% if perms.sales.change_receiptpayment %}
                         <a href="{% url 'update-sale-payment' receipt=receipt.pk payment=payment.pk %}"
                            class="btn btn-outline-success btn-sm mb-1">Update Payment</a>

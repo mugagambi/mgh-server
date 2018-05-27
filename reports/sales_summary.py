@@ -43,6 +43,7 @@ def sales_summary_report(request, date_0, date_1):
         '-total_amount')
     cash_sale = models.CashReceiptParticular.objects.filter(cash_receipt__date__range=(date_0, date_1)).aggregate(
         total_amount=Sum(F('qty') * F('price')))
+    # todo stop aggregating total
     credit = models.ReceiptPayment.objects.filter(receipt__date__range=(date_0, date_1), type=4)
     if credit.exists():
         credit_total = credit.aggregate(total_amount=Sum('amount'))

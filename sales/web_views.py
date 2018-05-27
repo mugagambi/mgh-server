@@ -187,7 +187,8 @@ def receipt_detail(request, pk):
                                                         'total_amount': total_amount,
                                                         'payments': payments,
                                                         'total_payment': total_payed_amount,
-                                                        'bcf': bcf
+                                                        'bcf': bcf,
+                                                        'particulars_amount': particulars_amount
                                                         })
 
 

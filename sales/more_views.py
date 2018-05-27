@@ -13,6 +13,7 @@ class OrderlessFilter(django_filters.FilterSet):
 
 
 # todo add the right permissions
+# todo order by date in decreasing order and probably group by dates and give details
 @login_required()
 def orderless_dispatch(request):
     """
