@@ -178,7 +178,7 @@ class OrderlessPackageSerializer(serializers.ModelSerializer):
 class MarketReturnSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MarketReturn
-        fields = ('number', 'product', 'qty', 'date')
+        fields = ('number', 'product', 'qty', 'date', 'type')
 
 
 class CustomerDepositSerializer(serializers.ModelSerializer):

@@ -367,10 +367,15 @@ class CashReceiptPayment(models.Model):
 
 # todo record each return and it's state
 class MarketReturn(models.Model):
+    TYPES = (
+        ('U', 'UnSalvageable'),
+        ('S', 'Salvageable')
+    )
     number = models.CharField(unique=True, max_length=10, primary_key=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     qty = models.DecimalField(decimal_places=2, max_digits=8)
     date = models.DateField(default=now)
+    type = models.CharField(max_length=1, choices=TYPES, default='S')
 
     def __str__(self):
         return self.number
