@@ -86,7 +86,11 @@
                 {% endif %}
                 {% for payment in receipt.receiptpayment_set.all %}
                     <b>Payment Type : </b>{{ payment.get_type_display }}<br>
-                    <b>Amount : </b>Ksh. {{ payment.amount | intcomma }}<br/>
+                    {% if not receipt.has_credit %}
+                    <p><b>Amount : </b>Ksh. {{ payment.amount | intcomma }}</p>
+                    {% else %}
+                    <p><b>Amount : </b>Ksh. {{ receipt.sub_total | intcomma }}</p>
+                    {% endif %}<br/>
                     {% if payment.type == 1 %}
                         <b>Cheque Number : </b> {{ payment.check_number }}
                     {% elif payment.type == 2 %}
