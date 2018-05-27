@@ -57,18 +57,33 @@
             {% if not receipt.has_credit %}
                 <div class="float-right">
                     <p><b>Total Qty: </b>{{ total_qty | intcomma }}</p>
-                    <p><b>Total Amount: </b>Ksh. {{ total_amount | intcomma }}</p>
-                    <p data-toggle="tooltip" data-placement="top" title="Balance Brought Forward before the invoice
-                    for this sale was created">
-                        {% if receipt.receiptmisc.balance %}
-                            <b>BBF Account Balance: </b>Ksh. {{ receipt.receiptmisc.balance | intcomma }}</p>
-                        {% endif %}
+                    {% if receipt.receiptmisc.balance %}
+                        <p data-toggle="tooltip" data-placement="top" title="Balance Brought Down before
+                     this sale">
+                            <b>BBD: </b>Ksh. {{ receipt.receiptmisc.balance | intcomma }}</p>
+                    {% else %}
+                        <p data-toggle="tooltip" data-placement="top" title="Balance Brought Down before
+                     this sale">
+                            <b>BBD: </b>Ksh. 0.0</p>
+                    {% endif %}
+                    <p><b>Sale Amount: </b>Ksh. {{ total_amount | intcomma }}</p>
                     {% if receipt.receiptmisc.balance %}
                         <p><b>Amount Payable: </b>Ksh. {{ total_amount|sub:receipt.receiptmisc.balance | intcomma }}</p>
                     {% else %}
-                        <p><b>Amount Payable: </b>Ksh. {{ total_amount | intcomma }}</p>
+                        <p><b>Amount Payable: </b>Ksh. {{ total_amount| intcomma }}</p>
                     {% endif %}
                     <p><b>Amount Payed: </b>Ksh. {{ total_payment.sum  | intcomma }}</p>
+                    {% if receipt.receiptmisc.balance %}
+                        <p data-toggle="tooltip" data-placement="top" title="Balance Brought Forward after
+                     this sale">
+                            <b>BBF: </b>Ksh. {{ total_payment.sum|sub:total_amount|sub:receipt.receiptmisc.balance | intcomma }}
+                        </p>
+                    {% else %}
+                        <p data-toggle="tooltip" data-placement="top" title="Balance Brought Forward after
+                     this sale">
+                            <b>BBF: </b>Ksh. {{ total_payment.sum|sub:total_amount | intcomma }}
+                        </p>
+                    {% endif %}
                 </div>
             {% endif %}
             <div class="float-left">
@@ -80,9 +95,9 @@
                 {% for payment in payments %}
                     <p><b>Payment Type : </b>{{ payment.get_type_display }}</p>
                     {% if not receipt.has_credit %}
-                    <p><b>Amount : </b>Ksh. {{ payment.amount | intcomma }}</p>
+                        <p><b>Amount : </b>Ksh. {{ payment.amount | intcomma }}</p>
                     {% else %}
-                    <p><b>Amount : </b>Ksh. {{ particulars_amount.sum | intcomma }}</p>
+                        <p><b>Amount : </b>Ksh. {{ particulars_amount.sum | intcomma }}</p>
                     {% endif %}
                     {% if perms.sales.change_receiptpayment %}
                         <a href="{% url 'update-sale-payment' receipt=receipt.pk payment=payment.pk %}"
@@ -107,9 +122,9 @@
     </div>
     <div class="alert alert-info" role="alert">
         <span data-feather="help-circle"> </span>
-        (-) BBF account balance means the customer owes Meru Greens and (+) BBF account balance means the Meru Greens
+        (-) BBF & BBD account balance means the customer owes Meru Greens and (+) BBF & BBD account balance means that Meru Greens
         owe the customer.<br/>
         (-) Amount Payable means the customer does not have to pay anything and that meru greens owes them money. (+)
-        Amount Payable is the total amount money the customer has to pay the invoice.
+        Amount Payable is the total amount money the customer has to pay for this sale.
     </div>
 {% endblock %}

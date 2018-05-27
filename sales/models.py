@@ -520,7 +520,7 @@ class CustomerDeposit(models.Model):
 
 
 class ReceiptMisc(models.Model):
-    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0,
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.0,
                                   help_text='The balance before a receipt payment was made')
     receipt = models.OneToOneField(Receipt, on_delete=models.CASCADE, help_text='Receipt can have only one balance')
 
