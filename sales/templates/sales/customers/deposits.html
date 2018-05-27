@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load humanize %}
 {% load static %}
 {% block breadcrump %}
     <nav aria-label="breadcrumb">
@@ -34,7 +35,7 @@
         {% for deposit in deposits %}
             <tr>
                 <td>{{ deposit.number }}</td>
-                <td>{{ deposit.amount }}</td>
+                <td>{{ deposit.amount | intcomma }}</td>
                 <td>{{ deposit.date }}</td>
                 <td>{{ deposit.get_via_display }}</td>
                 <td>

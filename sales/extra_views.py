@@ -175,6 +175,7 @@ def customer_statement(request, customer):
         balance = models.CustomerAccountBalance.objects.get(customer=customer)
     except models.CustomerAccountBalance.DoesNotExist:
         balance = None
+    final_account.sort(key=lambda x: x['date'], reverse=True)
     return render(request, 'sales/sales/customer_statement.html',
                   {'customer': customer, 'account': final_account, 'balance': balance})
 
