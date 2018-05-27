@@ -41,12 +41,12 @@
         {% endfor %}
         </tbody>
     </table>
-    <p><b>Showing {{ deposits.start_index }} to {{ deposits.end_index }}
-        of {{ deposits.paginator.count }} deposits</b></p>
-    {% if deposits.has_other_pages %}
+    <p><b>Showing {{ returns.start_index }} to {{ returns.end_index }}
+        of {{ returns.paginator.count }} returns</b></p>
+    {% if returns.has_other_pages %}
         <nav aria-label="Page navigation example">
             <ul class="pagination">
-                {% if deposits.has_previous %}
+                {% if returns.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
 
@@ -81,7 +81,7 @@
 
 
 
-                                {{ deposits.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                {{ returns.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                            aria-label="Previous">
                             <span aria-hidden="true">Previous</span>
                             <span class="sr-only">Previous</span>
@@ -95,7 +95,7 @@
                         <span class="sr-only">Previous</span>
                     </a></li>
                 {% endif %}
-                {% if deposits.number|add:'-4' > 1 %}
+                {% if returns.number|add:'-4' > 1 %}
                     <li class="page-item"><a class="page-link"
                                              href="?page=
 
@@ -129,19 +129,19 @@
 
 
 
-                                                     {{ deposits.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                                     {{ returns.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
                         <span class="sr-only">&hellip;</span>
                     </a></li>
                 {% endif %}
 
-                {% for i in deposits.paginator.page_range %}
-                    {% if deposits.number == i %}
+                {% for i in returns.paginator.page_range %}
+                    {% if returns.number == i %}
                         <li class="page-item active"><a class="page-link" disabled>{{ i }} <span
                                 class="sr-only">(current)</span></a>
                         </li>
-                    {% elif i > deposits.number|add:'-5' and i < deposits.number|add:'5' %}
+                    {% elif i > returns.number|add:'-5' and i < returns.number|add:'5' %}
                         <li class="page-item"><a class="page-link" href="?page=
 
 
@@ -177,7 +177,7 @@
                         </li>
                     {% endif %}
                 {% endfor %}
-                {% if deposits.paginator.num_pages > deposits.number|add:'4' %}
+                {% if returns.paginator.num_pages > returns.number|add:'4' %}
                     <li class="page-item"><a class="page-link"
                                              href="?page=
 
@@ -209,13 +209,13 @@
 
 
 
-                                                     {{ deposits.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                                     {{ returns.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
                         <span class="sr-only">&hellip;</span>
                     </a></li>
                 {% endif %}
-                {% if deposits.has_next %}
+                {% if returns.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
 
@@ -247,7 +247,7 @@
 
 
 
-                                {{ deposits.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                {{ returns.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                            aria-label="Next">
                             <span aria-hidden="true">Next</span>
                             <span class="sr-only">Next</span>
