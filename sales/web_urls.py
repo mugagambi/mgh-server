@@ -24,6 +24,7 @@ urlpatterns = [
     path('all/cash/<str:pk>/', extra_views.cash_receipt, name='cash-receipt'),
     path('all/debtors/<str:customer>/', extra_views.customer_statement, name='customer_statement'),
     path('customers/<str:pk>/prices/', web_views.customer_prices, name='customer_prices'),
+    path('customers/<str:customer>/deposits/', more_views.customer_deposits, name='customer_deposits'),
     path('customers/<str:pk>/bbf/', web_views.add_bbf, name='add-customer-bff'),
     path('customers/<str:customer>/prices/<int:pk>/', web_views.update_price, name='update_customer_price'),
     path('customers/<str:pk>/discounts/', web_views.add_discounts, name='add-discounts'),

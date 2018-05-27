@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from sales import models
 import django_filters
@@ -35,3 +35,19 @@ def orderless_dispatch(request):
     args = {'paginator': paginator, 'filter': orderless_filter,
             'orderless': orderless}
     return render(request, 'sales/orderless/index.html', args)
+
+
+@login_required()
+def customer_deposits(request, customer):
+    customer = get_object_or_404(models.Customer, pk=customer)
+    deposits = models.CustomerDeposit.objects.filter(customer=customer)
+    paginator = Paginator(deposits, 50)
+    page = request.GET.get('page', 1)
+    try:
+        deposits = paginator.page(page)
+    except PageNotAnInteger:
+        deposits = paginator.page(1)
+    except EmptyPage:
+        deposits = paginator.page(paginator.num_pages)
+    return render(request, 'sales/customers/deposits.html', {'paginator': paginator, 'deposits': deposits,
+                                                             'customer': customer})

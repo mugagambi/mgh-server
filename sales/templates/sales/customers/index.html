@@ -63,6 +63,9 @@
                     <a class="btn btn-outline-success btn-sm" href="{% url 'record-return' customer=customer.number %}">record
                         return</a>
                     <a class="btn btn-outline-success btn-sm"
+                       href="{% url 'customer_deposits' customer=customer.number %}">
+                        deposits</a>
+                    <a class="btn btn-outline-success btn-sm"
                        href="{% url 'customer_statement' customer=customer.number %}" data-toggle="tooltip"
                        data-placement="top"
                        title="View  {{ customer.shop_name }}  statement">Statement</a>
