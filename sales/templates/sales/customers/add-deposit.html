@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
+{% endblock %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'customers' %}">Customers</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'update-customer' pk=customer.number %}">
+                {{ customer.shop_name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'customer_deposits' customer=customer.number %}">deposits</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Add deposit</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Add {{ customer.shop_name }} deposit</h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <p><sup>*</sup> fields are required</p>
+            <br/>
+            <form method="post" id="formset" novalidate>
+                {% csrf_token %}
+                {{ form | crispy }}
+                <div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $('#id_date').datetimepicker(
+                    {
+                        'format': 'Y-m-d H:i',
+                    });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,9 +1,14 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
 
 from sales import models
 import django_filters
+from utils import main_generate_unique_id
 
 
 class OrderlessFilter(django_filters.FilterSet):
@@ -51,3 +56,31 @@ def customer_deposits(request, customer):
         deposits = paginator.page(paginator.num_pages)
     return render(request, 'sales/customers/deposits.html', {'paginator': paginator, 'deposits': deposits,
                                                              'customer': customer})
+
+
+class AddDeposit(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = models.CustomerDeposit
+    fields = ['amount', 'via', 'phone_number', 'transaction_id', 'cheque_number', 'date']
+    success_message = 'Deposit added successfully'
+    template_name = 'sales/customers/add-deposit.html'
+
+    def get_customer(self):
+        customer = get_object_or_404(models.Customer, pk=self.kwargs['customer'])
+        return customer
+
+    def get_context_data(self, **kwargs):
+        context = super(AddDeposit, self).get_context_data(**kwargs)
+        context['customer'] = self.get_customer()
+        return context
+
+    def form_valid(self, form):
+        deposit = form.save(commit=False)
+
+        deposit.number = main_generate_unique_id()
+        deposit.customer = self.get_customer()
+        deposit.received_by = self.request.user
+        deposit.save()
+        return super(AddDeposit, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('customer_deposits', kwargs= {'customer':self.kwargs['customer']})

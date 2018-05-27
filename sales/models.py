@@ -510,9 +510,12 @@ class CustomerDeposit(models.Model):
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     date = models.DateTimeField(default=now)
     via = models.CharField(max_length=1, choices=VIA)
-    phone_number = models.CharField(max_length=10, blank=True)
-    transaction_id = models.CharField(max_length=10, blank=True)
-    cheque_number = models.CharField(max_length=100, blank=True)
+    phone_number = models.CharField(max_length=10, blank=True, help_text='Provide phone number if the '
+                                                                         ' the deposit was received via mpesa')
+    transaction_id = models.CharField(max_length=10, blank=True, help_text='Provide transaction Id if the '
+                                                                           ' the deposit was received via bank transfer')
+    cheque_number = models.CharField(max_length=100, blank=True, help_text='Provide cheque number if the '
+                                                                           ' the deposit was received via Cheque')
     received_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
