@@ -1,0 +1,8 @@
+<nav class="nav nav-pills">
+    <a class="nav-item nav-link {% if '/returns/customers/' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'returns' %}">Customer Returns</a>
+    <a class="nav-item nav-link {% if '/returns/market/' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'market_returns' %}">Market Returns</a>
+</nav>

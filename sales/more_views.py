@@ -83,4 +83,18 @@ class AddDeposit(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return super(AddDeposit, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('customer_deposits', kwargs= {'customer':self.kwargs['customer']})
+        return reverse_lazy('customer_deposits', kwargs={'customer': self.kwargs['customer']})
+
+
+@login_required()
+def market_returns(request):
+    returns = models.MarketReturn.objects.select_related('product').all().order_by('-date')
+    paginator = Paginator(returns, 50)
+    page = request.GET.get('page', 1)
+    try:
+        returns = paginator.page(page)
+    except PageNotAnInteger:
+        returns = paginator.page(1)
+    except EmptyPage:
+        returns = paginator.page(paginator.num_pages)
+    return render(request, 'sales/returns/market-returns.html', {'paginator': paginator, 'returns': returns})

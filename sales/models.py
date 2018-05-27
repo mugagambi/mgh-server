@@ -366,6 +366,7 @@ class CashReceiptPayment(models.Model):
 
 
 # todo record each return and it's state
+# todo add who recorded the return
 class MarketReturn(models.Model):
     TYPES = (
         ('U', 'UnSalvageable'),
