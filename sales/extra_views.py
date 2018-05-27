@@ -125,7 +125,8 @@ def customer_statement(request, customer):
                 'payment': '-',
                 'receipt_id': total['receipt'],
                 'return_id': None,
-                'date': total['date']
+                'date': total['date'],
+                'customer': None
             })
             continue
         for payment in receipt_payments_total:
@@ -135,7 +136,8 @@ def customer_statement(request, customer):
                     'payment': payment['amount__sum'],
                     'receipt_id': payment['receipt'],
                     'return_id': None,
-                    'date': payment['date']
+                    'date': payment['date'],
+                    'customer': None
                 })
                 continue
     for acc in account:
@@ -145,7 +147,8 @@ def customer_statement(request, customer):
                 'payment': str(acc.amount) + '-return',
                 'receipt_id': None,
                 'return_id': acc.returns.number,
-                'date': acc.date
+                'date': acc.date,
+                'customer': None
             })
             continue
         if acc.type == 'D':
@@ -154,7 +157,8 @@ def customer_statement(request, customer):
                 'payment': str(acc.amount) + ' -deposit',
                 'receipt_id': None,
                 'return_id': None,
-                'date': acc.date
+                'date': acc.date,
+                'customer': acc.customer.number
             })
             continue
         if acc.type == 'B':
@@ -163,7 +167,8 @@ def customer_statement(request, customer):
                 'payment': str(acc.amount) + ' -BBF',
                 'receipt_id': None,
                 'return_id': None,
-                'date': acc.date
+                'date': acc.date,
+                'customer': None
             })
         continue
     try:

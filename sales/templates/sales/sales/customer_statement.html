@@ -23,16 +23,19 @@
                 <td>{{ item.date }}</td>
                 {% if item.purchase != '-' %}
                     <td>{{ item.purchase |abs | intcomma }}</td>
-                    {% else %}
+                {% else %}
                     <td>{{ item.purchase }}</td>
                 {% endif %}
-                    <td>{{ item.payment | intcomma }}</td>
+                <td>{{ item.payment | intcomma }}</td>
                 <td>{% if item.receipt_id %}
                     <a href="{% url 'sale-receipt' pk=item.receipt_id %}" class="btn btn-outline-success btn-sm">view
                         receipt</a>
                 {% elif item.return_id %}
                     <a href="{% url 'return' pk=item.return_id %}" class="btn btn-outline-success btn-sm">view
                         return</a>
+                {% elif item.customer %}
+                    <a href="{% url 'customer_deposits' customer=item.customer %}" class="btn btn-outline-success btn-sm">view
+                        deposits</a>
                 {% else %}
                     no action
                 {% endif %}
