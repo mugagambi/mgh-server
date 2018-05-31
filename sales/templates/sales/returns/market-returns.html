@@ -28,12 +28,15 @@
         <tbody>
         {% for return in returns %}
             <tr>
-                <td>{{ return.number }}</td>
                 <td>{{ return.product__name }}</td>
                 <td>{{ return.total_qty }}</td>
-                <td>{{ return.get_type_display }}</td>
+                <td>{% if return.type == 'U' %}
+                    UnSalvageable{% elif return.type == 'S' %}
+                    Salvageable
+                {% endif %}
+                </td>
                 <td>
-                {{ return.date }}
+                    {{ return.date }}
                 </td>
                 {% empty %}
                 <td colspan="8">No data available in table</td>
@@ -49,6 +52,7 @@
                 {% if returns.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
@@ -129,6 +133,7 @@
 
 
 
+
                                                      {{ returns.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -143,6 +148,7 @@
                         </li>
                     {% elif i > returns.number|add:'-5' and i < returns.number|add:'5' %}
                         <li class="page-item"><a class="page-link" href="?page=
+
 
 
 
@@ -209,6 +215,7 @@
 
 
 
+
                                                      {{ returns.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -218,6 +225,7 @@
                 {% if returns.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
