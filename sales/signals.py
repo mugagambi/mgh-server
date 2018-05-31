@@ -31,14 +31,19 @@ def distribute_order(sender, instance, created, **kwargs):
                                                        product=instance.product,
                                                        aggregation_center=center).exists():
                 center_product = AggregationCenterProduct.objects.filter(date=datetime.datetime.today(),
-                                                                         product=instance.product).first()
+                                                                         product=instance.product,
+                                                                         aggregation_center=center).first()
                 if int(center_product.remaining) > 1:
                     center_product.remaining = center_product.remaining - instance.qty
                     OrderDistributionPoint.objects.create(order_product=instance,
                                                           qty=instance.qty,
                                                           center=center)
                     center_product.save()
-                break
+                    break
+                else:
+                    continue
+            else:
+                continue
         if not OrderDistributionPoint.objects.filter(order_product=instance).exists():
             main_center = Settings.objects.all().first().main_distribution
             OrderDistributionPoint.objects.create(order_product=instance,
@@ -53,8 +58,9 @@ def distribute_order(sender, instance, created, **kwargs):
                                                        product=instance.product,
                                                        aggregation_center=center).exists():
                 center_product = AggregationCenterProduct.objects.filter(date=datetime.datetime.today(),
-                                                                         product=instance.product).first()
-                if center_product.remaining > 0:
+                                                                         product=instance.product,
+                                                                         aggregation_center=center).first()
+                if center_product.remaining > 0.0:
                     center_product.remaining = center_product.remaining - to_distribute
                     center_product.save()
                     try:
@@ -64,7 +70,18 @@ def distribute_order(sender, instance, created, **kwargs):
                         distribution.save()
                     except OrderDistributionPoint.DoesNotExist:
                         pass
-            break
+                    break
+                else:
+                    try:
+                        distribution = OrderDistributionPoint.objects.get(order_product=instance, center=center)
+                        final_qty = distribution.qty + to_distribute
+                        distribution.qty = final_qty
+                        distribution.save()
+                    except OrderDistributionPoint.DoesNotExist:
+                        pass
+                    break
+            else:
+                continue
 
 
 @receiver(post_save, sender=CustomerAccount)

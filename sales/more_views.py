@@ -19,7 +19,6 @@ class OrderlessFilter(django_filters.FilterSet):
 
 
 # todo add the right permissions
-# todo order by date in decreasing order and probably group by dates and give details
 @login_required()
 def orderless_dispatch(request):
     """
@@ -44,6 +43,7 @@ def orderless_dispatch(request):
     return render(request, 'sales/orderless/index.html', args)
 
 
+# todo add the right permissions
 @login_required()
 def customer_deposits(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
@@ -60,6 +60,7 @@ def customer_deposits(request, customer):
                                                              'customer': customer})
 
 
+# todo add the right permissions
 class AddDeposit(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = models.CustomerDeposit
     fields = ['amount', 'via', 'phone_number', 'transaction_id', 'cheque_number', 'date']
@@ -88,6 +89,7 @@ class AddDeposit(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return reverse_lazy('customer_deposits', kwargs={'customer': self.kwargs['customer']})
 
 
+# todo add the right permissions
 @login_required()
 def market_returns(request):
     returns = models.MarketReturn.objects.select_related('product').values('product__name', 'date', 'type'). \
