@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+{% endblock %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'customers' %}">Customers</a></li>
+            <li class="breadcrumb-item">{{ customer.shop_name }}</li>
+            <li class="breadcrumb-item active" aria-current="page">Discounts</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    {% include 'includes/discounts_nav.html' %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">{{ customer.shop_name }} Discounts Per Product</h1>
+        <a href="{% url 'add-discounts' pk=customer.pk %}" class="btn btn-outline-success">Add {{ customer.shop_name }}
+            discounts</a>
+    </div>
+    <table id="customers" class="table table-striped table-responsive-md" style="width:100%">
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Discount</th>
+            <th>Created At</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for discount in discounts %}
+            <tr>
+                <td>{{ discount.product }}</td>
+                <td>{{ discount.discount }}</td>
+                <td>{{ discount.created_at }}</td>
+                <td>{{ discount.updated_at }}</td>
+                <td>
+                    <a class="btn btn-outline-success btn-sm mb-1"
+                       href="{% url 'update_customer_discounts' customer=customer.number  pk=discount.id %}">update
+                        discount</a>
+                    <a class="btn btn-outline-danger btn-sm mb-1"
+                       href="{% url 'delete_customer_discounts' customer=customer.number  pk=discount.id %}">remove
+                        discount</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>Product</th>
+            <th>Discount</th>
+            <th>Created At</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#customers').DataTable({
+                'paging': true,
+                'lengthChange': true,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': true,
+                "columnDefs": [{
+                    "targets": 4,
+                    "orderable": false,
+                    "searchable": false
+                }]
+            });
+        });
+    </script>
+{% endblock %}

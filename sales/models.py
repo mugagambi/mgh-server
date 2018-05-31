@@ -115,7 +115,7 @@ class CustomerDiscount(models.Model):
         unique_together = ('customer', 'product')
 
     def __str__(self):
-        return str(self.product) + ' for ' + str(self.discount) + '%'
+        return 'Discount for ' + str(self.product) + ' of ' + str(self.discount) + '%'
 
 
 class CustomerTotalDiscount(models.Model):

@@ -1,0 +1,11 @@
+<nav class="nav nav-pills nav-fill">
+    <a class="nav-item nav-link {% if 'total' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'customer_total_discounts' customer=customer.pk %}">
+        Total Amount Discount
+    </a>
+    <a class="nav-item nav-link {% if 'discounts' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'customer_discounts' pk=customer.pk %}">
+        Discounts Per Product</a>
+</nav>

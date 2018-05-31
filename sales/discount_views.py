@@ -4,10 +4,10 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 
-from sales.models import Customer, CustomerTotalDiscount
-from sales.forms import TotalDiscountForm
+from sales.models import Customer, CustomerTotalDiscount, CustomerDiscount
+from sales.forms import TotalDiscountForm, DiscountForm
 from django.contrib import messages
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, DeleteView
 
 
 @login_required()
@@ -53,3 +53,39 @@ class UpdateDiscountView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     def get_success_url(self):
         customer = get_object_or_404(Customer, pk=self.kwargs['customer'])
         return reverse_lazy('customer_total_discounts', kwargs={'customer': customer.pk})
+
+
+@login_required()
+def customer_discounts(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    discounts = CustomerDiscount.objects.select_related('product').filter(customer=customer)
+    return render(request, 'sales/customers/discounts.html', {'discounts': discounts, 'customer': customer})
+
+
+class UpdateCustomerDiscountView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = CustomerDiscount
+    template_name = 'sales/customers/update_discount.html'
+    form_class = DiscountForm
+    success_message = 'Discount update successfully'
+
+    def get_context_data(self, **kwargs):
+        cxt = super(UpdateCustomerDiscountView, self).get_context_data(**kwargs)
+        cxt['customer'] = get_object_or_404(Customer, pk=self.kwargs['customer'])
+        return cxt
+
+    def get_success_url(self):
+        customer = get_object_or_404(Customer, pk=self.kwargs['customer'])
+        return reverse_lazy('customer_discounts', kwargs={'pk': customer.pk})
+
+
+class DeleteDiscount(LoginRequiredMixin, DeleteView):
+    def post(self, request, *args, **kwargs):
+        messages.success(request, 'Discount removed successfully!')
+        return super().post(request, *args, **kwargs)
+
+    template_name = 'crud/delete.html'
+    model = CustomerDiscount
+
+    def get_success_url(self):
+        customer = get_object_or_404(Customer, pk=self.kwargs['customer'])
+        return reverse_lazy('customer_discounts', kwargs={'pk': customer.pk})

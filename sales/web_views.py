@@ -277,15 +277,18 @@ def update_price(request, customer, pk):
         'form': form})
 
 
-# TODO make a discounts table
 @login_required()
 def add_discounts(request, pk):
     discounts_formset = modelformset_factory(models.CustomerDiscount, fields=('product', 'discount'),
                                              widgets={'product': Select2Widget}, extra=10,
                                              can_delete=True)
     customer = models.Customer.objects.get(pk=pk)
+    product_ids = [discount.product.id for discount in customer.customerdiscount_set.all()]
+    products = Product.objects.exclude(pk__in=product_ids)
     if request.method == 'POST':
         formset = discounts_formset(request.POST)
+        for form in formset:
+            form.fields['product'].queryset = products
         if formset.is_valid():
             discounts = formset.save(commit=False)
             for discount in discounts:
@@ -294,10 +297,12 @@ def add_discounts(request, pk):
             for obj in formset.deleted_objects:
                 obj.delete()
             messages.success(request, 'discounts added successfully!')
-            return redirect(reverse_lazy('customers'))
+            return redirect('customer_discounts', pk=customer.pk)
     else:
         formset = discounts_formset(
-            queryset=models.CustomerDiscount.objects.select_related('product').filter(customer=pk))
+            queryset=models.CustomerDiscount.objects.none())
+        for form in formset:
+            form.fields['product'].queryset = products
     return render(request, 'crud/formset-create.html', {'formset': formset,
                                                         "customer": customer,
                                                         'create_name': customer.shop_name + ' Discounts',

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'customers' %}">Customers</a></li>
+            <li class="breadcrumb-item">{{ customer.shop_name }}</li>
+            <li class="breadcrumb-item"><a href="{% url 'customer_discounts' pk=customer.number %}">
+                {{ customer.shop_name }} discount</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% if object %} Update
+                {{ customer.shop_name }} {% else %} Add
+                {{ customer.shop_name }} {% endif %}  discount
+            </li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <h1 class="h2">{% if object %} Update {% else %} Add
+                    {{ customer.shop_name }} {% endif %}  discount</h1>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <input class="btn btn-success" type="submit" value="add">
+            </form>
+        </div>
+    </div>
+{% endblock %}

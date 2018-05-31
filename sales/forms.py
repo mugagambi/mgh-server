@@ -77,3 +77,13 @@ class TotalDiscountForm(forms.ModelForm):
     class Meta:
         model = models.CustomerTotalDiscount
         fields = ['discount']
+
+
+class DiscountForm(forms.ModelForm):
+    def __init__(self, **kwargs):
+        super(DiscountForm, self).__init__(**kwargs)
+        self.fields['product'].disabled = True
+
+    class Meta:
+        model = models.CustomerDiscount
+        fields = ['product', 'discount']

@@ -13,41 +13,43 @@
     </nav>
 {% endblock %}
 {% block content %}
+    {% include 'includes/discounts_nav.html' %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">{{ customer.shop_name }} total discounts</h1>
+    </div>
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                <h1 class="h2">{{ customer.shop_name }} total discounts</h1>
-            </div>
-        {% if not discount %}
-            <a class="btn btn-outline-success mb-1" href="{% url 'add_total_discounts' customer=customer.pk %}">Add
-                Discount</a>
-        {% endif %}
+            {% if not discount %}
+                <a class="btn btn-outline-success mb-1" href="{% url 'add_total_discounts' customer=customer.pk %}">Add
+                    Discount</a>
+            {% endif %}
             {% if discount %}
                 <a class="btn btn-outline-success mb-1"
                    href="{% url 'update_total_discount' customer=customer.pk  pk=discount.pk %}">Update
                     Discount</a>
             {% endif %}
             {% if discount %}
-            <table id="customers" class="table table-striped" style="width:100%">
-                <tbody>
-                <tr>
-                    <th>Discount</th>
-                    <td>{{ discount.discount }}</td>
-                </tr>
-                <tr>
-                    <th>Created At</th>
-                    <td>{{ discount.created_at }}</td>
-                </tr>
-                <tr>
-                    <th>Last Updated On</th>
-                    <td>{{ discount.updated_at }}</td>
-                </tr>
-                </tbody>
-            </table>
+                <table id="customers" class="table table-striped" style="width:100%">
+                    <tbody>
+                    <tr>
+                        <th>Discount</th>
+                        <td>{{ discount.discount }}</td>
+                    </tr>
+                    <tr>
+                        <th>Created At</th>
+                        <td>{{ discount.created_at }}</td>
+                    </tr>
+                    <tr>
+                        <th>Last Updated On</th>
+                        <td>{{ discount.updated_at }}</td>
+                    </tr>
+                    </tbody>
+                </table>
             {% else %}
-            <p class="text-center text-danger"><b>This customer has no total discount.You can add one by clicking add discount
-                button</b></p>
-        {% endif %}
+                <p class="text-center text-danger"><b>This customer has no total discount.You can add one by clicking
+                    add discount
+                    button</b></p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
