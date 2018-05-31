@@ -29,8 +29,8 @@
         {% for return in returns %}
             <tr>
                 <td>{{ return.number }}</td>
-                <td>{{ return.product }}</td>
-                <td>{{ return.qty }}</td>
+                <td>{{ return.product__name }}</td>
+                <td>{{ return.total_qty }}</td>
                 <td>{{ return.get_type_display }}</td>
                 <td>
                 {{ return.date }}

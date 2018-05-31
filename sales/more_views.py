@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Sum
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -88,7 +89,8 @@ class AddDeposit(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 @login_required()
 def market_returns(request):
-    returns = models.MarketReturn.objects.select_related('product').all().order_by('-date')
+    returns = models.MarketReturn.objects.select_related('product').values('product__name', 'date', 'type').\
+        order_by('-date').annotate(total_qty=Sum('qty'))
     paginator = Paginator(returns, 50)
     page = request.GET.get('page', 1)
     try:
