@@ -193,8 +193,21 @@ def customer_statement(request, customer):
     except models.CustomerAccountBalance.DoesNotExist:
         balance = None
     final_account.sort(key=lambda x: x['date'], reverse=True)
-    return render(request, 'sales/sales/customer_statement.html',
-                  {'customer': customer, 'account': final_account, 'balance': balance})
+    download = request.GET.get('download', None)
+    today = timezone.now().date()
+    context = {'customer': customer, 'account': final_account, 'balance': balance,
+               'today': today}
+    if download:
+        pdf = render_to_pdf('sales/resources/customer_statement.html', context)
+        if pdf:
+            today = today.strftime("%Y-%m-%d")
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "%s_statement_as_of_%s.pdf" % (customer.shop_name, today)
+            content = "inline; filename='%s'" % filename
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")
+    return render(request, 'sales/sales/customer_statement.html', context)
 
 
 @login_required()

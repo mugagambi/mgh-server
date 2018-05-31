@@ -1,0 +1,59 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ customer.shop_name }} statement as of {{ today }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<h4><u>{{ customer.shop_name }} statement as of {{ today }}</u></h4>
+<table id="customers">
+    <tr>
+        <th>Date</th>
+        <th>Purchase</th>
+        <th>Payment</th>
+        <th>Narration</th>
+    </tr>
+    {% for item in account %}
+        <tr>
+            <td>{{ item.date }}</td>
+            {% if item.purchase != '-' %}
+                <td>{{ item.purchase |abs | intcomma }}</td>
+            {% else %}
+                <td>{{ item.purchase }}</td>
+            {% endif %}
+            <td>{{ item.payment | intcomma }}</td>
+            <td>{% if item.receipt_id %}
+                Receipt No. {{ item.receipt_id }}
+            {% elif item.return_id %}
+                Return No. {{ item.return_id }}
+            {% else %}
+                -
+            {% endif %}
+            </td>
+            {% empty %}
+            <td class="text-center"><b>No data available in table</b></td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <th>Grand Total</th>
+        {% if balance.amount < 0 %}
+            <th>{{ balance.amount |abs | intcomma }} dr</th>
+            <th></th>
+        {% else %}
+            <th></th>
+            <th>{{ balance.amount  |intcomma }} cr</th>
+        {% endif %}
+        <td></td>
+    </tr>
+</table>
+</body>
+</html>
