@@ -76,7 +76,7 @@
                     {% if receipt.receiptmisc.balance %}
                         <p data-toggle="tooltip" data-placement="top" title="Balance Brought Forward after
                      this sale">
-                            <b>BBF: </b>Ksh. {{ total_payment.sum|sub:total_amount|sub:receipt.receiptmisc.balance | intcomma }}
+                            <b>BBF: </b>Ksh. {{ total_payment.sum|sub:total_amount|add:receipt.receiptmisc.balance | intcomma }}
                         </p>
                     {% else %}
                         <p data-toggle="tooltip" data-placement="top" title="Balance Brought Forward after
