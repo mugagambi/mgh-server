@@ -26,6 +26,7 @@ router.register(r'market-return', views.MarketReturnView)
 router.register(r'customer-deposits', views.CustomerDepositViewSet)
 router.register(r'receipt-misc', views.ReceiptMiscViewSet),
 router.register(r'customer-balance', views.CustomerAccountBalanceViewset)
+router.register(r'customer-total-discounts', views.TotalDiscountViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

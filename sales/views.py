@@ -366,3 +366,8 @@ class CustomerDepositViewSet(viewsets.ModelViewSet):
 class ReceiptMiscViewSet(viewsets.ModelViewSet):
     queryset = models.ReceiptMisc.objects.all()
     serializer_class = serializers.ReceiptMiscSerializer
+
+
+class TotalDiscountViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = models.CustomerTotalDiscount.objects.all()
+    serializer_class = serializers.TotalDiscountsSerializer

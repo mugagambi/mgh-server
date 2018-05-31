@@ -198,3 +198,9 @@ class ReceiptMiscSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ReceiptMisc
         fields = ('balance', 'receipt')
+
+
+class TotalDiscountsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CustomerTotalDiscount
+        fields = ('pk', 'customer', 'discount', 'created_at', 'updated_at')

@@ -71,3 +71,9 @@ class ReceiptPaymentForm(forms.ModelForm):
     class Meta:
         model = models.ReceiptPayment
         fields = ['amount', 'type', 'check_number', 'mobile_number', 'transfer_code']
+
+
+class TotalDiscountForm(forms.ModelForm):
+    class Meta:
+        model = models.CustomerTotalDiscount
+        fields = ['discount']

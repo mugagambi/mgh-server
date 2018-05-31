@@ -3,6 +3,7 @@ from django.urls import path
 from sales import extra_views
 from sales import web_views
 from sales import more_views
+from sales import discount_views
 
 urlpatterns = [
     path('regions/', web_views.RegionList.as_view(), name='regions'),
@@ -24,6 +25,10 @@ urlpatterns = [
     path('all/cash/<str:pk>/', extra_views.cash_receipt, name='cash-receipt'),
     path('all/debtors/<str:customer>/', extra_views.customer_statement, name='customer_statement'),
     path('customers/<str:pk>/prices/', web_views.customer_prices, name='customer_prices'),
+    path('customers/<str:customer>/total/', discount_views.total_discounts, name='customer_total_discounts'),
+    path('customers/<str:customer>/total/<int:pk>/update/', discount_views.UpdateDiscountView.as_view(),
+         name='update_total_discount'),
+    path('customers/<str:customer>/total/add/', discount_views.add_total_discounts, name='add_total_discounts'),
     path('customers/<str:customer>/deposits/', more_views.customer_deposits, name='customer_deposits'),
     path('customers/<str:customer>/deposits/add/', more_views.AddDeposit.as_view(), name='add_customer_deposit'),
     path('customers/<str:pk>/bbf/', web_views.add_bbf, name='add-customer-bff'),

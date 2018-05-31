@@ -118,6 +118,17 @@ class CustomerDiscount(models.Model):
         return str(self.product) + ' for ' + str(self.discount) + '%'
 
 
+class CustomerTotalDiscount(models.Model):
+    customer = models.OneToOneField(Customer, to_field='number', on_delete=models.CASCADE)
+    discount = models.DecimalField(max_digits=5, decimal_places=2,
+                                   help_text='% discount')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.customer)
+
+
 # todo on save re-calculate total qty and store it on the main order.This reduces aggregation time
 class OrderProduct(models.Model):
     number = models.CharField(max_length=10, unique=True, primary_key=True)
