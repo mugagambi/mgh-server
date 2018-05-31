@@ -1,0 +1,47 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Trade Debtors as of {{ today }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<h4><u>Trade Debtors as of {{ today }}</u></h4>
+<table id="customers">
+    <tr>
+        <th>Customer</th>
+        <th>Credit</th>
+        <th>Debit</th>
+    </tr>
+    {% for balance in debtors %}
+        <tr>
+            <td>
+                {{ balance.customer.shop_name }}
+            </td>
+            {% if balance.amount < 0 %}
+                <td></td>
+                <td>{{ balance.amount|abs | intcomma }}</td>
+            {% else %}
+                <td>{{ balance.amount | intcomma }}</td>
+                <td></td>
+            {% endif %}
+            {% empty %}
+            <td style="text-align: center" colspan="3"><b>No data available in table</b></td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td><b>Grand Total</b></td>
+        <td><b>{{ credit_total.total | intcomma }} cr</b></td>
+        <td><b>{{ debit_total.total|abs |intcomma }} dr</b></td>
+    </tr>
+</table>
+</body>
+</html>

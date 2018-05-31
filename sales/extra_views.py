@@ -5,13 +5,16 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Sum
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 
 from core.models import Product
 from sales import forms
 from sales import models
+from sales.render_pdf import render_to_pdf
 from utils import generate_unique_id, main_generate_unique_id
+from django.utils import timezone
 
 
 # todo add the right permissions
@@ -101,11 +104,25 @@ def trade_debtors(request):
     debtors = models.CustomerAccountBalance.objects.filter(~Q(amount=0.0)).order_by('customer__shop_name')
     credit_total = debtors.filter(amount__gt=Decimal('0.0')).aggregate(total=Sum('amount'))
     debit_total = debtors.filter(amount__lt=Decimal('0.0')).aggregate(total=Sum('amount'))
-    return render(request, 'sales/sales/customer_accounts.html', {
+    download = request.GET.get('download', None)
+    today = timezone.now().date()
+    context = {
         'debtors': debtors,
         'credit_total': credit_total,
-        'debit_total': debit_total
-    })
+        'debit_total': debit_total,
+        'today': today
+    }
+    if download:
+        pdf = render_to_pdf('sales/resources/trade-debtors.html', context)
+        if pdf:
+            today = today.strftime("%Y-%m-%d")
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "trade_debtors_as_of_%s.pdf" % today
+            content = "inline; filename='%s'" % filename
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")
+    return render(request, 'sales/sales/customer_accounts.html', context)
 
 
 # todo add the right permissions
