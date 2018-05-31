@@ -20,8 +20,8 @@
         <tbody>
         {% for order in orderless %}
             <tr>
-                <td>{{ order.product.name }}</td>
-                <td>{{ order.qty }}</td>
+                <td>{{ order.product__name }}</td>
+                <td>{{ order.total_qty }}</td>
                 <td>{{ order.date }}</td>
                 {% empty %}
                 <td class="text-center" colspan="3"><b>No data available in table</b></td>

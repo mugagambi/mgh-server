@@ -27,7 +27,8 @@ def orderless_dispatch(request):
     :param request:
     :return:
     """
-    orderless_list = models.OrderlessPackage.objects.select_related('product').all()
+    orderless_list = models.OrderlessPackage.objects.select_related('product').values('product__name', 'date').annotate(
+        total_qty=Sum('qty')).order_by('-date')
     orderless_filter = OrderlessFilter(request.GET, queryset=orderless_list)
     orderless_list = orderless_filter.qs
     paginator = Paginator(orderless_list, 50)
@@ -89,7 +90,7 @@ class AddDeposit(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 @login_required()
 def market_returns(request):
-    returns = models.MarketReturn.objects.select_related('product').values('product__name', 'date', 'type').\
+    returns = models.MarketReturn.objects.select_related('product').values('product__name', 'date', 'type'). \
         order_by('-date').annotate(total_qty=Sum('qty'))
     paginator = Paginator(returns, 50)
     page = request.GET.get('page', 1)
