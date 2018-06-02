@@ -288,6 +288,12 @@ class ReceiptParticular(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+        try:
+            discount = CustomerDiscount.objects.get(customer=self.receipt.customer,
+                                                    product=self.product)
+            self.discount = discount.discount
+        except CustomerDiscount.DoesNotExist:
+            pass
         amount = self.qty * self.price
         if self.discount:
             total_discount = Decimal(amount) * (Decimal(self.discount) / 100)

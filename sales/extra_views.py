@@ -214,12 +214,12 @@ def customer_statement(request, customer):
 @permission_required('sales.change_receiptparticular')
 def update_particular(request, item):
     item = get_object_or_404(models.ReceiptParticular, pk=item)
-    old_total = item.qty * item.price
+    old_total = item.total
     if request.method == 'POST':
         form = forms.ReceiptParticularForm(request.POST, instance=item)
         if form.is_valid():
             item = form.save()
-            new_total = item.qty * item.price
+            new_total = item.total
             diff = new_total - old_total
             models.CustomerAccount.objects.create(number=main_generate_unique_id(),
                                                   customer=item.receipt.customer,

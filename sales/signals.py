@@ -94,12 +94,6 @@ def update_customer_balance(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=ReceiptParticular)
 def particular_account(sender, instance, created, **kwargs):
-    try:
-        discount = CustomerDiscount.objects.get(customer=instance.receipt.customer,
-                                                product=instance.product)
-        instance.discount = discount.discount
-    except CustomerDiscount.DoesNotExist:
-        pass
     if created:
         CustomerAccount.objects.create(number=main_generate_unique_id(),
                                        customer=instance.receipt.customer,
