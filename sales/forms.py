@@ -56,7 +56,7 @@ class ReturnForm(forms.ModelForm):
 class ReceiptParticularForm(forms.ModelForm):
     class Meta:
         model = models.ReceiptParticular
-        fields = ('type', 'product', 'qty', 'price', 'discount')
+        fields = ('type', 'product', 'qty', 'price')
         widgets = {'product': Select2Widget}
 
 

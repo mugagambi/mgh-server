@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 from core.models import Product, AggregationCenterProduct, AggregationCenter
 from sales.models import OrderProduct, OrderDistributionPoint, CustomerAccount, CustomerAccountBalance, \
-    ReceiptParticular, BBF, Return, ReceiptPayment, CustomerDeposit
+    ReceiptParticular, BBF, Return, ReceiptPayment, CustomerDeposit, CustomerDiscount
 from system_settings.models import Settings
 from utils import main_generate_unique_id
 from .models import CustomerPrice
@@ -94,10 +94,16 @@ def update_customer_balance(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=ReceiptParticular)
 def particular_account(sender, instance, created, **kwargs):
+    try:
+        discount = CustomerDiscount.objects.get(customer=instance.receipt.customer,
+                                                product=instance.product)
+        instance.discount = discount.discount
+    except CustomerDiscount.DoesNotExist:
+        pass
     if created:
         CustomerAccount.objects.create(number=main_generate_unique_id(),
                                        customer=instance.receipt.customer,
-                                       amount=-(instance.qty * instance.price),
+                                       amount=-instance.total,
                                        date=instance.receipt.date,
                                        type='P',
                                        receipt=instance.receipt)
