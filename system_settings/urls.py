@@ -1,6 +1,7 @@
-from django.urls import path, re_path
-from system_settings import views
 from django.contrib.auth import views as auth_views
+from django.urls import path, re_path
+
+from system_settings import views
 
 urlpatterns = [
     path('settings/main-center/', views.main_center_setting, name='main-center'),
@@ -13,5 +14,7 @@ urlpatterns = [
             auth_views.password_reset_confirm, name='main-password_reset_confirm'),
     path('reset/done/', auth_views.password_reset_complete, name='main-password_reset_complete'),
     path('change-password/', views.change_password, name='change_password'),
-    path('users/<str:username>/permission', views.assign_permissions, name='assign-permission')
+    path('users/<str:username>/permission', views.assign_permissions, name='assign-permission'),
+    path('settings/billings/', views.BilledTogetherView.as_view(), name='billings'),
+    path('settings/billings/add/', views.AddBilling.as_view(), name='add_billing')
 ]

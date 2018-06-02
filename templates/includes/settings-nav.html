@@ -1,5 +1,8 @@
-<nav class="nav nav-pills nav-justified">
-    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'main-center' %}
+<nav class="nav nav-pills nav-fill">
+    <a class="mr-1 nav-item nav-link {% if request.resolver_match.url_name == 'main-center' %}
                         active
                         {% endif %}" href="{% url 'main-center' %}">Main Center</a>
+    <a class="nav-item nav-link {% if 'billings' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'billings' %}">Billed Together</a>
 </nav>

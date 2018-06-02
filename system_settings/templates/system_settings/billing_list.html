@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+{% endblock %}
+{% block breadcrump %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Billed Together</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    {% include 'includes/settings-nav.html' %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Customer Billed Together</h1>
+        <a class="btn btn-outline-success" href="{% url 'add_billing' %}">
+            <span data-feather="plus"></span>
+            Add Another Billing
+        </a>
+    </div>
+    <table id="datatable" class="table table-striped table-responsive-md table-bordered">
+        <thead>
+        <tr>
+            <th>Billing Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>P.O BOX</th>
+            <th>actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for billing in object_list %}
+            <tr>
+                <td>{{ billing.name }}</td>
+                <td>{{ billing.phone }}</td>
+                <td>{{ billing.email }}</td>
+                <td>{{ billing.box }}</td>
+                <td>
+                    <a href="#" class="btn btn-outline-success btn-sm mb-1">View Customers</a>
+                    <a href="#" class="btn btn-outline-success btn-sm mb-1">Add Customer</a>
+                    <a href="#" class="btn btn-outline-success btn-sm mb-1">Update</a>
+                    <a href="#" class="btn btn-outline-danger btn-sm mb-1">Remove</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>Billing Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>P.O BOX</th>
+            <th>actions</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#datatable').DataTable({
+                'paging': true,
+                'lengthChange': true,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': true,
+                "columnDefs": [{
+                    "targets": 4,
+                    "orderable": false,
+                    "searchable": false
+                }]
+            });
+        });
+    </script>
+{% endblock %}

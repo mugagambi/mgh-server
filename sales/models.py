@@ -555,3 +555,21 @@ class ReceiptMisc(models.Model):
 
     def __str__(self):
         return self.receipt
+
+
+class BilledTogether(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Billing Name')
+    phone = models.CharField(max_length=15, blank=True)
+    email = models.EmailField(blank=True)
+    box = models.CharField(verbose_name='P.O Box', max_length=100, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class BilledTogetherCustomer(models.Model):
+    company = models.ForeignKey(BilledTogether, on_delete=models.CASCADE)
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.company)

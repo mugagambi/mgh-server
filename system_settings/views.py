@@ -1,20 +1,22 @@
-from utils import main_generate_unique_id
-
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Permission
+from django.contrib.messages.views import SuccessMessageMixin
+from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import loader
 from django.urls import reverse_lazy, reverse
 from django.views.decorators.http import require_http_methods
-from django.views.generic import ListView
-from django.contrib.auth.forms import PasswordChangeForm
+from django.views.generic import ListView, CreateView
+
+from sales.models import BilledTogether
 from system_settings import forms
 from system_settings import models
-from django.db import transaction
-from django.contrib.auth.models import Permission
+from utils import main_generate_unique_id
 
 
 # Create your views here.
@@ -94,6 +96,7 @@ def deactivate_user(request):
                                   ' not log in to the system from now until activated again')
     return redirect('users')
 
+
 @login_required()
 def change_password(request):
     if request.method == 'POST':
@@ -145,3 +148,17 @@ def assign_permissions(request, username):
     return render(request, 'system_settings/permissions.html', {'permission': permission,
                                                                 'his_permission': his_permissions,
                                                                 'user': user})
+
+
+# todo permissions
+class BilledTogetherView(LoginRequiredMixin, ListView):
+    template_name = 'system_settings/billing_list.html'
+    model = BilledTogether
+
+
+class AddBilling(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = BilledTogether
+    form_class = forms.BilledTogetherForm
+    template_name = 'system_settings/add-billing.html'
+    success_url = reverse_lazy('billings')
+    success_message = 'the billing has been added successfully'

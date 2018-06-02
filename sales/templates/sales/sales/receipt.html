@@ -110,7 +110,6 @@
                         <p><b>Transaction Id : </b>{{ payment.transaction_id }}</p>
                     {% elif payment.type == 4 %}
                         <p><b>Invoice Number: </b>{{ receipt.number }}</p>
-                        <a href="#" class="button">View Invoice</a>
                     {% elif payment.type == 5 %}
                         <p><b>Transfer Code : </b>{{ payment.transfer_code }}</p>
                     {% endif %}

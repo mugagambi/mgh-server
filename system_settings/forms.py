@@ -1,8 +1,9 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 
 from core.models import AggregationCenter
-from django.contrib.auth import get_user_model
+from sales.models import BilledTogether
 
 
 class MainCenterForm(forms.Form):
@@ -37,3 +38,9 @@ class PermissionForm(forms.Form):
         'change_logentry',
         'delete_logentry',
     )))
+
+
+class BilledTogetherForm(forms.ModelForm):
+    class Meta:
+        model = BilledTogether
+        fields = ['name', 'phone', 'email', 'box']

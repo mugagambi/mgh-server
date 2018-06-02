@@ -68,11 +68,17 @@
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'customer_statement' customer=customer.number %}" data-toggle="tooltip"
                        data-placement="top"
-                       title="View  {{ customer.shop_name }}  statement">Statement</a>
+                       title="View  {{ customer.shop_name }}  statement">statement</a>
+                    <a class="btn btn-outline-success btn-sm"
+                       href="{% url 'total-sales' %}?customer={{ customer.pk }}">receipts</a>
+                    <a class="btn btn-outline-success btn-sm"
+                       href="{% url 'invoices' %}?customer={{ customer.pk }}">invoices</a>
+                    <a class="btn btn-outline-success btn-sm"
+                       href="{% url 'invoices' %}?customer={{ customer.pk }}">settle debts</a>
                     <a class="btn btn-outline-success btn-sm mb-1"
-                       href="{% url 'update-customer' pk=customer.number %}">Edit</a>
+                       href="{% url 'update-customer' pk=customer.number %}">edit</a>
                     <a class="btn btn-outline-danger btn-sm mb-1"
-                       href="{% url 'delete-customer' pk=customer.number %}">Remove</a>
+                       href="{% url 'delete-customer' pk=customer.number %}">remove</a>
                 </td>
             </tr>
         {% endfor %}
