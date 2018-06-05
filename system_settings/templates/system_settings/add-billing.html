@@ -3,15 +3,17 @@
 {% block breadcrump %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'billings' %}">Billed Together</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Add Billed Together</li>
+            <li class="breadcrumb-item"><a href="{% url 'billings' %}">Billing Group</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% if object %} Update {% else %} Add {% endif %}
+                Billing Group
+            </li>
         </ol>
     </nav>
 {% endblock %}
 {% block content %}
     {% include 'includes/settings-nav.html' %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2">Add Billed Together</h1>
+        <h1 class="h2">{% if object %} Update {% else %} Add {% endif %} Billing Group</h1>
     </div>
     <div class="row">
         <div class="col-md-6 offset-md-3">

@@ -1,14 +1,16 @@
+from decimal import Decimal
+
+import django_filters
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Sum
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
 from sales import models
-import django_filters
 from utils import main_generate_unique_id
 
 
@@ -47,7 +49,12 @@ def orderless_dispatch(request):
 @login_required()
 def customer_deposits(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
-    deposits = models.CustomerDeposit.objects.filter(customer=customer)
+    settle = request.GET.get('settle', None)
+    if settle:
+        deposits = models.CustomerDeposit.objects.filter(customer=customer,
+                                                         remaining_amount__gt=Decimal('0.00'))
+    else:
+        deposits = models.CustomerDeposit.objects.filter(customer=customer)
     paginator = Paginator(deposits, 50)
     page = request.GET.get('page', 1)
     try:

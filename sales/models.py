@@ -3,6 +3,7 @@ from functools import reduce
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Sum
 from django.utils.timezone import now
 
 from core.models import User, Product, Crate, AggregationCenter
@@ -225,6 +226,9 @@ class Receipt(models.Model):
     date = models.DateTimeField(default=now)
     served_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     bbf_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    settled = models.BooleanField(default=False)
+    balance = models.DecimalField(max_digits=12, decimal_places=2,
+                                  default=0.00)
 
     def __str__(self):
         return 'Receipt no ' + ' ' + str(self.number)
@@ -232,6 +236,7 @@ class Receipt(models.Model):
     class Meta:
         verbose_name_plural = 'Sales'
         verbose_name = 'Sale'
+        ordering = ('-date',)
 
     def has_credit(self):
         return self.receiptpayment_set.filter(type=4).exists()
@@ -328,6 +333,15 @@ class ReceiptPayment(models.Model):
 
     def __str__(self):
         return str(self.receipt)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        if self.type == 4:
+            particulars_amount = ReceiptParticular.objects.filter(receipt=self.receipt).aggregate(total=Sum('total'))
+            self.receipt.balance = particulars_amount['total']
+            self.receipt.save()
+        super(ReceiptPayment, self).save(force_insert=False, force_update=False, using=None,
+                                         update_fields=None)
 
 
 class CashReceipt(models.Model):
@@ -534,6 +548,7 @@ class CustomerDeposit(models.Model):
     number = models.CharField(unique=True, max_length=10, primary_key=True)
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    remaining_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     date = models.DateTimeField(default=now)
     via = models.CharField(max_length=1, choices=VIA)
     phone_number = models.CharField(max_length=10, blank=True, help_text='Provide phone number if the '
@@ -546,6 +561,9 @@ class CustomerDeposit(models.Model):
 
     def __str__(self):
         return self.number
+
+    class Meta:
+        ordering = ('-date',)
 
 
 class ReceiptMisc(models.Model):
@@ -572,4 +590,4 @@ class BilledTogetherCustomer(models.Model):
     customer = models.OneToOneField(Customer, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.company)
+        return str(self.customer.shop_name) + ' from ' + str(self.company) + ' group '

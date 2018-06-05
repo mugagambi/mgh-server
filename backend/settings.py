@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'sales.apps.SalesConfig',
     'reports.apps.ReportsConfig',
-    'system_settings'
+    'system_settings',
+    'tooling'
 ]
 
 MIDDLEWARE = [

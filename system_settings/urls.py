@@ -16,5 +16,10 @@ urlpatterns = [
     path('change-password/', views.change_password, name='change_password'),
     path('users/<str:username>/permission', views.assign_permissions, name='assign-permission'),
     path('settings/billings/', views.BilledTogetherView.as_view(), name='billings'),
-    path('settings/billings/add/', views.AddBilling.as_view(), name='add_billing')
+    path('settings/billings/add/', views.AddBilling.as_view(), name='add_billing'),
+    path('settings/billings/<int:pk>/update/', views.UpdateBillingView.as_view(), name='update_billing'),
+    path('settings/billings/<int:pk>/delete/', views.DeleteBilling.as_view(), name='delete_billing'),
+    path('settings/billings/<int:billing>/customers/', views.billing_group_customer_list, name='customer_list'),
+    path('settings/billings/<int:billing>/customers/<int:pk>/remove/', views.RemoveCustomer.as_view(),
+         name='remove_customer')
 ]

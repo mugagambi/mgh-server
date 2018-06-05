@@ -15,7 +15,11 @@
 {% endblock %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2">{{ customer.shop_name }} Deposits</h1>
+        <h1 class="h2"> {% if request.GET.settle %} Settle debt for  {{ customer.shop_name }}
+            {% else %}{{ customer.shop_name }} Deposits {% endif %}
+            {% if request.GET.settle %}<br/>
+                <small>Pick a deposit and settle invoices against it</small>
+            {% endif %}</h1>
         <a href="{% url 'add_customer_deposit' customer=customer.number %}"
            class="btn  btn-outline-success">Add {{ customer.shop_name }} deposit</a>
     </div>
@@ -30,6 +34,9 @@
             <th>Transaction Id</th>
             <th>Cheque Number</th>
             <th>Received By</th>
+            {% if request.GET.settle %}
+                <th>Actions</th>
+            {% endif %}
         </tr>
         </thead>
         <tbody>
@@ -61,8 +68,14 @@
                     {% endif %}
                 </td>
                 <td>{{ deposit.received_by }}</td>
+                {% if request.GET.settle %}
+                    <td><a href="{% url 'settle_debt_invoices' deposit=deposit.pk %}"
+                           class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top"
+                           title="Use this debt to settle previous debt">Settle Debt</a></td>
+                {% endif %}
                 {% empty %}
-                <td colspan="8">No data available in table</td>
+                <td class="text-center" colspan="{% if request.GET.settle %} 9 {% else %} 8 {% endif %}">
+                    {% if request.GET.settle %} No unused deposit {% else %}No data available in table{% endif %}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -75,6 +88,15 @@
                 {% if deposits.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
 
 
 
@@ -147,6 +169,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
                                                      {{ deposits.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -161,6 +192,15 @@
                         </li>
                     {% elif i > deposits.number|add:'-5' and i < deposits.number|add:'5' %}
                         <li class="page-item"><a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
 
 
 
@@ -219,6 +259,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
                                                      {{ deposits.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -228,6 +277,15 @@
                 {% if deposits.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
 
 
 

@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 from core.models import Product, AggregationCenterProduct, AggregationCenter
 from sales.models import OrderProduct, OrderDistributionPoint, CustomerAccount, CustomerAccountBalance, \
-    ReceiptParticular, BBF, Return, ReceiptPayment, CustomerDeposit, CustomerDiscount
+    ReceiptParticular, BBF, Return, ReceiptPayment, CustomerDeposit
 from system_settings.models import Settings
 from utils import main_generate_unique_id
 from .models import CustomerPrice
@@ -169,6 +169,8 @@ def receipt_payment_account(sender, instance, created, **kwargs):
 @receiver(post_save, sender=CustomerDeposit)
 def deposit_account(sender, instance, created, **kwargs):
     if created:
+        instance.remaining_amount = instance.amount
+        instance.save()
         CustomerAccount.objects.create(number=main_generate_unique_id(),
                                        customer=instance.customer,
                                        amount=instance.amount,

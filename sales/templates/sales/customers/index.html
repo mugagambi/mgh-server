@@ -74,7 +74,7 @@
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'invoices' %}?customer={{ customer.pk }}">invoices</a>
                     <a class="btn btn-outline-success btn-sm"
-                       href="{% url 'invoices' %}?customer={{ customer.pk }}">settle debts</a>
+                       href="{% url 'customer_deposits' customer=customer.number %}?settle=true">settle debts</a>
                     <a class="btn btn-outline-success btn-sm mb-1"
                        href="{% url 'update-customer' pk=customer.number %}">edit</a>
                     <a class="btn btn-outline-danger btn-sm mb-1"

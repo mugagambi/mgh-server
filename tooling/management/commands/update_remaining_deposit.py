@@ -14,8 +14,8 @@ class Command(BaseCommand):
                                                           defaults={
                                                               'runs': 'O'
                                                           })
-        if not created and command.run_times > 1:
-            raise CommandError('This command can\'t be ran more than once')
+        if not created and command.run_times >= 1:
+            raise CommandError('This command can\'t be run more than once')
         else:
             try:
                 CustomerDeposit.objects.all().update(remaining_amount=F('amount'))

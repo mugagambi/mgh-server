@@ -1,9 +1,10 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
+from django_select2.forms import Select2Widget
 
 from core.models import AggregationCenter
-from sales.models import BilledTogether
+from sales.models import BilledTogether, BilledTogetherCustomer
 
 
 class MainCenterForm(forms.Form):
@@ -44,3 +45,11 @@ class BilledTogetherForm(forms.ModelForm):
     class Meta:
         model = BilledTogether
         fields = ['name', 'phone', 'email', 'box']
+
+
+class BilledTogetherCustomerForm(forms.ModelForm):
+    class Meta:
+        model = BilledTogetherCustomer
+        fields = ['customer', 'company']
+        widgets = {'company': forms.HiddenInput(),
+                   'customer': Select2Widget}
