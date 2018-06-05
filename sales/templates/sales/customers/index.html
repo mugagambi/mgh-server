@@ -71,8 +71,11 @@
                        title="View  {{ customer.shop_name }}  statement">statement</a>
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'total-sales' %}?customer={{ customer.pk }}">receipts</a>
-                    <a class="btn btn-outline-success btn-sm"
-                       href="{% url 'invoices' %}?customer={{ customer.pk }}">invoices</a>
+                    <button type="button" class="btn btn-outline-success btn-sm mb-1"
+                            id="generate_invoice"
+                            data-toggle="modal" data-target="#duedate"
+                            data-customer="{{ customer.number }}">Generate Invoice
+                    </button>
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'customer_deposits' customer=customer.number %}?settle=true">settle debts</a>
                     <a class="btn btn-outline-success btn-sm mb-1"
@@ -140,6 +143,31 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="duedate" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Select Payment Due Date For The Invoice</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ due_date_form | crispy }}
+                        <div>
+                            <button type="submit" class="btn btn-primary">Proceed</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
 {% block scripts %}
@@ -180,6 +208,14 @@
 
                 //populate the hidden field
                 $(e.currentTarget).find('input[id="id_customer_number"]').val(customer);
+            });
+            $('#duedate').on('show.bs.modal', function (e) {
+
+                //get customer number attribute of the clicked element
+                var customer = $(e.relatedTarget).data('customer');
+
+                //populate the hidden field
+                $(e.currentTarget).find('input[id="id_customer_number_due_date"]').val(customer);
             });
         });
     </script>

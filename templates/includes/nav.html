@@ -4,11 +4,7 @@
                         {% endif %}" href="{% url 'total-sales' %}">Customers Sales</a>
     <a class="nav-item nav-link {% if 'cash' in request.path %}
                         active
-                        {% endif %}" href="{% url 'cash-sales' %}">Cash Sales</a>
-    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'invoices' %}
-                        active
-                        {% endif %}" href="{% url 'invoices' %}">Invoice</a>
-    <a class="nav-item nav-link" href="#">Debt Settlement</a>
+                        {% endif %}" href="{% url 'cash-sales' %}">Open Air Market Sales</a>
     <a class="nav-item nav-link {% if 'debtors' in request.path %}
                         active
                         {% endif %}" href="{% url 'trade-debtors' %}">Trade Debtors</a>

@@ -1,8 +1,8 @@
 from django import forms
 from django_select2.forms import Select2Widget
 
-from sales import models
 from core.models import Product
+from sales import models
 
 
 class RegionForm(forms.ModelForm):
@@ -32,6 +32,11 @@ class ProductSelectionForm(forms.Form):
 class PlaceOrderModal(forms.Form):
     date_of_delivery = forms.DateField(label='Date Of Delivery')
     customer_number = forms.CharField(widget=forms.HiddenInput())
+
+
+class DueDateForm(forms.Form):
+    due_date = forms.DateField(label='Due Date')
+    customer_number_due_date = forms.CharField(widget=forms.HiddenInput())
 
 
 class CustomerPriceForm(forms.ModelForm):

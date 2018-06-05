@@ -111,6 +111,12 @@ class CustomerFilter(FilterSet):
 @login_required()
 def customer_list(request):
     if request.method == 'POST':
+        due_date_form = forms.DueDateForm(request.POST)
+        print(due_date_form.errors)
+        if due_date_form.is_valid():
+            customer_number = due_date_form.cleaned_data['customer_number_due_date']
+            due_date = due_date_form.cleaned_data['due_date']
+            return redirect('generate_invoice', customer=customer_number, due_date=due_date)
         form = forms.PlaceOrderModal(request.POST)
         if form.is_valid():
             customer_number = form.cleaned_data['customer_number']
@@ -119,8 +125,11 @@ def customer_list(request):
     else:
         form = forms.PlaceOrderModal(initial={'date_of_delivery': datetime.now() + timedelta(days=1),
                                               'customer_number': ''})
+        due_date_form = forms.DueDateForm(initial={'due_date': datetime.now(),
+                                                   'customer_number_due_date': ''})
     f = CustomerFilter(request.GET, queryset=models.Customer.objects.select_related('region').all())
-    return render(request, 'sales/customers/index.html', {'filter': f, 'form': form})
+    return render(request, 'sales/customers/index.html', {'filter': f, 'form': form,
+                                                          'due_date_form': due_date_form})
 
 
 class SalesFilterSet(FilterSet):

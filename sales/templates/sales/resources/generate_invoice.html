@@ -1,0 +1,72 @@
+{% load humanize %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Invoice for {{ customer.shop_name }} generated on {{ today }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="address_block">
+    <h4><u>Meru Greens Horticulture Ltd Invoice , {{ today }}</u></h4>
+    <div class="column">
+        <p>From<br/>
+            <b>Meru Greens Horticulture Ltd.</b><br/>
+            P.O BOX 1730 - 60200 <br/>
+            MERU, KENYA<br/>
+            Phone: +254709751992<br/>
+            Email: <a href="mailto:sales@merugreens.com">sales@merugreens.com</a></p>
+    </div>
+    <div class="column">
+        <p>To<br/>
+            <b>{{ customer.shop_name }}</b><br/>
+            {% if customer.phone_number %}
+                <b>Phone: {{ customer.phone_number }}</b>
+            {% endif %}<br/>
+            {% if customer.email %}
+                <b>{{ customer.email }}</b>
+            {% endif %}</p>
+    </div>
+    <h5 style="text-align: center;">Items</h5>
+    <table id="customers">
+        <tr>
+            <th>Date</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>@ (Ksh)</th>
+            {% if has_discount %}
+                <th>Discount (%)</th>
+            {% endif %}
+            <th>Sub Total (Ksh)</th>
+        </tr>
+        {% for particular in particulars %}
+            <tr>
+                <td>{{ particular.receipt.date }}</td>
+                <td>{{ particular.product.name }}</td>
+                <td>{{ particular.qty }}</td>
+                <td>{{ particular.price | intcomma }}</td>
+                {% if has_discount %}
+                    <td>{{ particular.discount }}</td>
+                {% endif %}
+                <td>{{ particular.total | floatformat:2 | intcomma }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <h3 style="text-align: right">Amount Due {{ due_date }}</h3>
+    <p style="text-align: right">Total Amount: <b>Ksh.{{ total_amount.total | intcomma }}</b></p>
+    <p style="text-align: right">Amount Payable: <b>Ksh.{{ receipt_balances.total | intcomma }}</b></p>
+
+    <p>Signature:
+        <sub>_____________________________________________________________________________________________</sub>
+    </p>
+    <p>Date: {% now "jS F Y" %}</p>
+</div>
+</body>
+</html>
