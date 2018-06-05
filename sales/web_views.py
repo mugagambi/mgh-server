@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
 from django.db.models import Sum, F, Max
 from django.forms import modelformset_factory
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.html import format_html
@@ -22,6 +22,7 @@ from django_select2.forms import Select2Widget
 from core.models import Product
 from sales import forms
 from sales import models
+from sales.render_pdf import render_to_pdf
 from system_settings.models import Settings
 from utils import generate_unique_id
 
@@ -165,6 +166,7 @@ def sales_list(request):
     return render(request, 'sales/sales/index.html', args)
 
 
+# todo add the right permissions
 @login_required()
 def receipt_detail(request, pk):
     try:
@@ -190,15 +192,28 @@ def receipt_detail(request, pk):
         bcf = {'amount': 0}
     except models.BBF.MultipleObjectsReturned:
         bcf = models.BBF.objects.filter(receipt=receipt).last()
-    return render(request, 'sales/sales/receipt.html', {'receipt': receipt,
-                                                        'particulars': particulars,
-                                                        'total_qty': total_qty,
-                                                        'total_amount': total_amount,
-                                                        'payments': payments,
-                                                        'total_payment': total_payed_amount,
-                                                        'bcf': bcf,
-                                                        'particulars_amount': particulars_amount
-                                                        })
+    has_discount = receipt.customer.customerdiscount_set.exists()
+    context = {'receipt': receipt,
+               'particulars': particulars,
+               'total_qty': total_qty,
+               'total_amount': total_amount,
+               'payments': payments,
+               'total_payment': total_payed_amount,
+               'bcf': bcf,
+               'particulars_amount': particulars_amount,
+               'has_discount': has_discount
+               }
+    download = request.GET.get('download', None)
+    if download:
+        pdf = render_to_pdf('sales/resources/receipt.html', context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "%s_receipt" % receipt.customer.shop_name
+            content = "inline; filename='%s'" % filename
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")
+    return render(request, 'sales/sales/receipt.html', context)
 
 
 @login_required()

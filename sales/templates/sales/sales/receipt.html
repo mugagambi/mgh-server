@@ -7,6 +7,8 @@
     {% include 'includes/nav.html' %}
     <br/>
     <h4 class="text-center"><u>Receipt Number {{ receipt.number }}</u></h4>
+    <a href="{% url 'sale-receipt' pk=receipt.number %}?download=true" class="btn btn-outline-success btn-sm float-right">Export as
+        PDF</a>
     <div class="row">
         <div class="col-sm-8 offset-sm-4">
             <p><b>Customer: </b>{{ receipt.customer.shop_name }}</p>
@@ -121,7 +123,8 @@
     </div>
     <div class="alert alert-info" role="alert">
         <span data-feather="help-circle"> </span>
-        (-) BBF & BBD account balance means the customer owes Meru Greens and (+) BBF & BBD account balance means that Meru Greens
+        (-) BBF & BBD account balance means the customer owes Meru Greens and (+) BBF & BBD account balance means that
+        Meru Greens
         owe the customer.<br/>
         (-) Amount Payable means the customer does not have to pay anything and that meru greens owes them money. (+)
         Amount Payable is the total amount money the customer has to pay for this sale.

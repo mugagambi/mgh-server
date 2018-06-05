@@ -1,0 +1,105 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ receipt.customer.shop_name }} receipt</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+{% if receipt.has_credit %}
+    <p><b>Invoice No.: </b>{{ receipt.pk }}</p>
+{% else %}
+    <p><b>Receipt No.: </b>{{ receipt.pk }}</p>
+{% endif %}
+<p><b>Customer: </b>{{ receipt.customer.shop_name }}</p>
+<p><b>Served By: </b>{{ receipt.served_by.username }}</p>
+<p><b>Date: </b>{{ receipt.date }}</p>
+<h3 style="text-align: center">Receipt Particulars</h3>
+<table id="customers">
+    <tr>
+        <th>Product</th>
+        <th>Qty</th>
+        <th>@ (Ksh)</th>
+        {% if has_discount %}
+            <th>Discount (%)</th>
+        {% endif %}
+        <th>Sub Total (Ksh)</th>
+    </tr>
+    {% for particular in particulars %}
+        <tr>
+            <td>{{ particular.product.name }}</td>
+            <td>{{ particular.qty }}</td>
+            <td>{{ particular.price | intcomma }}</td>
+            {% if has_discount %}
+                <td>{{ particular.discount }}</td>
+            {% endif %}
+            <td>{{ particular.total | floatformat:2 | intcomma }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% if not receipt.has_credit %}
+    <div>
+        <p><b>Total Qty: </b>{{ total_qty | intcomma }}</p>
+        {% if receipt.receiptmisc.balance %}
+            <p>
+                <b>BBD: </b>Ksh. {{ receipt.receiptmisc.balance | intcomma }}</p>
+        {% else %}
+            <p>
+                <b>BBD: </b>Ksh. 0.0</p>
+        {% endif %}
+        <p><b>Sale Amount: </b>Ksh. {{ total_amount | intcomma }}</p>
+        {% if receipt.receiptmisc.balance %}
+            <p><b>Amount Payable: </b>Ksh. {{ total_amount|sub:receipt.receiptmisc.balance | intcomma }}</p>
+        {% else %}
+            <p><b>Amount Payable: </b>Ksh. {{ total_amount| intcomma }}</p>
+        {% endif %}
+        <p><b>Amount Payed: </b>Ksh. {{ total_payment.sum  | intcomma }}</p>
+        {% if receipt.receiptmisc.balance %}
+            <p>
+                <b>BBF: </b>Ksh. {{ total_payment.sum|sub:total_amount|add:receipt.receiptmisc.balance | intcomma }}
+            </p>
+        {% else %}
+            <p>
+                <b>BBF: </b>Ksh. {{ total_payment.sum|sub:total_amount | intcomma }}
+            </p>
+        {% endif %}
+    </div>
+{% endif %}
+<div>
+    <h6><i>Receipt Payments</i></h6>
+    {% for payment in payments %}
+        <p><b>Payment Type : </b>{{ payment.get_type_display }}</p>
+        {% if not receipt.has_credit %}
+            <p><b>Amount : </b>Ksh. {{ payment.amount | intcomma }}</p>
+        {% else %}
+            <p><b>Amount : </b>Ksh. {{ particulars_amount.sum | intcomma }}</p>
+        {% endif %}
+        {% if payment.type == 1 %}
+            <p><b>Cheque Number : </b> {{ payment.check_number }}</p>
+        {% elif payment.type == 2 %}
+            <p><b>Mobile No. :</b> {{ payment.mobile_number }}</p>
+            <p><b>Transaction Id : </b>{{ payment.transaction_id }}</p>
+        {% elif payment.type == 4 %}
+            <p><b>Invoice Number: </b>{{ receipt.number }}</p>
+        {% elif payment.type == 5 %}
+            <p><b>Transfer Code : </b>{{ payment.transfer_code }}</p>
+        {% endif %}
+    {% empty %}
+        <p><b>No Payments have been made yet.</b></p>
+    {% endfor %}
+    <p><i>(-) BBF & BBD account balance means the customer owes Meru Greens and (+) BBF & BBD account balance means that
+        Meru Greens
+        owe the customer.<br/>
+        (-) Amount Payable means the customer does not have to pay anything and that meru greens owes them money. (+)
+        Amount Payable is the total amount money the customer has to pay for this sale.</i></p>
+</div>
+</body>
+</html>
