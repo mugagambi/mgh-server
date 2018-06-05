@@ -95,11 +95,15 @@
     {% empty %}
         <p><b>No Payments have been made yet.</b></p>
     {% endfor %}
-    <p><i>(-) BBF & BBD account balance means the customer owes Meru Greens and (+) BBF & BBD account balance means that
-        Meru Greens
-        owe the customer.<br/>
-        (-) Amount Payable means the customer does not have to pay anything and that meru greens owes them money. (+)
-        Amount Payable is the total amount money the customer has to pay for this sale.</i></p>
+    {% if not receipt.has_credit %}
+        <p><i>(-) BBF & BBD account balance means the customer owes Meru Greens and (+) BBF & BBD account balance means
+            that
+            Meru Greens
+            owe the customer.<br/>
+            (-) Amount Payable means the customer does not have to pay anything and that meru greens owes them money.
+            (+)
+            Amount Payable is the total amount money the customer has to pay for this sale.</i></p>
+    {% endif %}
 </div>
 </body>
 </html>
