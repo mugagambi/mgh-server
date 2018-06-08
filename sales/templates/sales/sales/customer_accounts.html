@@ -7,7 +7,7 @@
     <hr/>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2"> Trade Debtors</h1>
-    <a href="{% url 'trade-debtors' %}?download=true" class="btn btn-outline-success">Export as PDF</a>
+        <a href="{% url 'trade-debtors' %}?download=true" class="btn btn-outline-success">Export as PDF</a>
     </div>
     <table id="customers" class="table table-striped" style="width:100%">
         <thead class="thead-dark">
@@ -32,10 +32,14 @@
                     <td></td>
                 {% endif %}
                 <td>
-                    <a class="btn btn-outline-success btn-sm"
-                       href="{% url 'customer_statement' customer=balance.customer.number %}" data-toggle="tooltip"
-                       data-placement="top"
-                       title="View  {{ balance.customer.shop_name }}  statement">View Customer Statement</a>
+                    {% if balance.customer %}
+                        <a class="btn btn-outline-success btn-sm"
+                           href="{% url 'customer_statement' customer=balance.customer.number %}" data-toggle="tooltip"
+                           data-placement="top"
+                           title="View  {{ balance.customer.shop_name }}  statement">View Customer Statement</a>
+                    {% else %}
+                        No action
+                    {% endif %}
                 </td>
                 {% empty %}
                 <td class="text-center"><b>No data available in table</b></td>
@@ -59,6 +63,7 @@
                 {% if balances.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
@@ -124,6 +129,7 @@
 
 
 
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -131,6 +137,7 @@
                 {% if balances.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
