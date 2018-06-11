@@ -534,7 +534,7 @@ class CustomerAccountBalance(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.pk
+        return str(self.pk)
 
 
 # todo create a customer deposits interface.with all deposits by each customer
