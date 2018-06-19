@@ -48,6 +48,9 @@ class DeleteBank(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
+        if self.object.cashdeposit_set.exists():
+            messages.error(request, 'You can\'t remove this bank because it already has deposits')
+            return redirect('banks')
         messages.success(request, 'Bank removed successfully')
         return super(DeleteBank, self).delete(request, *args, **kwargs)
 
