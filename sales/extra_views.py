@@ -309,7 +309,7 @@ def customer_statement(request, customer):
             response['Content-Disposition'] = content
             return response
         return HttpResponse("Not found")
-    return HttpResponse(status=500)
+    return render(request, 'sales/sales/customer_statement.html', context)
 
 
 @login_required()
