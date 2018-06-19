@@ -10,4 +10,5 @@ urlpatterns = [
     path('cash-deposits/', views.CashDepositList.as_view(), name='cash_deposits'),
     path('cash-deposits/create/', views.add_deposits, name='add_deposits'),
     path('cash-deposits/<int:pk>/update/', views.UpdateCashDeposit.as_view(), name='update_deposit'),
+    path('cash-expenses/', views.CashExpenseList.as_view(), name='cash_expenses'),
 ]

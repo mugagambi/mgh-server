@@ -21,3 +21,12 @@ class CashDeposit(models.Model):
 
     def __str__(self):
         str(self.amount) + ' deposit ' + str(self.bank)
+
+
+class CashExpense(models.Model):
+    amount = models.DecimalField(decimal_places=2, max_digits=15)
+    date = models.DateField(default=now)
+    narration = models.TextField()
+
+    def __str__(self):
+        return 'cash expense'

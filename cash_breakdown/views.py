@@ -3,12 +3,13 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 # Create your views here.
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Sum
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, DeleteView
 
-from cash_breakdown.models import Bank, CashDeposit
+from cash_breakdown.models import Bank, CashDeposit, CashExpense
 
 
 class BankList(LoginRequiredMixin, ListView):
@@ -92,3 +93,9 @@ class UpdateCashDeposit(LoginRequiredMixin, PermissionRequiredMixin, SuccessMess
     success_message = 'Cash Deposit details have been updated'
     success_url = reverse_lazy('cash_deposits')
     template_name = 'cash_breakdown/cash_deposit_update.html'
+
+
+class CashExpenseList(LoginRequiredMixin, ListView):
+    model = CashExpense
+    template_name = 'cash_breakdown/cash_expense_list.html'
+    queryset = CashExpense.objects.values('date').annotate(total_amount=Sum('amount'))
