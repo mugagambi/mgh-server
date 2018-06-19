@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
 {% endblock %}
 {% block breadcrump %}
+    {% include 'cash_breakdown/nav.html' %}
+    <br/>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
@@ -15,10 +17,12 @@
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">MGH Bank Names</h1>
-        <a class="btn btn-outline-success" href="{% url 'create-customer' %}">
+        {% if perms.core.add_bank %}
+        <a class="btn btn-outline-success" href="{% url 'create_banks' %}">
             <span data-feather="plus"></span>
             Add Banks
         </a>
+    {% endif %}
     </div>
     <table id="customers" class="table table-striped table-responsive-md" style="width:100%">
         <thead>
