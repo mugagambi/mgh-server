@@ -17,12 +17,12 @@
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">MGH Bank Names</h1>
-        {% if perms.core.add_bank %}
-        <a class="btn btn-outline-success" href="{% url 'create_banks' %}">
-            <span data-feather="plus"></span>
-            Add Banks
-        </a>
-    {% endif %}
+        {% if perms.cash_breakdown.add_bank %}
+            <a class="btn btn-outline-success" href="{% url 'create_banks' %}">
+                <span data-feather="plus"></span>
+                Add Banks
+            </a>
+        {% endif %}
     </div>
     <table id="customers" class="table table-striped table-responsive-md" style="width:100%">
         <thead>
@@ -36,10 +36,14 @@
             <tr>
                 <td>{{ bank.name }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm mb-1"
-                       href="">Update</a>
-                    <a class="btn btn-outline-danger btn-sm mb-1"
-                       href="">Update</a>
+                    {% if perms.cash_breakdown.change_bank %}
+                        <a class="btn btn-outline-success btn-sm mb-1"
+                           href="{% url 'update_bank' pk=bank.pk %}">Update</a>
+                    {% endif %}
+                    {% if perms.cash_breakdown.delete_bank %}
+                        <a class="btn btn-outline-danger btn-sm mb-1"
+                           href="{% url 'delete_bank' pk=bank.pk %}">Delete</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
