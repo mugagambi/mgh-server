@@ -294,7 +294,7 @@ def customer_statement(request, customer):
         balance = models.CustomerAccountBalance.objects.get(customer=customer)
     except models.CustomerAccountBalance.DoesNotExist:
         balance = None
-    final_account.sort(key=lambda x: x['date'], reverse=True)
+    final_account.sort(key=lambda x: x['date'], reverse=False)
     download = request.GET.get('download', None)
     today = timezone.now().date()
     context = {'customer': customer, 'account': final_account, 'balance': balance,
