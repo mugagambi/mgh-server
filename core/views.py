@@ -1,10 +1,22 @@
 import django_filters.rest_framework
+from django.template.response import TemplateResponse
+from rest_framework import filters
 from rest_framework import viewsets
+
 from core import models
 from core import serializers
-from rest_framework import filters
-
 from core.serializers import UserSerializer
+
+
+def handler500(request):
+    """500 error handler which includes ``request`` in the context.
+
+    Templates: `500.html`
+    Context: None
+    """
+
+    context = {'request': request}
+    return TemplateResponse(request, 'core/500.html', context, status=500)
 
 
 # TODO send permissions short codes with the token payload

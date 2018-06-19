@@ -17,19 +17,24 @@
 <h4><u>{{ customer.shop_name }} statement as of {{ today }}</u></h4>
 <table id="customers">
     <tr>
-        <th>Date</th>
-        <th>Purchase</th>
-        <th>Payment</th>
-        <th>Narration</th>
+        <th rowspan="2">Date</th>
+        <th colspan="4">Purchase</th>
+        <th rowspan="2">Payment</th>
+        <th rowspan="2">action</th>
+    </tr>
+    <tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>@</th>
+        <th>subtotal</th>
     </tr>
     {% for item in account %}
         <tr>
             <td>{{ item.date }}</td>
-            {% if item.purchase != '-' %}
-                <td>{{ item.purchase |abs | intcomma }}</td>
-            {% else %}
-                <td>{{ item.purchase }}</td>
-            {% endif %}
+            <td>{{ item.item }}</td>
+            <td>{{ item.qty }}</td>
+            <td>{{ item.at }}</td>
+            <td>{{ item.subtotal }}</td>
             <td>{{ item.payment | intcomma }}</td>
             <td>{% if item.receipt_id %}
                 Receipt No. {{ item.receipt_id }}
@@ -46,9 +51,15 @@
     <tr>
         <th>Grand Total</th>
         {% if balance.amount < 0 %}
+            <th></th>
+            <th></th>
+            <th></th>
             <th>{{ balance.amount |abs | intcomma }} dr</th>
             <th></th>
         {% else %}
+            <th></th>
+            <th></th>
+            <th></th>
             <th></th>
             <th>{{ balance.amount  |intcomma }} cr</th>
         {% endif %}

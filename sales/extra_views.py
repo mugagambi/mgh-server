@@ -7,14 +7,15 @@ from django.db.models import F, Sum
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 from django.views.generic import ListView
 
 from core.models import Product
 from sales import forms
 from sales import models
+from sales.models import Receipt
 from sales.render_pdf import render_to_pdf
 from utils import generate_unique_id, main_generate_unique_id
-from django.utils import timezone
 
 
 # todo add the right permissions
@@ -129,65 +130,166 @@ def trade_debtors(request):
 @login_required()
 def customer_statement(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
+    has_discount = customer.customerdiscount_set.exists()
     account = models.CustomerAccount.objects.select_related('customer', 'receipt', 'returns').filter(
         customer=customer).order_by('-date')
     receipt_purchases_total = account.filter(type='P').values('receipt', 'date').annotate(Sum('amount'))
     receipt_payments_total = account.filter(type='A').values('receipt', 'date').annotate(Sum('amount'))
     account = account.exclude(type__in=['P', 'A'])
     final_account = []
-    for total in receipt_purchases_total:
-        if not receipt_payments_total.exists():
-            final_account.append({
-                'purchase': total['amount__sum'],
-                'payment': '-',
-                'receipt_id': total['receipt'],
-                'return_id': None,
-                'date': total['date'],
-                'customer': None
-            })
-            continue
-        for payment in receipt_payments_total:
-            if total['receipt'] == payment['receipt']:
+    if has_discount:
+        for total in receipt_purchases_total:
+            receipt = Receipt.objects.get(pk=total['receipt'])
+            for item in receipt.receiptparticular_set.all():
                 final_account.append({
-                    'purchase': total['amount__sum'],
-                    'payment': payment['amount__sum'],
-                    'receipt_id': payment['receipt'],
+                    'item': item.product.name,
+                    'qty': item.qty,
+                    'at': item.price,
+                    'discount': item.discount,
+                    'subtotal': item.total,
+                    'payment': '-',
+                    'receipt_id': total['receipt'],
                     'return_id': None,
-                    'date': payment['date'],
+                    'date': total['date'],
                     'customer': None
                 })
                 continue
-    for acc in account:
-        if acc.type == 'R':
+            continue
+
+        for payment in receipt_payments_total:
             final_account.append({
-                'purchase': '-',
-                'payment': str(acc.amount) + '-return',
-                'receipt_id': None,
-                'return_id': acc.returns.number,
-                'date': acc.date,
+                'item': '-',
+                'qty': '-',
+                'at': '-',
+                'discount': '-',
+                'subtotal': '-',
+                'payment': payment['amount__sum'],
+                'receipt_id': payment['receipt'],
+                'return_id': None,
+                'date': payment['date'],
                 'customer': None
             })
             continue
-        if acc.type == 'D':
-            final_account.append({
-                'purchase': '-',
-                'payment': str(acc.amount) + ' -deposit',
-                'receipt_id': None,
-                'return_id': None,
-                'date': acc.date,
-                'customer': acc.customer.number
-            })
+        for acc in account:
+            if acc.type == 'R':
+                final_account.append({
+                    'item': '-',
+                    'qty': '-',
+                    'at': '-',
+                    'discount': '-',
+                    'subtotal': '-',
+                    'purchase': '-',
+                    'payment': str(acc.amount) + '-return',
+                    'receipt_id': None,
+                    'return_id': acc.returns.number,
+                    'date': acc.date,
+                    'customer': None
+                })
+                continue
+            if acc.type == 'D':
+                final_account.append({
+                    'item': '-',
+                    'qty': '-',
+                    'at': '-',
+                    'discount': '-',
+                    'subtotal': '-',
+                    'purchase': '-',
+                    'payment': str(acc.amount) + ' -deposit',
+                    'receipt_id': None,
+                    'return_id': None,
+                    'date': acc.date,
+                    'customer': acc.customer.number
+                })
+                continue
+            if acc.type == 'B':
+                final_account.append({
+                    'item': '-',
+                    'qty': '-',
+                    'at': '-',
+                    'discount': '-',
+                    'subtotal': '-',
+                    'purchase': '-',
+                    'payment': str(acc.amount) + ' -BBF',
+                    'receipt_id': None,
+                    'return_id': None,
+                    'date': acc.date,
+                    'customer': None
+                })
             continue
-        if acc.type == 'B':
+    else:
+        for total in receipt_purchases_total:
+            receipt = Receipt.objects.get(pk=total['receipt'])
+            for item in receipt.receiptparticular_set.all():
+                final_account.append({
+                    'item': item.product.name,
+                    'qty': item.qty,
+                    'at': item.price,
+                    'subtotal': item.total,
+                    'payment': '-',
+                    'receipt_id': total['receipt'],
+                    'return_id': None,
+                    'date': total['date'],
+                    'customer': None
+                })
+                continue
+            continue
+
+        for payment in receipt_payments_total:
             final_account.append({
-                'purchase': '-',
-                'payment': str(acc.amount) + ' -BBF',
-                'receipt_id': None,
+                'item': '-',
+                'qty': '-',
+                'at': '-',
+                'subtotal': '-',
+                'payment': payment['amount__sum'],
+                'receipt_id': payment['receipt'],
                 'return_id': None,
-                'date': acc.date,
+                'date': payment['date'],
                 'customer': None
             })
-        continue
+            continue
+        for acc in account:
+            if acc.type == 'R':
+                final_account.append({
+                    'item': '-',
+                    'qty': '-',
+                    'at': '-',
+                    'subtotal': '-',
+                    'purchase': '-',
+                    'payment': str(acc.amount) + '-return',
+                    'receipt_id': None,
+                    'return_id': acc.returns.number,
+                    'date': acc.date,
+                    'customer': None
+                })
+                continue
+            if acc.type == 'D':
+                final_account.append({
+                    'item': '-',
+                    'qty': '-',
+                    'at': '-',
+                    'subtotal': '-',
+                    'purchase': '-',
+                    'payment': str(acc.amount) + ' -deposit',
+                    'receipt_id': None,
+                    'return_id': None,
+                    'date': acc.date,
+                    'customer': acc.customer.number
+                })
+                continue
+            if acc.type == 'B':
+                final_account.append({
+                    'item': '-',
+                    'qty': '-',
+                    'at': '-',
+                    'subtotal': '-',
+                    'purchase': '-',
+                    'payment': str(acc.amount) + ' -BBF',
+                    'receipt_id': None,
+                    'return_id': None,
+                    'date': acc.date,
+                    'customer': None
+                })
+            continue
     try:
         balance = models.CustomerAccountBalance.objects.get(customer=customer)
     except models.CustomerAccountBalance.DoesNotExist:
@@ -196,7 +298,7 @@ def customer_statement(request, customer):
     download = request.GET.get('download', None)
     today = timezone.now().date()
     context = {'customer': customer, 'account': final_account, 'balance': balance,
-               'today': today}
+               'today': today, 'has_discount': has_discount}
     if download:
         pdf = render_to_pdf('sales/resources/customer_statement.html', context)
         if pdf:
@@ -207,7 +309,7 @@ def customer_statement(request, customer):
             response['Content-Disposition'] = content
             return response
         return HttpResponse("Not found")
-    return render(request, 'sales/sales/customer_statement.html', context)
+    return HttpResponse(status=500)
 
 
 @login_required()
