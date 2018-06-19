@@ -258,9 +258,14 @@ def create_customer(request):
 
 
 class DeleteCustomer(LoginRequiredMixin, DeleteView):
-    def post(self, request, *args, **kwargs):
-        messages.success(request, 'Customer removed successfully!')
-        return super().post(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.customeraccount_set.exists():
+            messages.error(request, 'This customer can not be deleted because they already have sales/bbf accounts')
+            return redirect('customers')
+        messages.success(request, 'Customer removed successfully')
+        return super(DeleteCustomer, self).delete(request, *args, **kwargs)
 
     template_name = 'crud/delete.html'
     model = models.Customer
