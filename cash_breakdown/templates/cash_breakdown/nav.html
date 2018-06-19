@@ -2,9 +2,9 @@
     <a class="nav-item nav-link {% if 'banks' in request.path %}
                         active
                         {% endif %}" href="{% url 'banks' %}">Banks</a>
-    <a class="nav-item nav-link {% if 'cash' in request.path %}
+    <a class="nav-item nav-link {% if 'cash-deposit' in request.path %}
                         active
-                        {% endif %}" href="">Bank Deposits</a>
+                        {% endif %}" href="{% url 'cash_deposits' %}">Bank Deposits</a>
     <a class="nav-item nav-link {% if 'debtors' in request.path %}
                         active
                         {% endif %}" href="{% url 'trade-debtors' %}">Cash Expenses</a>

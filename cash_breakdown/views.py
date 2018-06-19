@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, DeleteView
 
-from cash_breakdown.models import Bank
+from cash_breakdown.models import Bank, CashDeposit
 
 
 class BankList(LoginRequiredMixin, ListView):
@@ -55,3 +55,8 @@ class DeleteBank(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Bank
     success_url = reverse_lazy('banks')
     permission_required = 'bank.delete_bank'
+
+
+class CashDepositList(LoginRequiredMixin, ListView):
+    model = CashDeposit
+    template_name = 'cash_breakdown/cash_deposit_list.html'
