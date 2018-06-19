@@ -309,6 +309,7 @@ def customer_statement(request, customer):
             response['Content-Disposition'] = content
             return response
         return HttpResponse("Not found")
+    raise NotImplementedError('Raised this to test sentry')
     return render(request, 'sales/sales/customer_statement.html', context)
 
 
