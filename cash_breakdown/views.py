@@ -147,3 +147,11 @@ def create_expenses(request, date):
     else:
         formset = expense_formset(queryset=CashExpense.objects.none())
     return render(request, 'cash_breakdown/add_expenses.html', {'formset': formset})
+
+
+@login_required()
+def expense_detail(request, date):
+    date = timezone.datetime.strptime(date, '%Y-%m-%d').date()
+    expenses = CashExpense.objects.filter(date=date)
+    return render(request, 'cash_breakdown/expenses_list.html', {'expenses': expenses,
+                                                                 'date': date})

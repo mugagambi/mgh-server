@@ -8,17 +8,17 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Cash Deposit</li>
+            <li class="breadcrumb-item active" aria-current="page">Deposit</li>
         </ol>
     </nav>
 {% endblock %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2">Cash Deposits</h1>
+        <h1 class="h2"> Bank Deposits</h1>
         {% if perms.cash_breakdown.add_cashdeposit %}
             <a class="btn btn-outline-success" href="{% url 'add_deposits' %}">
                 <span data-feather="plus"></span>
-                Record Cash Deposits
+                Record Bank Deposits
             </a>
         {% endif %}
     </div>

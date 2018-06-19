@@ -41,7 +41,7 @@
                 <td>
                     {% if perms.cash_breakdown.change_cashdeposit %}
                         <a class="btn btn-outline-success btn-sm mb-1"
-                           href="" data-toggle="tooltip" data-placement="top"
+                           href="{% url 'expenses' date=expense.date %}" data-toggle="tooltip" data-placement="top"
                            title="Click to view all the day expenses">More Details</a>
                     {% endif %}
                 </td>
