@@ -55,6 +55,7 @@ urlpatterns = [
     path('system/', include('system_settings.urls')),
     path('resources/sales/', include('sales.resource_urls')),
     path('reports/', include('reports.urls')),
+    path('cash-breakdown/', include('cash_breakdown.urls')),
     path('api/core/', include('core.urls')),
     path('api/sales/', include('sales.urls')),
     path('api/auth/', include('djoser.urls')),
