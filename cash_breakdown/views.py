@@ -60,3 +60,32 @@ class DeleteBank(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 class CashDepositList(LoginRequiredMixin, ListView):
     model = CashDeposit
     template_name = 'cash_breakdown/cash_deposit_list.html'
+
+
+@login_required()
+@permission_required('core.add_cashdeposit', raise_exception=True)
+def add_deposits(request):
+    """
+        Add  banks
+        :param request:
+        :return response:
+        """
+    deposit_formset = modelformset_factory(CashDeposit, fields=('bank', 'amount', 'date'), extra=0, min_num=1)
+    if request.method == 'POST':
+        formset = deposit_formset(request.POST)
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, 'Cash deposits added!')
+            return redirect(reverse_lazy('cash_deposits'))
+    else:
+        formset = deposit_formset(queryset=CashDeposit.objects.none())
+    return render(request, 'cash_breakdown/add_cash_deposit.html', {'formset': formset})
+
+
+class UpdateCashDeposit(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = CashDeposit
+    fields = ('bank', 'amount', 'date')
+    permission_required = 'core.change_cashdeposit'
+    success_message = 'Cash Deposit details have been updated'
+    success_url = reverse_lazy('cash_deposits')
+    template_name = 'cash_breakdown/cash_deposit_update.html'

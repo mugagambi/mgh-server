@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block breadcrump %}
+    {% include 'cash_breakdown/nav.html' %}
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'cash_deposits' %}">Cash Deposits</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Update Cash Deposit</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-5 offset-sm-3">
+            <h4 class="text-center">Update Cash Deposit</h4>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

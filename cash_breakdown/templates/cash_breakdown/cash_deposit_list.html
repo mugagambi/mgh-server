@@ -16,7 +16,7 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">Cash Deposits</h1>
         {% if perms.cash_breakdown.add_cashdeposit %}
-            <a class="btn btn-outline-success" href="{% url 'create_banks' %}">
+            <a class="btn btn-outline-success" href="{% url 'add_deposits' %}">
                 <span data-feather="plus"></span>
                 Record Cash Deposits
             </a>
@@ -38,13 +38,9 @@
                 <td>{{ cash.amount | intcomma }}</td>
                 <td>{{ cash.date }}</td>
                 <td>
-                    {% if perms.cash_breakdown.change_bank %}
+                    {% if perms.cash_breakdown.change_cashdeposit %}
                         <a class="btn btn-outline-success btn-sm mb-1"
-                           href="{% url 'update_bank' pk=bank.pk %}">Update</a>
-                    {% endif %}
-                    {% if perms.cash_breakdown.delete_bank %}
-                        <a class="btn btn-outline-danger btn-sm mb-1"
-                           href="{% url 'delete_bank' pk=bank.pk %}">Delete</a>
+                           href="{% url 'update_deposit' pk=cash.pk %}">Update</a>
                     {% endif %}
                 </td>
             </tr>
