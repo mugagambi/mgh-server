@@ -26,12 +26,11 @@
                 {% for sale in customer_sales %}
                     <tr>
                         <td>{{ sale.product__name }}</td>
-
                         <td>{{ sale.price__max | floatformat:2 }}</td>
                         <td>{{ sale.price__avg | floatformat:2 }}</td>
                         <td>{{ sale.price__min | floatformat:2 }}</td>
                         <td>
-                            <a href=""
+                            <a href="{% url 'product_group_prices' product_id=sale.product__pk date_0=date_0_str date_1=date_1_str type='customer' %}"
                                class="btn btn-sm btn-outline-success"
                                data-toggle="tooltip"
                                data-placement="top"
@@ -65,7 +64,7 @@
                         <td>{{ sale.price__avg | floatformat:2 }}</td>
                         <td>{{ sale.price__min | floatformat:2 }}</td>
                         <td>
-                            <a href=""
+                            <a href="{% url 'product_group_prices' product_id=sale.product__pk date_0=date_0_str date_1=date_1_str type='cash' %}"
                                class="btn btn-sm btn-outline-success"
                                data-toggle="tooltip"
                                data-placement="top"

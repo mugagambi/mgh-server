@@ -63,14 +63,14 @@ def product_prices(request, product_id, type, date_0, date_1):
         sales = ReceiptParticular.objects.annotate(as_integer=Cast('price', IntegerField())).filter(
             receipt__date__range=(date_0_datetime, date_1_datetime), product=product).values(
             'as_integer').annotate(
-            Sum('total'), Count('total', distinct=True)).order_by('as_integer')
+            Sum('total'), Count('total', distinct=True)).order_by('-total__sum')
         context = {'product': product, 'sales': sales, 'type': 'Customer Sales', 'date_0': date_0_datetime,
                    'date_1': date_1_datetime}
     else:
         sales = CashReceiptParticular.objects.annotate(as_integer=Cast('price', IntegerField())).filter(
             cash_receipt__date__range=(date_0_datetime, date_1_datetime), product=product).values(
             'as_integer').annotate(
-            Sum('total'), Count('total', distinct=True)).order_by('as_integer')
+            Sum('total'), Count('total', distinct=True)).order_by('-total__sum')
         context = {'product': product, 'sales': sales, 'type': 'Open Air Market Sales', 'date_0': date_0_datetime,
                    'date_1': date_1_datetime}
     return render(request, 'reports/price_per_product/product_prices.html', context)

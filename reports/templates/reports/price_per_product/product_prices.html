@@ -24,7 +24,7 @@
                 <td>{{ sale.as_integer }}</td>
 
                 <td>{{ sale.total__sum | floatformat:2 | intcomma }}</td>
-                <td>{{ sale.total_count | intcomma }}</td>
+                <td>{{ sale.total__count | intcomma }}</td>
                 <td>
                     <a href="" class="btn btn-sm btn-outline-success"
                        data-toggle="tooltip"
