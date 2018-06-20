@@ -47,19 +47,20 @@ def outward_product_summary_report(request, date_0: str, date_1: str):
     for product in Product.objects.all():
         if models.OrderProduct.objects. \
                 filter(product=product,
-                       order__date_delivery__range=(date_0, date_1)).exists() is False or models.PackageProduct.objects. \
+                       order__date_delivery__range=(
+                       date_0, date_1)).exists() is False and models.PackageProduct.objects. \
                 filter(order_product__product=product,
                        order_product__order__date_delivery__range=(
-                               date_0, date_1)).exists() is False or models.OrderlessPackage.objects. \
+                               date_0, date_1)).exists() is False and models.OrderlessPackage.objects. \
                 filter(product=product,
-                       date__range=(date_0, date_1)).exists() is False or models.ReceiptParticular.objects. \
+                       date__range=(date_0, date_1)).exists() is False and models.ReceiptParticular.objects. \
                 filter(product=product, receipt__date__range=(
-                date_0_datetime, date_1_datetime)).exists() is False or models.CashReceiptParticular.objects. \
+                date_0_datetime, date_1_datetime)).exists() is False and models.CashReceiptParticular.objects. \
                 filter(product=product, cash_receipt__date__range=(
-                date_0_datetime, date_1_datetime)).exists() is False or AggregationCenterProduct.objects.filter(
+                date_0_datetime, date_1_datetime)).exists() is False and AggregationCenterProduct.objects.filter(
             product=product,
             date__range=(
-                    date_0, date_1)).exists() is False or models.MarketReturn.objects. \
+                    date_0, date_1)).exists() is False and models.MarketReturn.objects. \
                 filter(product=product, date__range=(date_0, date_1)).exists() is False:
             continue
         total_ordered = models.OrderProduct.objects. \
