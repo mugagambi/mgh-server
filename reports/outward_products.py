@@ -48,8 +48,6 @@ def outward_product_summary_report(request, date_0: str, date_1: str):
         total_ordered = models.OrderProduct.objects. \
             filter(product=product, order__date_delivery__range=(date_0, date_1)). \
             aggregate(total=Sum('qty'))
-        if not total_ordered['total']:
-            continue
         total_packaged = models.PackageProduct.objects. \
             filter(order_product__product=product,
                    order_product__order__date_delivery__range=(date_0, date_1)). \

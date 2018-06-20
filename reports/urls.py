@@ -34,4 +34,6 @@ urlpatterns = [
     path('sales/price-per-product/period/', price_per_product.period, name='price_per_product_period'),
     path('sales/price-per-product/<str:date_0>/<str:date_1>/', price_per_product.report,
          name='price_per_product_report'),
+    path('sales/price/<int:product_id>/<str:type>/<str:date_0>/<str:date_1>/', price_per_product.product_prices,
+         name='product_prices'),
 ]
