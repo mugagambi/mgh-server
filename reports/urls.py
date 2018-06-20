@@ -1,10 +1,11 @@
 from django.urls import path
 
 from reports import sales_summary
-from . import views
 from . import outward_products
 from . import outward_stock_summary
+from . import price_per_product
 from . import product_customer
+from . import views
 
 urlpatterns = [
     path('index/', views.index, name='report-index'),
@@ -30,4 +31,7 @@ urlpatterns = [
          name='sales_summary_period'),
     path('sales/sales_summary/<str:date_0>/<str:date_1>/', sales_summary.sales_summary_report,
          name='sales_summary_report'),
+    path('sales/price-per-product/period/', price_per_product.period, name='price_per_product_period'),
+    path('sales/price-per-product/<str:date_0>/<str:date_1>/', price_per_product.report,
+         name='price_per_product_report'),
 ]
