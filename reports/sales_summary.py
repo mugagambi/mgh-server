@@ -44,13 +44,15 @@ def sales_summary_report(request, date_0, date_1):
     cash_sale = models.CashReceiptParticular.objects.filter(cash_receipt__date__range=(date_0, date_1)).aggregate(
         total_amount=Sum(F('qty') * F('price')))
     # todo stop aggregating total
-    credit = models.ReceiptPayment.objects.filter(receipt__date__range=(date_0, date_1), type=4)
+    credit_payments = models.ReceiptPayment.objects.filter(receipt__date__range=(date_0, date_1), type=4)
+    receipt_id = [payment.receipt.number for payment in credit_payments]
+    credit = models.Receipt.objects.filter(number__in=receipt_id).values('number').annotate(
+        Sum('receiptparticular__total'))
     if credit.exists():
-        credit_total = credit.aggregate(total_amount=Sum('amount'))
+        credit_total = credit.aggregate(total_amount=Sum('receiptparticular__total__sum'))
     else:
-        credit_total = {'total_amount': 0}
-    credit_receipts = credit.values('receipt__number').annotate(total_amount=Sum('amount')).order_by(
-        '-total_amount')
+        credit_total = {'receiptparticular__total__sum': 0}
+    credit_receipts = credit.order_by('-receiptparticular__total__sum')
     payed_page = request.GET.get('payed_page', 1)
     paginator = Paginator(payed_receipts, 5)
     try:
