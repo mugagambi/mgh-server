@@ -35,10 +35,13 @@ def report(request, date_0, date_1):
     date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59))
     customer_sales = ReceiptParticular.objects.filter(receipt__date__range=(date_0_datetime, date_1_datetime)).values(
         'product__name').annotate(Max('price'), Avg('price'),
-                                  Min('price'))
+                                  Min('price')).order_by('product__name')
     cash_sales = CashReceiptParticular.objects.filter(
         cash_receipt__date__range=(date_0_datetime, date_1_datetime)).values('product__name').annotate(Max('price'),
                                                                                                        Avg('price'),
-                                                                                                       Min('price'))
-    context = {'customer_sales': customer_sales, 'cash_sales': cash_sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime}
+                                                                                                       Min(
+                                                                                                           'price')).order_by(
+        'product__name')
+    context = {'customer_sales': customer_sales, 'cash_sales': cash_sales, 'date_0': date_0_datetime,
+               'date_1': date_1_datetime}
     return render(request, 'reports/price_per_product/report.html', context)
