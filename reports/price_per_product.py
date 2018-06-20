@@ -40,5 +40,5 @@ def report(request, date_0, date_1):
         cash_receipt__date__range=(date_0_datetime, date_1_datetime)).values('product__name').annotate(Max('price'),
                                                                                                        Avg('price'),
                                                                                                        Min('price'))
-    context = {'customer_sales': customer_sales, 'cash_sales': cash_sales}
+    context = {'customer_sales': customer_sales, 'cash_sales': cash_sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime}
     return render(request, 'reports/price_per_product/report.html', context)
