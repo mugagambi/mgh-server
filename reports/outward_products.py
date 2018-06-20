@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.shortcuts import redirect, render
 
-from reports import forms
 from core.models import Product, AggregationCenterProduct
+from reports import forms
 from sales import models
 
 
@@ -45,6 +45,23 @@ def outward_product_summary_report(request, date_0: str, date_1: str):
     date_1_datetime = datetime.datetime.combine(date_1, datetime.time(23, 59))
     outward = []
     for product in Product.objects.all():
+        if not models.OrderProduct.objects. \
+                filter(product=product,
+                       order__date_delivery__range=(date_0, date_1)).exists() or not models.PackageProduct.objects. \
+                filter(order_product__product=product,
+                       order_product__order__date_delivery__range=(
+                               date_0, date_1)).exists() or not models.OrderlessPackage.objects. \
+                filter(product=product,
+                       date__range=(date_0, date_1)).exists() or not models.ReceiptParticular.objects. \
+                filter(product=product, receipt__date__range=(
+                date_0_datetime, date_1_datetime)).exists() or not models.CashReceiptParticular.objects. \
+                filter(product=product, cash_receipt__date__range=(
+                date_0_datetime, date_1_datetime)).exists() or not AggregationCenterProduct.objects.filter(
+            product=product,
+            date__range=(
+                    date_0, date_1)).exists() or not models.MarketReturn.objects. \
+                filter(product=product, date__range=(date_0, date_1)).exists():
+            continue
         total_ordered = models.OrderProduct.objects. \
             filter(product=product, order__date_delivery__range=(date_0, date_1)). \
             aggregate(total=Sum('qty'))
