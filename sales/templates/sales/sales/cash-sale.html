@@ -22,9 +22,9 @@
         {% for sale in sales %}
             <tr>
                 <td>{{ sale.date_only }}</td>
-                <td>{{ sale.cashreceiptparticular__total__sum }}</td>
+                <td>{{ sale.cashreceiptparticular__total__sum | intcomma }}</td>
                 <td>
-                    <a class="btn btn-outline-success btn-sm" href="">view
+                    <a class="btn btn-outline-success btn-sm" href="{% url 'cash-receipt' date=sale.date_only %}">view
                         cash
                         sale</a>
                 </td>
@@ -40,6 +40,7 @@
                 {% if sales.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
@@ -91,6 +92,7 @@
 
 
 
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -98,6 +100,7 @@
                 {% if sales.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 
