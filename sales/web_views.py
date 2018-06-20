@@ -8,6 +8,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
 from django.db.models import Sum, F, Max
+from django.db.models.fields import DateField
+from django.db.models.functions import Cast
 from django.forms import modelformset_factory
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -529,9 +531,9 @@ class CashSalesFilterSet(FilterSet):
 # todo add the right permissions
 @login_required()
 def cash_sales_list(request):
-    sales = models.CashReceipt.objects.select_related('served_by').filter(cashreceiptparticular__isnull=False) \
-        .order_by(
-        '-date')
+    sales = models.CashReceipt.objects.annotate(
+        date_only=Cast('date', DateField())).values('date_only').annotate(Sum('cashreceiptparticular__total')).order_by(
+        '-date_only')
     paginator = Paginator(sales, 50)
     page = request.GET.get('page', 1)
     try:

@@ -10,19 +10,6 @@
             padding-top: 3px;
             text-align: center;
         }
-
-        .receipt td {
-            background-color: #5F6E44;
-            color: white;
-        }
-        .totals td  {
-            background-color: #936949;
-            color: white;
-        }
-        .payments td {
-            background-color: #8B4500;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -39,7 +26,7 @@
     </tr>
     </thead>
     {% for receipt in receipts %}
-        <tr class="receipt">
+        <tr>
             <td><b>Customer </b></td>
             <td>{{ receipt.customer.shop_name }}</td>
             <td><b>Served By </b></td>
@@ -57,7 +44,7 @@
                 <td>{{ particular.get_type_display }}</td>
             </tr>
         {% endfor %}
-        <tr class="totals">
+        <tr>
             <td><b>Grand Total</b></td>
             <td>{{ receipt.total_qty | intcomma }}</td>
             <td>-</td>
@@ -65,7 +52,7 @@
             <td>{{ receipt.sub_total | intcomma }}</td>
             <td>-</td>
         </tr>
-        <tr class="payments">
+        <tr>
             <td><b>Payments</b></td>
             <td>-</td>
             <td>-</td>
@@ -98,7 +85,8 @@
             <td>-</td>
         </tr>
         <tr>
-            <td colspan="6"></td>
+            <td colspan="6">--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            </td>
         </tr>
     {% endfor %}
     <tr>
