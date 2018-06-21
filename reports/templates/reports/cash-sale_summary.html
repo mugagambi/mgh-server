@@ -237,7 +237,7 @@
                 {% for cash_receipt in cash_receipts %}
                     <tr>
                         <td>
-                            <a href="{% url 'cash-receipt' pk=cash_receipt.cash_receipt__number %}"> {{ cash_receipt.cash_receipt__number }}</a>
+                            <a href="{% url 'cash-sales' %}"> {{ cash_receipt.cash_receipt__number }}</a>
                         </td>
                         <td>{{ cash_receipt.total_amount | floatformat:2 | intcomma }}</td>
                     </tr>
