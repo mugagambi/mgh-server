@@ -107,8 +107,11 @@ def export_customer_sales(request, date_0, date_1):
     total_balance = receipts.aggregate(total=Sum('receiptmisc__balance'))
     total_amount_payable = (receipt_amount['total'] or 0) - (total_balance['total'] or 0)
     total_payed = receipts.exclude(receiptpayment__type=4).aggregate(total=Sum('receiptpayment__amount'))
-    total_credit = receipts.filter(receiptpayment__type=4).aggregate(total=Sum('receiptpayment__amount'))
-    total_payed_amount = receipts.aggregate(total=Sum('receiptpayment__amount'))
+    credit = receipts.filter(receiptpayment__type=4)
+    receipt_id = [payment.number for payment in credit]
+    total_credit = models.Receipt.objects.filter(number__in=receipt_id).values('number').aggregate(
+        total=Sum('receiptparticular__total'))
+    total_payed_amount = (total_payed['total'] or 0) + (total_credit['total'] or 0)
     context = {
         'date_0_datetime': date_0_datetime,
         'date_1_datetime': date_1_datetime,
@@ -118,7 +121,7 @@ def export_customer_sales(request, date_0, date_1):
         'total_amount_payable': total_amount_payable,
         'total_payed': (total_payed['total'] or 0),
         'total_credit': (total_credit['total'] or 0),
-        'total_payed_amount': (total_payed_amount['total'] or 0)
+        'total_payed_amount': total_payed_amount
     }
     html = template.render(context)
     pdf = render_to_pdf('sales/resources/customer_sale_export.html', context)

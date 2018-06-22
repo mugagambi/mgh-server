@@ -95,9 +95,6 @@
         <td>-</td>
         <td>-</td>
         <td><b>Amount Sold: </b>Ksh. {{ receipt_amount | intcomma }}
-            <br>
-            <b>Total BBF: </b> Ksh. {{ total_balance | intcomma }}<br/>
-            <b>Total Payable: </b> Ksh. {{ total_amount_payable | intcomma }}
         </td>
         <td>-</td>
     </tr>
@@ -108,7 +105,7 @@
         <td>-</td>
         <td><b>Payed: </b> Ksh.{{ total_payed | intcomma }}<br/>
             <b>Debt: </b> Ksh.{{ total_credit | intcomma }}<br/>
-            <b>Total: </b> Ksh. {{ total_payed_amount | intcomma }}</td>
+            <b>Total: </b> Ksh. {{ total_payed_amount |floatformat:2 | intcomma }}</td>
         <td>-</td>
     </tr>
 </table>
