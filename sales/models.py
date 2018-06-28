@@ -339,7 +339,9 @@ class ReceiptPayment(models.Model):
              update_fields=None):
         if self.type == 4:
             particulars_amount = ReceiptParticular.objects.filter(receipt=self.receipt).aggregate(total=Sum('total'))
-            self.receipt.balance = particulars_amount['total']
+            # todo an integrity error occurred meaning i am received particulars with no particulars.
+            # todo Check this with the app devs
+            self.receipt.balance = particulars_amount.get('total', 0.0)
             self.receipt.save()
         super(ReceiptPayment, self).save(force_insert=False, force_update=False, using=None,
                                          update_fields=None)
