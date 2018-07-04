@@ -39,7 +39,7 @@
                         <td>{{ item.qty | safe }}</td>
                         <td>{{ item.at }}</td>
                         <td>{{ item.discount }}</td>
-                        <td>{{ item.subtotal | safe }}</td>
+                        <td>{{ item.subtotal | intcomma | safe }}</td>
                         <td>{{ item.payment | intcomma }}</td>
                         <td>{% if item.receipt_id %}
                             <a href="{% url 'sale-receipt' pk=item.receipt_id %}"
@@ -66,14 +66,15 @@
                 {% if balance.amount < 0 %}
                     <th></th>
                     <th></th>
+                    <th></th>
                     <th>{{ balance.amount |abs | intcomma }} dr</th>
                     <th></th>
                 {% else %}
                     <th></th>
                     <th></th>
                     <th></th>
-                    <th>{{ balance.amount  |intcomma }} cr</th>
                     <th></th>
+                    <th>{{ balance.amount  |intcomma }} cr</th>
                 {% endif %}
                 <td></td>
             </tr>
@@ -98,14 +99,14 @@
             {% regroup account by  date as items %}
             {% for item in items %}
                 <tr>
-                    <td colspan="7" class="text-center"><b>{{ item.grouper }}</b></td>
+                    <td colspan="6" class="text-center"><b>{{ item.grouper }}</b></td>
                 </tr>
                 {% for item in item.list %}
                     <tr>
                         <td>{{ item.item | safe }}</td>
                         <td>{{ item.qty | safe }}</td>
                         <td>{{ item.at }}</td>
-                        <td>{{ item.subtotal  | safe }}</td>
+                        <td>{{ item.subtotal | intcomma  | safe }}</td>
                         <td>{{ item.payment | intcomma }}</td>
                         <td>{% if item.receipt_id %}
                             <a href="{% url 'sale-receipt' pk=item.receipt_id %}"
@@ -139,7 +140,6 @@
                     <th></th>
                     <th></th>
                     <th>{{ balance.amount  |intcomma }} cr</th>
-                    <th></th>
                 {% endif %}
                 <td></td>
             </tr>

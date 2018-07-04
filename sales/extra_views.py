@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.db.models import F, Sum
 from django.db.models import Q
 from django.http import HttpResponse
@@ -164,10 +165,10 @@ def customer_statement(request, customer):
             total_sum = total_sum.get('total__sum', '-')
             final_account.append({
                 'item': '<b>Receipt Total</b>',
-                'qty': f'<b>{total_qty}</b',
+                'qty': f'<b>{intcomma(total_sum)}</b',
                 'at': '-',
                 'discount': '-',
-                'subtotal': f'<b>{total_sum}</b>',
+                'subtotal': f'<b>{intcomma(total_sum)}</b>',
                 'payment': '-',
                 'receipt_id': total['receipt'],
                 'return_id': None,
@@ -258,10 +259,10 @@ def customer_statement(request, customer):
             total_sum = total_sum.get('total__sum', '-')
             final_account.append({
                 'item': '<b>Receipt Total</b>',
-                'qty': f'<b>{total_qty}</b',
+                'qty': f'<b>{intcomma(total_qty)}</b',
                 'at': '-',
                 'discount': '-',
-                'subtotal': f'<b>{total_sum}</b>',
+                'subtotal': f'<b>{intcomma(total_sum)}</b>',
                 'payment': '-',
                 'receipt_id': total['receipt'],
                 'return_id': None,
