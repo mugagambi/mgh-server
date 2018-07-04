@@ -15,7 +15,6 @@
         <table id="customers" class="table table-bordered table-striped table-responsive-md" style="width:100%">
             <thead class="thead-dark">
             <tr>
-                <th rowspan="2">Date</th>
                 <th colspan="5">Purchase</th>
                 <th rowspan="2">Payment</th>
                 <th rowspan="2">action</th>
@@ -29,43 +28,47 @@
             </tr>
             </thead>
             <tbody>
-            {% for item in account %}
+            {% regroup account by  date as items %}
+            {% for item in items %}
                 <tr>
-                    <td>{{ item.date }}</td>
-                    <td>{{ item.item }}</td>
-                    <td>{{ item.qty }}</td>
-                    <td>{{ item.at }}</td>
-                    <td>{{ item.discount }}</td>
-                    <td>{{ item.subtotal }}</td>
-                    <td>{{ item.payment | intcomma }}</td>
-                    <td>{% if item.receipt_id %}
-                        <a href="{% url 'sale-receipt' pk=item.receipt_id %}" class="btn btn-outline-success btn-sm">view
-                            receipt</a>
-                    {% elif item.return_id %}
-                        <a href="{% url 'return' pk=item.return_id %}" class="btn btn-outline-success btn-sm">view
-                            return</a>
-                    {% elif item.customer %}
-                        <a href="{% url 'customer_deposits' customer=item.customer %}"
-                           class="btn btn-outline-success btn-sm">view
-                            deposits</a>
-                    {% else %}
-                        no action
-                    {% endif %}
-                    </td>
-                    {% empty %}
-                    <td class="text-center" colspan="8"><b>No data available in table</b></td>
+                    <td colspan="7"><b>{{ item.grouper }}</b></td>
                 </tr>
+                {% for item in item.list %}
+                    <tr>
+                        <td>{{ item.item }}</td>
+                        <td>{{ item.qty }}</td>
+                        <td>{{ item.at }}</td>
+                        <td>{{ item.discount }}</td>
+                        <td>{{ item.subtotal }}</td>
+                        <td>{{ item.payment | intcomma }}</td>
+                        <td>{% if item.receipt_id %}
+                            <a href="{% url 'sale-receipt' pk=item.receipt_id %}"
+                               class="btn btn-outline-success btn-sm">view
+                                receipt</a>
+                        {% elif item.return_id %}
+                            <a href="{% url 'return' pk=item.return_id %}" class="btn btn-outline-success btn-sm">view
+                                return</a>
+                        {% elif item.customer %}
+                            <a href="{% url 'customer_deposits' customer=item.customer %}"
+                               class="btn btn-outline-success btn-sm">view
+                                deposits</a>
+                        {% else %}
+                            no action
+                        {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% empty %}
+                <td class="text-center" colspan="8"><b>No data available in table</b></td>
             {% endfor %}
             <tr>
                 <th>Grand Total</th>
                 {% if balance.amount < 0 %}
                     <th></th>
                     <th></th>
-                    <th></th>
                     <th>{{ balance.amount |abs | intcomma }} dr</th>
                     <th></th>
                 {% else %}
-                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>

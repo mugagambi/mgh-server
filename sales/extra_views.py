@@ -158,6 +158,22 @@ def customer_statement(request, customer):
                     'customer': None
                 })
                 continue
+            total_qty = receipt.receiptparticular_set.aggregate(Sum('qty'))
+            total_qty = total_qty.get('qty__sum', '-')
+            total_sum = receipt.receiptparticular_set.aggregate(Sum('total'))
+            total_sum = total_sum.get('total__sum', '-')
+            final_account.append({
+                'item': 'Receipt Total',
+                'qty': total_qty,
+                'at': '-',
+                'discount': '-',
+                'subtotal': total_sum,
+                'payment': '-',
+                'receipt_id': total['receipt'],
+                'return_id': None,
+                'date': total['date'],
+                'customer': None
+            })
             continue
 
         for payment in receipt_payments_total:
