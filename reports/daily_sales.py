@@ -42,7 +42,7 @@ def report(request, date_0, date_1):
         values('day').annotate(total=Sum('total')).order_by('-day')
     total_sales = sales.aggregate(Sum('total'))
     total_cash_sales = cash_sales.aggregate((Sum('total')))
-    page = request.GET.get('page', 1)
+    page = request.GET.get('payed_page', 1)
 
     paginator = Paginator(sales, 10)
     try:
@@ -51,7 +51,7 @@ def report(request, date_0, date_1):
         sales = paginator.page(1)
     except EmptyPage:
         sales = paginator.page(paginator.num_pages)
-    page = request.GET.get('page', 1)
+    page = request.GET.get('credit_page', 1)
 
     paginator = Paginator(cash_sales, 10)
     try:
