@@ -1,6 +1,8 @@
 from django.urls import path
 
 from reports import sales_summary
+from . import customer_performance
+from . import daily_sales
 from . import outward_products
 from . import outward_stock_summary
 from . import price_per_product
@@ -36,4 +38,10 @@ urlpatterns = [
          name='price_per_product_report'),
     path('sales/price/<int:product_id>/<str:type>/<str:date_0>/<str:date_1>/', price_per_product.product_prices,
          name='product_group_prices'),
+    path('sales/customer-performance/period/', customer_performance.period, name='customer_performance_period'),
+    path('sales/customer-perfomance/<str:customer>/<str:date_0>/<str:date_1>/', customer_performance.report,
+         name='customer_performance_report'),
+    path('sales/daily-sales/period/', daily_sales.period, name='daily_sales_period'),
+    path('sales/daily-sales/<str:date_0>/<str:date_1>/', daily_sales.report,
+         name='daily_sales_report'),
 ]
