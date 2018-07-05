@@ -74,6 +74,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                                             {{ sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">Previous</span>
@@ -91,6 +104,19 @@
                             {% if sales.number|add:'-4' > 1 %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?payed_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -174,6 +200,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                                             {{ i }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                                     </li>
                                 {% endif %}
@@ -181,6 +220,19 @@
                             {% if sales.paginator.num_pages > sales.number|add:'4' %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?payed_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -223,6 +275,19 @@
                             {% if sales.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?payed_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -339,6 +404,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                                             {{ cash_sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">Previous</span>
@@ -356,6 +434,19 @@
                             {% if cash_sales.number|add:'-4' > 1 %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?credit_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -428,6 +519,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                                             {{ i }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                                     </li>
                                 {% endif %}
@@ -435,6 +539,19 @@
                             {% if cash_sales.paginator.num_pages > cash_sales.number|add:'4' %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?credit_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -497,6 +614,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                                             {{ cash_sales.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Next">
                                         <span aria-hidden="true">Next</span>
@@ -519,70 +649,89 @@
         </div>
     </div>
     <hr/>
-    <h4 class="text-center">Customer Sales Over Time</h4>
-    <style>
-        .bar-chart {
-            display: flex;
-            justify-content: space-around;
-            height: 500px;
-            padding-top: 60px;
-        }
+    <h4 class="text-center">Customer Sales over Time (by {{ period }})</h4>
+    <canvas id="myChart"></canvas>
+    <h4 class="text-center">Open Air Market Sales over Time (by {{ period }})</h4>
+    <canvas id="cashChart"></canvas>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <script>
+        var api = '{% url 'daily_sales_charts' date_0=date_0_str date_1=date_1_str %}';
+        var cash_api = '{% url 'daily_cash_sales_charts' date_0=date_0_str date_1=date_1_str %}';
+        var defaultData = [];
+        var cashData = [];
+        var cashLabels = [];
+        var labels = [];
+        $(document).ready(function () {
+            $.ajax({
+                method: 'GET',
+                url: api,
+                success: function (data) {
+                    console.log(data);
+                    $.each(data, function (index, value) {
+                        defaultData.push(value.total);
+                        labels.push(value.period);
+                    });
+                    console.log(defaultData, labels);
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        // The type of chart we want to create
+                        type: 'bar',
 
-        .bar-chart .bar {
-            flex: 100%;
-            align-self: flex-end;
-            margin-right: 2px;
-            position: relative;
-            background-color: #79aec8;
-        }
+                        // The data for our dataset
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Ksh",
+                                backgroundColor: 'rgb(114,148,114)',
+                                borderColor: 'rgb(0, 0, 0)',
+                                data: defaultData,
+                            }]
+                        },
 
-        .bar-chart .bar:last-child {
-            margin: 0;
-        }
+                        // Configuration options go here
+                        options: {}
+                    });
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+            $.ajax({
+                method: 'GET',
+                url: cash_api,
+                success: function (data) {
+                    console.log(data);
+                    $.each(data, function (index, value) {
+                        cashData.push(value.total);
+                        cashLabels.push(value.period);
+                    });
+                    console.log(defaultData, labels);
+                    var ctx = document.getElementById('cashChart').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        // The type of chart we want to create
+                        type: 'bar',
 
-        .bar-chart .bar:hover {
-            background-color: #417690;
-        }
+                        // The data for our dataset
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Ksh",
+                                backgroundColor: 'rgb(114,148,114)',
+                                borderColor: 'rgb(0, 0, 0)',
+                                data: defaultData,
+                            }]
+                        },
 
-        .bar-chart .bar .bar-tooltip {
-            position: relative;
-            z-index: 999;
-        }
-
-        .bar-chart .bar .bar-tooltip {
-            position: absolute;
-            top: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            font-weight: bold;
-            opacity: 0;
-        }
-
-        .bar-chart .bar:hover .bar-tooltip {
-            opacity: 1;
-        }
-
-    </style>
-    <div class="bar-chart ml-3 mr-3 mb-5">
-        {% for x in sales_summary_over_time %}
-            <div class="bar" style="height:{{ x.pct }}%">
-                <div class="bar-tooltip">
-                    {{ x.total | default:0 | intcomma }}<br>
-                    {{ x.period | date:"d/m/Y" }}
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-    <h4 class="text-center mt-5">Open Air Market Sales Over Time</h4>
-    <div class="bar-chart ml-3 mr-3 mb-5">
-        {% for x in cash_sales_summary_over_time %}
-            <div class="bar" style="height:{{ x.pct }}%">
-                <div class="bar-tooltip">
-                    {{ x.total | default:0 | intcomma }}<br>
-                    {{ x.period | date:"d/m/Y" }}
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+                        // Configuration options go here
+                        options: {}
+                    });
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        })
+    </script>
 {% endblock %}
