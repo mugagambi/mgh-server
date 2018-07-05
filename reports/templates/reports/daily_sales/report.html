@@ -564,7 +564,7 @@
         }
 
     </style>
-    <div class="bar-chart ml-3 mr-3">
+    <div class="bar-chart ml-3 mr-3 mb-5">
         {% for x in sales_summary_over_time %}
             <div class="bar" style="height:{{ x.pct }}%">
                 <div class="bar-tooltip">
@@ -575,7 +575,7 @@
         {% endfor %}
     </div>
     <h4 class="text-center mt-5">Open Air Market Sales Over Time</h4>
-    <div class="bar-chart ml-3 mr-3">
+    <div class="bar-chart ml-3 mr-3 mb-5">
         {% for x in cash_sales_summary_over_time %}
             <div class="bar" style="height:{{ x.pct }}%">
                 <div class="bar-tooltip">
