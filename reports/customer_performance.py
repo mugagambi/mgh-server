@@ -6,12 +6,15 @@ from django.db.models import Min, Max, DateField, Sum, Avg
 from django.db.models.functions import Trunc
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
+from pytz import timezone as pytz_zone
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from reports import forms
 from reports.serializers import DailySalesChartSerializer
 from sales import models
+
+AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
 
 
 @login_required()
@@ -25,8 +28,8 @@ def period(request):
             return redirect('customer_performance_report',
                             date_0=str(date_0), date_1=str(date_1), customer=customer)
     else:
-        form = forms.CustomerPerformance(initial={'date_0': datetime.date.today(),
-                                                  'date_1': datetime.date.today(), })
+        form = forms.CustomerPerformance(initial={'date_0': timezone.datetime.today(),
+                                                  'date_1': timezone.datetime.today(), })
     return render(request, 'reports/customer_performance/period.html',
                   {'form': form})
 
@@ -52,8 +55,8 @@ def report(request, date_0, date_1, customer):
     period = get_date_period_in_range(date_0, date_1)
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
-    date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0))
-    date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59))
+    date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
+    date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
     customer = get_object_or_404(models.Customer, pk=customer)
     sales = models.ReceiptParticular.objects. \
         filter(receipt__date__range=(date_0_datetime, date_1_datetime),
@@ -73,11 +76,7 @@ def report(request, date_0, date_1, customer):
                  total_purchase=Sum('total')).order_by('-total_purchase')
     high = summary_range.get('high', 0)
     low = summary_range.get('low', 0)
-    performance_over_time = [{
-        'period': x['period'],
-        'total': x['total'] or 0,
-        'pct': ((x['total'] or 0) - low) / (high - low) * 100 if high > low else 0, } for x in sales]
-    context_data = {'performance_over_time': performance_over_time, 'date_0': date_0_datetime,
+    context_data = {'date_0': date_0_datetime,
                     'date_1': date_1_datetime, 'customer': customer, 'period': period,
                     'products': products, 'high': high, 'low': low, 'average': average,
                     'total_purchase': total_purchase,
@@ -91,8 +90,8 @@ def get_json_response(request, date_0, date_1, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
-    date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0))
-    date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59))
+    date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
+    date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
     sales = models.ReceiptParticular.objects. \
         filter(receipt__date__range=(date_0_datetime, date_1_datetime),
                receipt__customer=customer). \

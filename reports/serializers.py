@@ -7,7 +7,6 @@ class DailySalesChartSerializer(serializers.Serializer):
     total = serializers.SerializerMethodField('total_number', read_only=True)
 
     def total_number(self, obj):
-        print(obj['total'])
         return number_format(obj['total'])
 
     def create(self, validated_data):
