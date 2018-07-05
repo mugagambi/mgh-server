@@ -6,8 +6,11 @@ from django.db.models import Min, Max, DateField, Sum, Avg
 from django.db.models.functions import Trunc
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from reports import forms
+from reports.serializers import DailySalesChartSerializer
 from sales import models
 
 
@@ -44,6 +47,8 @@ def get_date_period_in_range(date_0, date_1):
 # todo add the right permissions
 @login_required()
 def report(request, date_0, date_1, customer):
+    date_0_str = date_0
+    date_1_str = date_1
     period = get_date_period_in_range(date_0, date_1)
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
@@ -75,5 +80,27 @@ def report(request, date_0, date_1, customer):
     context_data = {'performance_over_time': performance_over_time, 'date_0': date_0_datetime,
                     'date_1': date_1_datetime, 'customer': customer, 'period': period,
                     'products': products, 'high': high, 'low': low, 'average': average,
-                    'total_purchase': total_purchase}
+                    'total_purchase': total_purchase,
+                    'date_0_str': date_0_str, 'date_1_str': date_1_str}
     return render(request, 'reports/customer_performance/report.html', context_data)
+
+
+@api_view(['GET'])
+def get_json_response(request, date_0, date_1, customer):
+    period = get_date_period_in_range(date_0, date_1)
+    customer = get_object_or_404(models.Customer, pk=customer)
+    date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
+    date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
+    date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0))
+    date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59))
+    sales = models.ReceiptParticular.objects. \
+        filter(receipt__date__range=(date_0_datetime, date_1_datetime),
+               receipt__customer=customer). \
+        annotate(day=Trunc('receipt__date', period, output_field=DateField(), )). \
+        values('day').annotate(total=Sum('total')).order_by('day')
+    sales_summary_over_time = [{
+        'period': x['day'],
+        'total': x['total'] or 0,
+    } for x in sales]
+    serializer = DailySalesChartSerializer(sales_summary_over_time, many=True)
+    return Response(serializer.data)

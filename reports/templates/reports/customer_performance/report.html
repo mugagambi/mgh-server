@@ -8,61 +8,8 @@
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'customer_performance_period' %}" class="btn btn-outline-success">Change Period</a>
     <hr/>
-    <h4 class="text-center">Sales Over Time (by {{ 'day' }})</h4>
-    <style>
-        .bar-chart {
-            display: flex;
-            justify-content: space-around;
-            height: 500px;
-            padding-top: 60px;
-        }
-
-        .bar-chart .bar {
-            flex: 100%;
-            align-self: flex-end;
-            margin-right: 2px;
-            position: relative;
-            background-color: #79aec8;
-        }
-
-        .bar-chart .bar:last-child {
-            margin: 0;
-        }
-
-        .bar-chart .bar:hover {
-            background-color: #417690;
-        }
-
-        .bar-chart .bar .bar-tooltip {
-            position: relative;
-            z-index: 999;
-        }
-
-        .bar-chart .bar .bar-tooltip {
-            position: absolute;
-            top: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            font-weight: bold;
-            opacity: 0;
-        }
-
-        .bar-chart .bar:hover .bar-tooltip {
-            opacity: 1;
-        }
-
-    </style>
-    <div class="bar-chart mr-5 ml-5 mb-5">
-        {% for x in performance_over_time %}
-            <div class="bar" style="height:{{ x.pct }}%">
-                <div class="bar-tooltip">
-                    {{ x.total | default:0 | intcomma }}<br>
-                    {{ x.period | date:"d/m/Y" }}
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+    <h4 class="text-center">Sales Over Time (by {{ period }})</h4>
+    <canvas id="myChart"></canvas>
     <h4 class="text-center">Description</h4>
     <p><b>Max Purchase: </b>Ksh.{{ high | intcomma }}, <b>Lowest Purchase: </b>Ksh. {{ low | intcomma }}, <b>Average
         Spending per Purchase: </b>Ksh. {{ average.average | floatformat:2 |intcomma }}, <b>Total
@@ -86,4 +33,46 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <script>
+        var api = '{% url 'customer_performance_chart' date_0=date_0_str date_1=date_1_str customer=customer.pk %}';
+        var defaultData = [];
+        var labels = [];
+        $(document).ready(function () {
+            $.ajax({
+                method: 'GET',
+                url: api,
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        defaultData.push(value.total);
+                        labels.push(value.period);
+                    });
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        // The type of chart we want to create
+                        type: 'bar',
+
+                        // The data for our dataset
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Ksh",
+                                backgroundColor: 'rgb(114,148,114)',
+                                borderColor: 'rgb(0, 0, 0)',
+                                data: defaultData,
+                            }]
+                        },
+
+                        // Configuration options go here
+                        options: {}
+                    });
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        })
+    </script>
 {% endblock %}
