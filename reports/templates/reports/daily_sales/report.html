@@ -69,6 +69,10 @@
 
 
 
+
+
+
+
                                             {{ sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">Previous</span>
@@ -86,6 +90,10 @@
                             {% if sales.number|add:'-4' > 1 %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?payed_page=
+
+
+
+
 
 
 
@@ -159,6 +167,10 @@
 
 
 
+
+
+
+
                                             {{ i }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                                     </li>
                                 {% endif %}
@@ -166,6 +178,10 @@
                             {% if sales.paginator.num_pages > sales.number|add:'4' %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?payed_page=
+
+
+
+
 
 
 
@@ -203,6 +219,10 @@
                             {% if sales.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?payed_page=
+
+
+
+
 
 
 
@@ -309,6 +329,10 @@
 
 
 
+
+
+
+
                                             {{ cash_sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">Previous</span>
@@ -326,6 +350,10 @@
                             {% if cash_sales.number|add:'-4' > 1 %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?credit_page=
+
+
+
+
 
 
 
@@ -388,6 +416,10 @@
 
 
 
+
+
+
+
                                             {{ i }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                                     </li>
                                 {% endif %}
@@ -395,6 +427,10 @@
                             {% if cash_sales.paginator.num_pages > cash_sales.number|add:'4' %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?credit_page=
+
+
+
+
 
 
 
@@ -447,6 +483,10 @@
 
 
 
+
+
+
+
                                             {{ cash_sales.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Next">
                                         <span aria-hidden="true">Next</span>
@@ -469,4 +509,60 @@
         </div>
     </div>
     <hr/>
+    <h4 class="text-center">Sales Over Time</h4>
+    <style>
+        .bar-chart {
+            display: flex;
+            justify-content: space-around;
+            height: 160px;
+            padding-top: 60px;
+            overflow: hidden;
+        }
+
+        .bar-chart .bar {
+            flex: 100%;
+            align-self: flex-end;
+            margin-right: 2px;
+            position: relative;
+            background-color: #79aec8;
+        }
+
+        .bar-chart .bar:last-child {
+            margin: 0;
+        }
+
+        .bar-chart .bar:hover {
+            background-color: #417690;
+        }
+
+        .bar-chart .bar .bar-tooltip {
+            position: relative;
+            z-index: 999;
+        }
+
+        .bar-chart .bar .bar-tooltip {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-weight: bold;
+            opacity: 0;
+        }
+
+        .bar-chart .bar:hover .bar-tooltip {
+            opacity: 1;
+        }
+
+    </style>
+    <div class="bar-chart">
+        {% for x in sales_summary_over_time %}
+            <div class="bar" style="height:{{ x.pct }}%">
+                <div class="bar-tooltip">
+                    {{ x.total | default:0 | intcomma }}<br>
+                    {{ x.period | date:"d/m/Y" }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

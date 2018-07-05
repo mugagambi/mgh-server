@@ -2,7 +2,7 @@ import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import DateField, Sum
+from django.db.models import DateField, Sum, Min, Max
 from django.db.models.functions import Trunc
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -36,6 +36,19 @@ def report(request, date_0, date_1):
         filter(receipt__date__range=(date_0_datetime, date_1_datetime)). \
         annotate(day=Trunc('receipt__date', 'day', output_field=DateField(), )). \
         values('day').annotate(total=Sum('total')).order_by('-day')
+    sales_summary_range = sales.aggregate(
+        low=Min('total'),
+        high=Max('total'),
+    )
+    high = sales_summary_range.get('high', 0)
+    low = sales_summary_range.get('low', 0)
+    sales_summary_over_time = [{
+        'period': x['day'],
+        'total': x['total'] or 0,
+        'pct':
+            ((x['total'] or 0) - low) / (high - low) * 100
+            if high > low else 0,
+    } for x in sales]
     cash_sales = models.CashReceiptParticular.objects. \
         filter(cash_receipt__date__range=(date_0_datetime, date_1_datetime)). \
         annotate(day=Trunc('cash_receipt__date', 'day', output_field=DateField(), )). \
@@ -61,5 +74,6 @@ def report(request, date_0, date_1):
     except EmptyPage:
         cash_sales = paginator.page(paginator.num_pages)
     context_data = {'sales': sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime, 'cash_sales': cash_sales,
-                    'total_sales': total_sales, 'total_cash_sales': total_cash_sales}
+                    'total_sales': total_sales, 'total_cash_sales': total_cash_sales,
+                    'sales_summary_over_time': sales_summary_over_time}
     return render(request, 'reports/daily_sales/report.html', context_data)
