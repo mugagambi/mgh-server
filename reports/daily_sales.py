@@ -53,7 +53,7 @@ def report(request, date_0, date_1):
         filter(cash_receipt__date__range=(date_0_datetime, date_1_datetime)). \
         annotate(day=Trunc('cash_receipt__date', 'day', output_field=DateField(), )). \
         values('day').annotate(total=Sum('total')).order_by('day')
-    cash_sales_summary_range = sales.aggregate(
+    cash_sales_summary_range = cash_sales.aggregate(
         low=Min('total'),
         high=Max('total'),
     )
