@@ -65,7 +65,7 @@ def report(request, date_0, date_1):
         'pct':
             ((x['total'] or 0) - low) / (high - low) * 100
             if high > low else 0,
-    } for x in sales]
+    } for x in cash_sales]
     total_sales = sales.aggregate(Sum('total'))
     total_cash_sales = cash_sales.aggregate((Sum('total')))
     page = request.GET.get('payed_page', 1)
