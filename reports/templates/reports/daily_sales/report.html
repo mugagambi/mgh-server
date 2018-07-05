@@ -509,7 +509,7 @@
         </div>
     </div>
     <hr/>
-    <h4 class="text-center">Sales Over Time</h4>
+    <h4 class="text-center">Customer Sales Over Time</h4>
     <style>
         .bar-chart {
             display: flex;
@@ -555,7 +555,7 @@
         }
 
     </style>
-    <div class="bar-chart">
+    <div class="bar-chart ml-3 mr-3">
         {% for x in sales_summary_over_time %}
             <div class="bar" style="height:{{ x.pct }}%">
                 <div class="bar-tooltip">

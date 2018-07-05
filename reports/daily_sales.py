@@ -35,7 +35,7 @@ def report(request, date_0, date_1):
     sales = models.ReceiptParticular.objects. \
         filter(receipt__date__range=(date_0_datetime, date_1_datetime)). \
         annotate(day=Trunc('receipt__date', 'day', output_field=DateField(), )). \
-        values('day').annotate(total=Sum('total')).order_by('-day')
+        values('day').annotate(total=Sum('total')).order_by('day')
     sales_summary_range = sales.aggregate(
         low=Min('total'),
         high=Max('total'),
