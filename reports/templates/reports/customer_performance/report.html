@@ -65,7 +65,8 @@
     </div>
     <h4 class="text-center">Description</h4>
     <p><b>Max Purchase: </b>Ksh.{{ high | intcomma }}, <b>Lowest Purchase: </b>Ksh. {{ low | intcomma }}, <b>Average
-        Spending per Purchase: </b>Ksh. {{ average.average | floatformat:2 |intcomma }}</p>
+        Spending per Purchase: </b>Ksh. {{ average.average | floatformat:2 |intcomma }}, <b>Total
+        Spent: </b>Ksh. {{ total_purchase.total_purchase | intcomma }}</p>
     <p class="text-center"><b><u>Total Purchases per Product</u></b></p>
     <table id="customers" class="table table-bordered table-responsive-sm">
         <thead class="thead-dark">

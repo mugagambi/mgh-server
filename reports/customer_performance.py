@@ -60,11 +60,12 @@ def report(request, date_0, date_1, customer):
         high=Max('total'),
     )
     average = sales.aggregate(average=Avg('total'))
+    total_purchase = sales.aggregate(total_purchase=Sum('total'))
     products = models.ReceiptParticular.objects. \
         filter(receipt__date__range=(date_0_datetime, date_1_datetime),
-               receipt__customer=customer).values('product__name').annotate(total_qty=Sum('qty'),
-                                                                            total_purchase=Sum('total')).order_by(
-        '-total_purchase')
+               receipt__customer=customer).values('product__name'). \
+        annotate(total_qty=Sum('qty'),
+                 total_purchase=Sum('total')).order_by('-total_purchase')
     high = summary_range.get('high', 0)
     low = summary_range.get('low', 0)
     performance_over_time = [{
@@ -73,5 +74,6 @@ def report(request, date_0, date_1, customer):
         'pct': ((x['total'] or 0) - low) / (high - low) * 100 if high > low else 0, } for x in sales]
     context_data = {'performance_over_time': performance_over_time, 'date_0': date_0_datetime,
                     'date_1': date_1_datetime, 'customer': customer, 'period': period,
-                    'products': products, 'high': high, 'low': low, 'average': average}
+                    'products': products, 'high': high, 'low': low, 'average': average,
+                    'total_purchase': total_purchase}
     return render(request, 'reports/customer_performance/report.html', context_data)
