@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2"> {{ customer.shop_name }} Performance Report</h1>
+    </div>
+    <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
+    <a href="{% url 'customer_performance_period' %}" class="btn btn-outline-success">Change Period</a>
+    <hr/>
+    <h4 class="text-center">Sales Over Time (by {{ 'day' }})</h4>
+    <style>
+        .bar-chart {
+            display: flex;
+            justify-content: space-around;
+            height: 500px;
+            padding-top: 60px;
+        }
+
+        .bar-chart .bar {
+            flex: 100%;
+            align-self: flex-end;
+            margin-right: 2px;
+            position: relative;
+            background-color: #79aec8;
+        }
+
+        .bar-chart .bar:last-child {
+            margin: 0;
+        }
+
+        .bar-chart .bar:hover {
+            background-color: #417690;
+        }
+
+        .bar-chart .bar .bar-tooltip {
+            position: relative;
+            z-index: 999;
+        }
+
+        .bar-chart .bar .bar-tooltip {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-weight: bold;
+            opacity: 0;
+        }
+
+        .bar-chart .bar:hover .bar-tooltip {
+            opacity: 1;
+        }
+
+    </style>
+    <div class="bar-chart mr-5 ml-5">
+        {% for x in performance_over_time %}
+            <div class="bar" style="height:{{ x.pct }}%">
+                <div class="bar-tooltip">
+                    {{ x.total | default:0 | intcomma }}<br>
+                    {{ x.period | date:"d/m/Y" }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
