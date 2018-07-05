@@ -1,9 +1,8 @@
 # todo add the right permissions
 import datetime
-import json
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Min, Max, DateField, Sum
+from django.db.models import Min, Max, DateField, Sum, Avg
 from django.db.models.functions import Trunc
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
@@ -60,13 +59,19 @@ def report(request, date_0, date_1, customer):
         low=Min('total'),
         high=Max('total'),
     )
+    average = sales.aggregate(average=Avg('total'))
+    products = models.ReceiptParticular.objects. \
+        filter(receipt__date__range=(date_0_datetime, date_1_datetime),
+               receipt__customer=customer).values('product__name').annotate(total_qty=Sum('qty'),
+                                                                            total_purchase=Sum('total')).order_by(
+        '-total_purchase')
     high = summary_range.get('high', 0)
     low = summary_range.get('low', 0)
-
     performance_over_time = [{
         'period': x['period'],
         'total': x['total'] or 0,
         'pct': ((x['total'] or 0) - low) / (high - low) * 100 if high > low else 0, } for x in sales]
     context_data = {'performance_over_time': performance_over_time, 'date_0': date_0_datetime,
-                    'date_1': date_1_datetime, 'customer': customer, 'period': period}
+                    'date_1': date_1_datetime, 'customer': customer, 'period': period,
+                    'products': products, 'high': high, 'low': low, 'average': average}
     return render(request, 'reports/customer_performance/report.html', context_data)

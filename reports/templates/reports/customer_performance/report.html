@@ -63,4 +63,26 @@
             </div>
         {% endfor %}
     </div>
+    <h4 class="text-center">Description</h4>
+    <p><b>Max Purchased: </b>Ksh.{{ high | intcomma }}, <b>Lowest Purchase: </b>Ksh. {{ low | intcomma }}, <b>Average
+        Spending per Purchase: </b>Ksh. {{ average.average | floatformat:2 |intcomma }}</p>
+    <p class="text-center"><b><u>Total Purchases per Product</u></b></p>
+    <table id="customers" class="table table-bordered table-responsive-sm">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Total Qty</th>
+            <th scope="col">Total Purchase</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>{{ product.product__name }}</td>
+                <td>{{ product.total_qty }}</td>
+                <td>Ksh. {{ product.total_purchase | intcomma }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
