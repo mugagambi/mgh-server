@@ -64,7 +64,7 @@
         {% endfor %}
     </div>
     <h4 class="text-center">Description</h4>
-    <p><b>Max Purchased: </b>Ksh.{{ high | intcomma }}, <b>Lowest Purchase: </b>Ksh. {{ low | intcomma }}, <b>Average
+    <p><b>Max Purchase: </b>Ksh.{{ high | intcomma }}, <b>Lowest Purchase: </b>Ksh. {{ low | intcomma }}, <b>Average
         Spending per Purchase: </b>Ksh. {{ average.average | floatformat:2 |intcomma }}</p>
     <p class="text-center"><b><u>Total Purchases per Product</u></b></p>
     <table id="customers" class="table table-bordered table-responsive-sm">
