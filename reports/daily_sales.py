@@ -52,7 +52,20 @@ def report(request, date_0, date_1):
     cash_sales = models.CashReceiptParticular.objects. \
         filter(cash_receipt__date__range=(date_0_datetime, date_1_datetime)). \
         annotate(day=Trunc('cash_receipt__date', 'day', output_field=DateField(), )). \
-        values('day').annotate(total=Sum('total')).order_by('-day')
+        values('day').annotate(total=Sum('total')).order_by('day')
+    cash_sales_summary_range = sales.aggregate(
+        low=Min('total'),
+        high=Max('total'),
+    )
+    high = cash_sales_summary_range.get('high', 0)
+    low = cash_sales_summary_range.get('low', 0)
+    cash_sales_summary_over_time = [{
+        'period': x['day'],
+        'total': x['total'] or 0,
+        'pct':
+            ((x['total'] or 0) - low) / (high - low) * 100
+            if high > low else 0,
+    } for x in sales]
     total_sales = sales.aggregate(Sum('total'))
     total_cash_sales = cash_sales.aggregate((Sum('total')))
     page = request.GET.get('payed_page', 1)
@@ -75,5 +88,6 @@ def report(request, date_0, date_1):
         cash_sales = paginator.page(paginator.num_pages)
     context_data = {'sales': sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime, 'cash_sales': cash_sales,
                     'total_sales': total_sales, 'total_cash_sales': total_cash_sales,
-                    'sales_summary_over_time': sales_summary_over_time}
+                    'sales_summary_over_time': sales_summary_over_time,
+                    'cash_sales_summary_over_time': cash_sales_summary_over_time}
     return render(request, 'reports/daily_sales/report.html', context_data)

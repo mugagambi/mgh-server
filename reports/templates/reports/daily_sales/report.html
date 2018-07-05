@@ -73,6 +73,7 @@
 
 
 
+
                                             {{ sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">Previous</span>
@@ -90,6 +91,7 @@
                             {% if sales.number|add:'-4' > 1 %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?payed_page=
+
 
 
 
@@ -171,6 +173,7 @@
 
 
 
+
                                             {{ i }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                                     </li>
                                 {% endif %}
@@ -178,6 +181,7 @@
                             {% if sales.paginator.num_pages > sales.number|add:'4' %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?payed_page=
+
 
 
 
@@ -219,6 +223,7 @@
                             {% if sales.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?payed_page=
+
 
 
 
@@ -333,6 +338,7 @@
 
 
 
+
                                             {{ cash_sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">Previous</span>
@@ -350,6 +356,7 @@
                             {% if cash_sales.number|add:'-4' > 1 %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?credit_page=
+
 
 
 
@@ -420,6 +427,7 @@
 
 
 
+
                                             {{ i }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                                     </li>
                                 {% endif %}
@@ -427,6 +435,7 @@
                             {% if cash_sales.paginator.num_pages > cash_sales.number|add:'4' %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?credit_page=
+
 
 
 
@@ -462,6 +471,7 @@
                             {% if cash_sales.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?credit_page=
+
 
 
 
@@ -556,6 +566,17 @@
     </style>
     <div class="bar-chart ml-3 mr-3">
         {% for x in sales_summary_over_time %}
+            <div class="bar" style="height:{{ x.pct }}%">
+                <div class="bar-tooltip">
+                    {{ x.total | default:0 | intcomma }}<br>
+                    {{ x.period | date:"d/m/Y" }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <h4 class="text-center mt-5">Open Air Market Sales Over Time</h4>
+    <div class="bar-chart ml-3 mr-3">
+        {% for x in cash_sales_summary_over_time %}
             <div class="bar" style="height:{{ x.pct }}%">
                 <div class="bar-tooltip">
                     {{ x.total | default:0 | intcomma }}<br>
