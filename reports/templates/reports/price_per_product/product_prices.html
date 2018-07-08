@@ -38,4 +38,41 @@
         {% endfor %}
         </tbody>
     </table>
+    <hr/>
+    <h4 class="text-center">Sales per Price</h4>
+    <canvas id="myChart"></canvas>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            var defaultData = [{% for sale in sales %}
+                {{ sale.total__sum }},
+            {% endfor %}
+            ];
+            var labels = [{% for sale in sales %}
+                '{{ sale.as_integer}}',
+            {% endfor %}];
+            console.log(labels)
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'bar',
+
+                // The data for our dataset
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Ksh",
+                        backgroundColor: 'rgb(114,148,114)',
+                        borderColor: 'rgb(0, 0, 0)',
+                        data: defaultData,
+                    }]
+                },
+
+                // Configuration options go here
+                options: {}
+            });
+        })
+    </script>
 {% endblock %}
