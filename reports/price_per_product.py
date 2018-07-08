@@ -93,7 +93,7 @@ def customer_sales_per_price(request, product_id, price, type, date_0, date_1):
                                                          'receipt__served_by').annotate(
             as_integer=Cast('price', IntegerField())).filter(
             receipt__date__range=(date_0_datetime, date_1_datetime), product=product, as_integer=price).order_by(
-            'receipt_date')
+            'receipt__date')
         context = {'product': product, 'type': 'Customer Sales', 'date_0': date_0_datetime,
                    'date_1': date_1_datetime, 'price': price}
     else:
