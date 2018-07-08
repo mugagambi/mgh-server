@@ -9,6 +9,7 @@ from . import outward_stock_summary
 from . import price_per_product
 from . import product_customer
 from . import views
+from . import daily_orders
 
 urlpatterns = [
     path('index/', views.index, name='report-index'),
@@ -50,7 +51,7 @@ urlpatterns = [
          name='daily_sales_report'),
     path('sales/daily-sales/charts/<str:date_0>/<str:date_1>/', daily_sales.get_json_response,
          name='daily_sales_charts'),
-    path('sales/daily-cash_sales/charts/<str:date_0>/<str:date_1>/', daily_sales.get_json_response,
+    path('sales/daily-cash_sales/charts/<str:date_0>/<str:date_1>/', daily_sales.get_cash_sale_json_response,
          name='daily_cash_sales_charts'),
     path('sales/customer-sales/period/', customer_sales.period, name='customer_sales_period'),
     path('sales/customer-sales/<str:customer>/<str:date_0>/<str:date_1>/', customer_sales.report,
@@ -58,4 +59,5 @@ urlpatterns = [
     path('sales/total-order/period/', total_orders.period, name='total_orders_period'),
     path('sales/total-order/<str:date_0>/<str:date_1>/', total_orders.report,
          name='total_orders_report'),
+    path('sales/daily-order-per-product/period/', daily_orders.period, name='total_order_period'),
 ]
