@@ -27,7 +27,8 @@
                 <td>{{ sale.total__sum | floatformat:2 | intcomma }}</td>
                 <td>{{ sale.total__count | intcomma }}</td>
                 <td>
-                    <a href="" class="btn btn-sm btn-outline-success"
+                    <a href="{% url 'sales_per_price' type=type date_1=date_1_str date_0=date_0_str product_id=product.id price=sale.as_integer %}"
+                       class="btn btn-sm btn-outline-success"
                        data-toggle="tooltip"
                        data-placement="top"
                        title="Click to view all the selling prices and how many items sold in each price">more
