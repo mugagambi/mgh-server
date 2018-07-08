@@ -1,15 +1,15 @@
 from django.urls import path
 
-from reports import sales_summary, total_orders
+from reports import sales_summary, total_orders, product_sales
 from . import customer_performance
 from . import customer_sales
+from . import daily_orders
 from . import daily_sales
 from . import outward_products
 from . import outward_stock_summary
 from . import price_per_product
 from . import product_customer
 from . import views
-from . import daily_orders
 
 urlpatterns = [
     path('index/', views.index, name='report-index'),
@@ -60,4 +60,7 @@ urlpatterns = [
     path('sales/total-order/<str:date_0>/<str:date_1>/', total_orders.report,
          name='total_orders_report'),
     path('sales/daily-order-per-product/period/', daily_orders.period, name='total_order_period'),
+    path('sales/product-sales/period/', product_sales.period, name='product_sales_period'),
+    path('sales/product-sales/<str:date_0>/<str:date_1>/', product_sales.report,
+         name='product_sales_report'),
 ]

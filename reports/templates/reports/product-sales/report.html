@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2"> Product Sales Report</h1>
+    </div>
+    <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
+    <a href="{% url 'daily_sales_period' %}" class="btn btn-outline-success">Change Period</a>
+    <hr/>
+    <div class="row">
+        <div class="col-md-6">
+            <h6 class="text-center">Customer Sales</h6>
+            <table id="customers" class="table table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Total Qty</th>
+                    <th scope="col">Total Sold (Ksh.)</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for sales in sales %}
+                    <tr>
+                        <td>
+                            {{ sales.product__name }}
+                        </td>
+                        <td>{{ sales.qty__sum | intcomma }}</td>
+                        <td>{{ sales.total__sum | intcomma }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <th>Grand Total</th>
+                    <th>{{ total_sales_qty.qty__sum__sum | intcomma }}</th>
+                    <th>{{ total_sales_amount.total__sum__sum | intcomma }}</th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h6 class="text-center" data-toggle="tooltip" data-placement="top" title="Cash Sale Summary">Open Air Market
+                Sales
+            </h6>
+            <table id="customers" class="table table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Total Qty</th>
+                    <th scope="col">Total Sold (Ksh.)</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for sales in cash_sales %}
+                    <tr>
+                        <td>
+                            {{ sales.product__name }}
+                        </td>
+                        <td>{{ sales.qty__sum | intcomma }}</td>
+                        <td>{{ sales.total__sum | intcomma }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <th>Grand Total</th>
+                    <th>{{ total_cash_sales_qty.qty__sum__sum | intcomma }}</th>
+                    <th>{{ total_cash_sales_amount.total__sum__sum | intcomma }}</th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr/>
+    <h4 class="text-center">Amount Sold Per Product for customer sales</h4>
+    <canvas id="myChart"></canvas>
+    <h4 class="text-center">Amount Sold Per Product for open air market sales sales</h4>
+    <canvas id="cashChart"></canvas>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <script>
+    console.log('js');
+        $(document).ready(function () {
+            var defaultData = [{% for sale in sales %}
+                {{ sale.total__sum }},
+            {% endfor %}
+            ];
+            var cashData = [{% for sale in cash_sales %}
+                {{ sale.total__sum }},
+            {% endfor %}
+            ];
+            var cashLabels = [{% for sale in cash_sales %}
+                '{{ sale.product__name }}',
+            {% endfor %}];
+            var labels = [{% for sale in sales %}
+                '{{ sale.product__name }}',
+            {% endfor %}];
+            console.log(defaultData,labels);
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'bar',
+
+                // The data for our dataset
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Ksh",
+                        backgroundColor: 'rgb(114,148,114)',
+                        borderColor: 'rgb(0, 0, 0)',
+                        data: defaultData,
+                    }]
+                },
+
+                // Configuration options go here
+                options: {}
+            });
+            var ctx = document.getElementById('cashChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'bar',
+
+                // The data for our dataset
+                data: {
+                    labels: cashLabels,
+                    datasets: [{
+                        label: "Ksh",
+                        backgroundColor: 'rgb(114,148,114)',
+                        borderColor: 'rgb(0, 0, 0)',
+                        data: cashData,
+                    }]
+                },
+
+                // Configuration options go here
+                options: {}
+            });
+        })
+    </script>
+{% endblock %}
