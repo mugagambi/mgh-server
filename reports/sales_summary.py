@@ -34,17 +34,20 @@ def sales_summary_report(request, date_0, date_1):
     date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0 = datetime.datetime.combine(date_0, datetime.time(0, 0))
     date_1 = datetime.datetime.combine(date_1, datetime.time(23, 59))
-    payed = models.ReceiptPayment.objects.filter(receipt__date__range=(date_0, date_1)).exclude(type=4)
+    payed = models.ReceiptPayment.objects.select_related('receipt').filter(
+        receipt__date__range=(date_0, date_1)).exclude(type=4)
     if payed.exists():
         payed_total = payed.aggregate(total_amount=Sum('amount'))
     else:
         payed_total = {'total_amount': 0}
     payed_receipts = payed.values('receipt__number').annotate(total_amount=Sum('amount')).order_by(
         '-total_amount')
-    cash_sale = models.CashReceiptParticular.objects.filter(cash_receipt__date__range=(date_0, date_1)).aggregate(
+    cash_sale = models.CashReceiptParticular.objects.select_related('cash_receipt').filter(
+        cash_receipt__date__range=(date_0, date_1)).aggregate(
         total_amount=Sum(F('qty') * F('price')))
     # todo stop aggregating total
-    credit_payments = models.ReceiptPayment.objects.filter(receipt__date__range=(date_0, date_1), type=4)
+    credit_payments = models.ReceiptPayment.objects.select_related('receipt').filter(
+        receipt__date__range=(date_0, date_1), type=4)
     receipt_id = [payment.receipt.number for payment in credit_payments]
     credit = models.Receipt.objects.filter(number__in=receipt_id).values('number').annotate(
         Sum('receiptparticular__total'))
