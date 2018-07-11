@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load mathfilters %}
 {% load static %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
@@ -8,36 +9,37 @@
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'daily_sales_period' %}" class="btn btn-outline-success">Change Period</a>
     <hr/>
-    <div class="row">
-        <div class="col-md-6">
-            <h6 class="text-center">Daily Customer Sales</h6>
-            <table id="customers" class="table table-bordered">
-                <thead class="thead-dark">
-                <tr>
-                    <th scope="col">Day</th>
-                    <th scope="col">Total</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for sales in sales %}
-                    <tr>
-                        <td>
-                            {{ sales.day }}
-                        </td>
-                        <td>{{ sales.total | intcomma }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <hr/>
-            <p><b>Showing {{ sales.start_index }} to {{ sales.end_index }}
-                of {{ sales.paginator.count }} Daily Customer sales</b>
-                {% if sales.has_other_pages %}
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            {% if sales.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?payed_page=
+    <h6 class="text-center">Daily Sales</h6>
+    <table id="customers" class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Day</th>
+            <th scope="col">Customer Sales</th>
+            <th scope="col">Open Air Market Sales</th>
+            <th scope="col">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sale in sales %}
+            <tr>
+                <td>
+                    {{ sale.day }}
+                </td>
+                <td>{{ sale.sales | intcomma }}</td>
+                <td>{{ sale.cash | intcomma }}</td>
+                <td>{{ sale.sales|add:sale.cash | intcomma }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p><b>Showing {{ sales.start_index }} to {{ sales.end_index }}
+        of {{ sales.paginator.count }} Daily sales</b></p>
+    {% if sales.has_other_pages %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if sales.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?payed_page=
 
 
 
@@ -87,23 +89,6 @@
 
 
 
-                                            {{ sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                                       aria-label="Previous">
-                                        <span aria-hidden="true">Previous</span>
-                                        <span class="sr-only">Previous</span>
-                                    </a>
-                                </li>
-                            {% else %}
-                                <li class="page-item disabled"><a class="page-link"
-                                                                  disabled
-                                                                  aria-label="Previous">
-                                    <span aria-hidden="true">Previous</span>
-                                    <span class="sr-only">Previous</span>
-                                </a></li>
-                            {% endif %}
-                            {% if sales.number|add:'-4' > 1 %}
-                                <li class="page-item"><a class="page-link"
-                                                         href="?payed_page=
 
 
 
@@ -137,242 +122,24 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                                                 {{ sales.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                                                         aria-label="Previous">
-                                    <span aria-hidden="true">&hellip;</span>
-                                    <span class="sr-only">&hellip;</span>
-                                </a></li>
-                            {% endif %}
-
-                            {% for i in sales.paginator.page_range %}
-                                {% if sales.number == i %}
-                                    <li class="page-item active"><a class="page-link" disabled>{{ i }} <span
-                                            class="sr-only">(current)</span></a>
-                                    </li>
-                                {% elif i > sales.number|add:'-5' and i < sales.number|add:'5' %}
-                                    <li class="page-item"><a class="page-link" href="?payed_page=
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            {{ i }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                            {% if sales.paginator.num_pages > sales.number|add:'4' %}
-                                <li class="page-item"><a class="page-link"
-                                                         href="?payed_page=
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                                                 {{ sales.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                                                         aria-label="Previous">
-                                    <span aria-hidden="true">&hellip;</span>
-                                    <span class="sr-only">&hellip;</span>
-                                </a></li>
-                            {% endif %}
-                            {% if sales.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?payed_page=
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            {{ sales.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                                       aria-label="Next">
-                                        <span aria-hidden="true">Next</span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
-                                </li>
-                            {% else %}
-                                <li class="page-item disabled">
-                                    <a class="page-link" disabled aria-label="Next">
-                                        <span aria-hidden="true">Next</span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
+                                {{ sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                           aria-label="Previous">
+                            <span aria-hidden="true">Previous</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link"
+                                                      disabled
+                                                      aria-label="Previous">
+                        <span aria-hidden="true">Previous</span>
+                        <span class="sr-only">Previous</span>
+                    </a></li>
                 {% endif %}
-            <hr>
-            <p><b>Total Customer sales: </b>{{ total_sales.total__sum | floatformat:2 | intcomma }}</p>
-        </div>
-        <div class="col-md-6">
-            <h6 class="text-center" data-toggle="tooltip" data-placement="top" title="Cash Sale Summary">Open Air Market
-                Sales
-            </h6>
-            <table id="customers" class="table table-bordered">
-                <thead class="thead-dark">
-                <tr>
-                    <th scope="col">Day</th>
-                    <th scope="col">Total</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for sales in cash_sales %}
-                    <tr>
-                        <td>
-                            {{ sales.day }}
-                        </td>
-                        <td>{{ sales.total | floatformat:2 | intcomma }}</td>
-                    </tr>
-                {% endfor %}
+                {% if sales.number|add:'-4' > 1 %}
+                    <li class="page-item"><a class="page-link"
+                                             href="?payed_page=
 
-                </tbody>
-            </table>
-            <hr/>
-            <p><b>Showing {{ cash_sales.start_index }} to {{ cash_sales.end_index }}
-                of {{ cash_sales.paginator.count }} Daily Open Air Sales</b>
-                {% if cash_sales.has_other_pages %}
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            {% if cash_sales.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?credit_page=
 
 
 
@@ -417,23 +184,6 @@
 
 
 
-                                            {{ cash_sales.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                                       aria-label="Previous">
-                                        <span aria-hidden="true">Previous</span>
-                                        <span class="sr-only">Previous</span>
-                                    </a>
-                                </li>
-                            {% else %}
-                                <li class="page-item disabled"><a class="page-link"
-                                                                  disabled
-                                                                  aria-label="Previous">
-                                    <span aria-hidden="true">Previous</span>
-                                    <span class="sr-only">Previous</span>
-                                </a></li>
-                            {% endif %}
-                            {% if cash_sales.number|add:'-4' > 1 %}
-                                <li class="page-item"><a class="page-link"
-                                                         href="?credit_page=
 
 
 
@@ -470,264 +220,357 @@
 
 
 
-
-
-
-
-
-
-                                                                 {{ cash_sales.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                                                         aria-label="Previous">
-                                    <span aria-hidden="true">&hellip;</span>
-                                    <span class="sr-only">&hellip;</span>
-                                </a></li>
-                            {% endif %}
-
-                            {% for i in cash_sales.paginator.page_range %}
-                                {% if cash_sales.number == i %}
-                                    <li class="page-item active"><a class="page-link" disabled>{{ i }} <span
-                                            class="sr-only">(current)</span></a>
-                                    </li>
-                                {% elif i > cash_sales.number|add:'-5' and i < cash_sales.number|add:'5' %}
-                                    <li class="page-item"><a class="page-link" href="?credit_page=
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            {{ i }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                            {% if cash_sales.paginator.num_pages > cash_sales.number|add:'4' %}
-                                <li class="page-item"><a class="page-link"
-                                                         href="?credit_page=
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                                                 {{ cash_sales.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                                                         aria-label="Previous">
-                                    <span aria-hidden="true">&hellip;</span>
-                                    <span class="sr-only">&hellip;</span>
-                                </a></li>
-                            {% endif %}
-                            {% if cash_sales.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?credit_page=
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            {{ cash_sales.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                                       aria-label="Next">
-                                        <span aria-hidden="true">Next</span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
-                                </li>
-                            {% else %}
-                                <li class="page-item disabled">
-                                    <a class="page-link" disabled aria-label="Next">
-                                        <span aria-hidden="true">Next</span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
+                                                     {{ sales.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                             aria-label="Previous">
+                        <span aria-hidden="true">&hellip;</span>
+                        <span class="sr-only">&hellip;</span>
+                    </a></li>
                 {% endif %}
-            <hr>
-            <p><b>Total Open Air Sales: </b>Ksh. {{ total_cash_sales.total__sum | floatformat:2 | intcomma }}</p>
-        </div>
-    </div>
+
+                {% for i in sales.paginator.page_range %}
+                    {% if sales.number == i %}
+                        <li class="page-item active"><a class="page-link" disabled>{{ i }} <span
+                                class="sr-only">(current)</span></a>
+                        </li>
+                    {% elif i > sales.number|add:'-5' and i < sales.number|add:'5' %}
+                        <li class="page-item"><a class="page-link" href="?payed_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                {{ i }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if sales.paginator.num_pages > sales.number|add:'4' %}
+                    <li class="page-item"><a class="page-link"
+                                             href="?payed_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                     {{ sales.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                             aria-label="Previous">
+                        <span aria-hidden="true">&hellip;</span>
+                        <span class="sr-only">&hellip;</span>
+                    </a></li>
+                {% endif %}
+                {% if sales.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?payed_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                {{ sales.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                           aria-label="Next">
+                            <span aria-hidden="true">Next</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" disabled aria-label="Next">
+                            <span aria-hidden="true">Next</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
     <hr/>
-    <h4 class="text-center">Customer Sales over Time (by {{ period }})</h4>
-    <canvas id="myChart"></canvas>
-    <h4 class="text-center">Open Air Market Sales over Time (by {{ period }})</h4>
-    <canvas id="cashChart"></canvas>
+    <p><b>Totals from {{ date_0 }} to {{ date_1 }}</b></p>
+    <p><b>Total Customer sales: </b>{{ total_sales.total__sum | floatformat:2 | intcomma }}</p>
+    <p><b>Total Open Air Sales: </b>Ksh. {{ total_cash_sales.total__sum | floatformat:2 | intcomma }}</p>
+    <p><b>Total Sales: </b>{{ total_sales.total__sum|add:total_cash_sales.total__sum|floatformat:2|intcomma }}</p>
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
 {% endblock %}
 {% block scripts %}
     <script src="{% static 'js/Chart.min.js' %}"></script>
     <script>
-        var api = '{% url 'daily_sales_charts' date_0=date_0_str date_1=date_1_str %}';
-        var cash_api = '{% url 'daily_cash_sales_charts' date_0=date_0_str date_1=date_1_str %}';
-        var defaultData = [];
-        var cashData = [];
-        var cashLabels = [];
-        var labels = [];
         $(document).ready(function () {
+            var api = '{% url 'daily_sales_charts' date_0=date_0_str date_1=date_1_str %}';
+            var defaultData = [];
+            var cashData = [];
+            var labels = [];
             $.ajax({
                 method: 'GET',
                 url: api,
                 success: function (data) {
                     $.each(data, function (index, value) {
-                        defaultData.push(value.total);
+                        defaultData.push(value.customer);
                         labels.push(value.period);
+                        cashData.push(value.cash)
                     });
-                    var ctx = document.getElementById('myChart').getContext('2d');
-                    var chart = new Chart(ctx, {
-                        // The type of chart we want to create
+                    var ctx = document.getElementById("myChart").getContext('2d');
+                    var myChart = new Chart(ctx, {
                         type: 'bar',
-
-                        // The data for our dataset
                         data: {
                             labels: labels,
                             datasets: [{
-                                label: "Ksh",
-                                backgroundColor: 'rgb(114,148,114)',
-                                borderColor: 'rgb(0, 0, 0)',
+                                label: 'Customer Sales',
                                 data: defaultData,
+                                backgroundColor: 'rgba(10,148,5)',
+                                borderColor: 'rgba(0,0,0)',
+                                borderWidth: 1
+                            }, {
+                                label: 'Open Air Market Sales',
+                                data: cashData,
+                                backgroundColor: 'rgba(181,214,6)',
+                                borderColor: 'rgba(0,0,0)',
+                                borderWidth: 1
                             }]
                         },
-
-                        // Configuration options go here
-                        options: {}
+                        options: {
+                            responsive: true,
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Sales per {{ period }}'
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
                     });
-                },
-                error: function (err) {
-                    console.log(err);
                 }
             });
-            $.ajax({
-                method: 'GET',
-                url: cash_api,
-                success: function (data) {
-                    $.each(data, function (index, value) {
-                        cashData.push(value.total);
-                        cashLabels.push(value.period);
-                    });
-                    var ctx = document.getElementById('cashChart').getContext('2d');
-                    var chart = new Chart(ctx, {
-                        // The type of chart we want to create
-                        type: 'bar',
 
-                        // The data for our dataset
-                        data: {
-                            labels: cashLabels,
-                            datasets: [{
-                                label: "Ksh",
-                                backgroundColor: 'rgb(114,148,114)',
-                                borderColor: 'rgb(0, 0, 0)',
-                                data: cashData,
-                            }]
-                        },
-
-                        // Configuration options go here
-                        options: {}
-                    });
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
-        })
+        });
     </script>
 {% endblock %}

@@ -54,8 +54,6 @@ urlpatterns = [
          name='daily_sales_report'),
     path('sales/daily-sales/charts/<str:date_0>/<str:date_1>/', daily_sales.get_json_response,
          name='daily_sales_charts'),
-    path('sales/daily-cash_sales/charts/<str:date_0>/<str:date_1>/', daily_sales.get_cash_sale_json_response,
-         name='daily_cash_sales_charts'),
     path('sales/customer-sales/period/', customer_sales.period, name='customer_sales_period'),
     path('sales/customer-sales/<str:customer>/<str:date_0>/<str:date_1>/', customer_sales.report,
          name='customer_sales_report'),
