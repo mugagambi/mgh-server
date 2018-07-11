@@ -59,23 +59,6 @@
         {% empty %}
             <td colspan="8"><b>No data available in table</b></td>
         {% endfor %}
-        <tr>
-            <th>Grand Total</th>
-            {% if balance.amount < 0 %}
-                <th></th>
-                <th></th>
-                <th></th>
-                <th>{{ balance.amount |abs | intcomma }} dr</th>
-                <th></th>
-            {% else %}
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th>{{ balance.amount  |intcomma }} cr</th>
-            {% endif %}
-            <td></td>
-        </tr>
         </tbody>
     </table>
 {% else %}
@@ -120,21 +103,6 @@
         {% empty %}
             <td colspan="8"><b>No data available in table</b></td>
         {% endfor %}
-        <tr>
-            <th>Grand Total</th>
-            {% if balance.amount < 0 %}
-                <th></th>
-                <th></th>
-                <th>{{ balance.amount |abs | intcomma }} dr</th>
-                <th></th>
-            {% else %}
-                <th></th>
-                <th></th>
-                <th></th>
-                <th>{{ balance.amount  |intcomma }} cr</th>
-            {% endif %}
-            <td></td>
-        </tr>
         </tbody>
     </table>
 {% endif %}
