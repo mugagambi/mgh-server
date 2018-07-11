@@ -146,8 +146,8 @@ def customer_statement(request, customer, date_0=None, date_1=None):
         date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
         account_qs = models.CustomerAccount.objects.select_related('customer', 'receipt', 'returns').filter(
             customer=customer, date__range=(date_0_datetime, date_1_datetime)).order_by('-date')
-        context['date_0'] = date_0_datetime
-        context['date_1'] = date_1_datetime
+        context['date_0'] = date_0
+        context['date_1'] = date_1
     else:
         account_qs = models.CustomerAccount.objects.select_related('customer', 'receipt', 'returns').filter(
             customer=customer).order_by('-date')
