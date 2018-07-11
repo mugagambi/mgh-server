@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django_select2',
     'mathfilters',
     'django_celery_results',
+    'rest_framework_swagger',
     'core.apps.CoreConfig',
     'sales.apps.SalesConfig',
     'reports.apps.ReportsConfig',

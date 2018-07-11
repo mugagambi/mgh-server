@@ -17,12 +17,13 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from django.views.generic import RedirectView
-from rest_framework.documentation import include_docs_urls
+from rest_framework_swagger.views import get_swagger_view
 
 from core.admin import custom_admin_site
 from core.views import handler500
 from sales.views import receipt
 
+schema_view = get_swagger_view(title='MGH API')
 handler500 = handler500
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='customers')),
@@ -61,7 +62,7 @@ urlpatterns = [
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.jwt')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('docs/', include_docs_urls(title='MGH API', public=False)),
+    path('docs/', schema_view),
     path('select2/', include('django_select2.urls'))
 ]
 
