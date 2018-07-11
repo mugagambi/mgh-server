@@ -26,6 +26,8 @@ urlpatterns = [
     path('all/cash/', web_views.cash_sales_list, name='cash-sales'),
     path('all/cash/<str:date>/', extra_views.cash_receipt, name='cash-receipt'),
     path('all/debtors/<str:customer>/', extra_views.customer_statement, name='customer_statement'),
+    path('all/debtors/<str:customer>/<str:date_0>/<str:date_1>/', extra_views.customer_statement,
+         name='customer_statement_export'),
     path('customers/<str:pk>/prices/', web_views.customer_prices, name='customer_prices'),
     path('customers/<str:pk>/discounts/', discount_views.customer_discounts, name='customer_discounts'),
     path('customers/<str:customer>/discounts/<int:pk>/update/', discount_views.UpdateCustomerDiscountView.as_view(),

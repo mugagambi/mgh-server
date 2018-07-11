@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import ListView
+from pytz import timezone as pytz_zone
 
 from core.models import Product
 from sales import forms
@@ -18,6 +19,8 @@ from sales import models
 from sales.models import Receipt
 from sales.render_pdf import render_to_pdf
 from utils import generate_unique_id, main_generate_unique_id
+
+AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
 
 
 # todo add the right permissions
@@ -133,11 +136,23 @@ def trade_debtors(request):
 
 # todo add the right permissions
 @login_required()
-def customer_statement(request, customer):
+def customer_statement(request, customer, date_0=None, date_1=None):
     customer = get_object_or_404(models.Customer, pk=customer)
+    context = {'customer': customer, }
+    if date_0 and date_1:
+        date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
+        date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
+        date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
+        date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
+        account_qs = models.CustomerAccount.objects.select_related('customer', 'receipt', 'returns').filter(
+            customer=customer, date__range=(date_0_datetime, date_1_datetime)).order_by('-date')
+        context['date_0'] = date_0_datetime
+        context['date_1'] = date_1_datetime
+    else:
+        account_qs = models.CustomerAccount.objects.select_related('customer', 'receipt', 'returns').filter(
+            customer=customer).order_by('-date')
     has_discount = customer.customerdiscount_set.exists()
-    account = models.CustomerAccount.objects.select_related('customer', 'receipt', 'returns').filter(
-        customer=customer).order_by('-date')
+    account = account_qs
     receipt_purchases_total = account.filter(type='P').values('receipt', 'date').annotate(Sum('amount'))
     receipt_payments_total = account.filter(type='A').values('receipt', 'date').annotate(Sum('amount'))
     account = account.exclude(type__in=['P', 'A'])
@@ -334,8 +349,10 @@ def customer_statement(request, customer):
     final_account.sort(key=lambda x: x['date'], reverse=False)
     download = request.GET.get('download', None)
     today = timezone.now().date()
-    context = {'customer': customer, 'account': final_account, 'balance': balance,
-               'today': today, 'has_discount': has_discount}
+    context['account'] = final_account
+    context['balance'] = balance
+    context['today'] = today
+    context['has_discount'] = has_discount
     if download:
         pdf = render_to_pdf('sales/resources/customer_statement.html', context)
         if pdf:

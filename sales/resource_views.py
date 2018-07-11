@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Sum
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template.loader import get_template
+from django.urls import reverse
 from django.utils import timezone
 from django.views import View
 from pytz import timezone as pytz_zone
@@ -139,3 +140,22 @@ def export_customer_sales(request, date_0, date_1):
         response['Content-Disposition'] = content
         return response
     return HttpResponse("Not found")
+
+
+@login_required()
+def export_customer_statement_period(request, customer):
+    customer = get_object_or_404(models.Customer, pk=customer)
+    if request.method == 'POST':
+        form = SaleSummaryDate(request.POST)
+        if form.is_valid():
+            date_0 = form.cleaned_data['date_0']
+            date_1 = form.cleaned_data['date_1']
+            url = reverse('customer_statement_export',
+                          kwargs={'date_0': date_0, 'date_1': date_1,
+                                  'customer': customer.pk})
+            return redirect(url + '?download=true')
+    else:
+        form = SaleSummaryDate(initial={'date_0': datetime.date.today(),
+                                        'date_1': datetime.date.today()})
+    return render(request, 'sales/resources/custtomer_statement_period.html',
+                  {'form': form, 'customer': customer})

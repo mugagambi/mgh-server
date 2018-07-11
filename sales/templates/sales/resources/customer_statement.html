@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>{{ customer.shop_name }} statement as of {{ today }}</title>
+    <title>{{ customer.shop_name }} statement from {{ date_0 }} to {{ date_1 }}</title>
     <style>
         #customers td, #customers th {
             border: 1px solid #ddd;
@@ -14,7 +14,7 @@
     </style>
 </head>
 <body>
-<h4><u>{{ customer.shop_name }} statement as of {{ today }}</u></h4>
+<h4><u>{{ customer.shop_name }} statement from {{ date_0 }} to {{ date_1 }}</u></h4>
 {% if has_discount %}
     <table id="customers">
         <thead>
