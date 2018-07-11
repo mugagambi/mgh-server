@@ -21,7 +21,7 @@
             font-weight: bold;
             font-size: 18px;
             text-align: left;
-            background: #28a745;
+            background: black;
             color: #fff;
         }
 
@@ -60,224 +60,70 @@
     </form>
 
     <div class="reports">
-        <h2>Orders Reports</h2>
+        <h2>Cash Flow Summary</h2>
         <br/>
-        <a href="" class="btn btn-success">Total Orders Report</a>
-    </div>
-    <br>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'trade-debtors' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Trade Debtors Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'sales-summary' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Payments Summary Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'outward_product_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Outward Products Summary Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'outward-product-per-customer-period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Product Summary Report Per Customer</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'outward_stock_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Outward Stock Summary Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'sales_summary_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Sales Summary Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'price_per_product_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Pricing Summary Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'daily_sales_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Sales Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'customer_sales_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Sales per Customer Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'customer_performance_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Customer Performance Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'product_sales_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Products Sales Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'daily_sales_product_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Sales per Product Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'total_orders_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Orders Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="{% url 'daily_sales_product_period' %}" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Orders per Product Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="#" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Product Availability Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="#" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Cash Deposits Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="#" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Orders per Customer Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="#" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Customer Returns Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="#" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Market Returns Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="#" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Returns per Customer Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="#" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Sales per Region Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
-                <a href="#" style="color: white;text-decoration: none;">
-                    <div class="card-body">
-                        <h5 class="card-title">Daily Cash Expenses Report</h5>
-                    </div>
-                </a>
-            </div>
-        </div>
+        <a href="{% url 'sales-summary' %}" class="btn btn-success mb-1">Payments Summary Report</a>
+        <a href="#" class="btn btn-success mb-1">Daily Cash Deposits Report</a>
+        <a href="#" class="btn btn-success mb-1">Daily Cash Expenses Report</a>
+
+        <hr/>
+        <h2>Trade Debtors</h2>
+        <br/>
+        <a href="{% url 'trade-debtors' %}" class="btn btn-success mb-1">Trade Debtors Report</a>
+        <hr/>
+        <h2>Pricing Summary</h2>
+        <br/>
+        <a href="{% url 'price_per_product_period' %}" class="btn btn-success mb-1">Pricing Summary Report</a>
+        <hr/>
+        <h2>Product Movement Summary</h2>
+        <br/>
+        <a href="{% url 'outward_product_period' %}" class="btn btn-success mb-1">Outward Products Summary Report</a>
+        <a href="{% url 'outward-product-per-customer-period' %}" class="btn btn-success mb-1">Product Summary Report
+            Per Customer</a>
+        <a href="{% url 'outward_stock_period' %}" class="btn btn-success mb-1">Outward Stock Summary
+            Report</a>
+        <a href="#" class="btn btn-success mb-1">Daily Product Availability Report</a>
+        <hr/>
+        <h2>Ordering</h2>
+        <br/>
+        <a href="{% url 'total_orders_period' %}" class="btn btn-success mb-1">Total Orders Report</a>
+        <a href="#" class="btn btn-success mb-1">Orders vs Dispatch Report</a>
+        <a href="#" class="btn btn-success mb-1">Daily Orders per Product Report</a>
+        <a href="#" class="btn btn-success mb-1">Daily Orders per Customer Report</a>
+        <hr/>
+        <h2>Packaging</h2>
+        <br/>
+        <a href="#" class="btn btn-success mb-1">Dispatch vs Sales Report</a>
+        <hr>
+        <h2>Sales</h2>
+        <br/>
+        <a href="{% url 'sales_summary_period' %}" class="btn btn-success mb-1">Sales Summary Report</a>
+        <a href="{% url 'daily_sales_period' %}" class="btn btn-success mb-1">Daily Sales Report</a>
+        <a href="{% url 'customer_sales_period' %}" class="btn btn-success mb-1">Daily Sales per Customer Report</a>
+        <a href="{% url 'product_sales_period' %}" class="btn btn-success mb-1">Products Sales Report</a>
+        <a href="{% url 'daily_sales_product_period' %}" class="btn btn-success mb-1">Daily Sales per Product Report</a>
+
+
+        <hr>
+        <h2>Customers Summary</h2>
+        <br/>
+        <a href="{% url 'customer_performance_period' %}" class="btn btn-success mb-1">Customer Performance Report</a>
+        <a href="#" class="btn btn-success mb-1">Daily Sales per Region Report </a>
+
+        <hr>
+        <h2>Returns</h2>
+        <br/>
+        <a href="#" class="btn btn-success mb-1">Market Returns Report</a>
+        <a href="#" class="btn btn-success mb-1">Daily Customer Returns Report</a>
+        <a href="#" class="btn btn-success mb-1">Daily Returns per Customer Report</a>
+        <hr>
     </div>
 {% endblock %}
 {% block scripts %}
     <script src="{% static 'js/select2.min.js' %}"></script>
     <script>
         $(document).ready(function () {
-            $('select').select2();
-            $('select').on('change', function () {
+            $('select').select2().on('change', function () {
                 window.location.href = this.value;
             })
         });
