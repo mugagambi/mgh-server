@@ -21,7 +21,7 @@
             <th>Customer Sales</th>
             <th>Cash Sales</th>
             <th>Total Sales</th>
-            <th>Returns</th>
+            <th>Market Returns</th>
             <th>Variance</th>
         </tr>
         </thead>
@@ -30,10 +30,7 @@
             <tr>
                 <td>{{ outward.product }}</td>
                 <td>
-                    {% for item in outward.available %}
-                        {{ item.aggregation_center__name }} : {{ item.total | intcomma }}<br/>
-                    {% endfor %}
-                    total: {{ outward.total_available | intcomma }}
+                    {{ outward.total_available | intcomma }}
                 </td>
                 <td>{{ outward.ordered | intcomma }}</td>
                 <td>{{ outward.packaged | intcomma }}</td>
@@ -44,15 +41,13 @@
                 <td>{{ outward.total_sale | intcomma }}</td>
                 <td>{{ outward.total_return | intcomma }}</td>
                 <td>
-                    <a href="{% url 'outward-product-per-customer' date_0=str_date_0 date_1=str_date_1 product_id=outward.product_id %}"
-                       data-toggle="tooltip"
-                       data-placement="top"
-                       title="Click to view the variances for this product for
-                        all the customers">{{ outward.diff | intcomma }}</a></td>
+                    {{ outward.variance | intcomma }}</td>
                 {% empty %}
                 <td class="text-center" colspan="11"><b>No data available in table</b></td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+{% block scripts %}
 {% endblock %}

@@ -20,7 +20,7 @@ urlpatterns = [
     path('sales/bank/<str:date_0>/<str:date_1>/', views.bank_transfer_sale_summary_report, name='bank-sales-summary'),
     path('sales/outward_product/period/', outward_products.outward_product_summary_period,
          name='outward_product_period'),
-    path('sales/outward_product/<str:date_0>/<str:date_1>/', outward_products.outward_product_summary_report,
+    path('sales/outward_product/<str:date_0>/<str:date_1>/', outward_products.outward_product_summary_alt_report,
          name='outward_product_report'),
     path('sales/outward_stock/period/', outward_stock_summary.outward_stock_summary_period,
          name='outward_stock_period'),

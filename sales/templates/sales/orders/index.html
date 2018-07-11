@@ -112,6 +112,7 @@
 
 
 
+
                                 {{ orders.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                            aria-label="Previous">
                             <span aria-hidden="true">Previous</span>
@@ -129,6 +130,7 @@
                 {% if orders.number|add:'-4' > 1 %}
                     <li class="page-item"><a class="page-link"
                                              href="?page=
+
 
 
 
@@ -256,6 +258,7 @@
 
 
 
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -263,6 +266,7 @@
                 {% if orders.paginator.num_pages > orders.number|add:'4' %}
                     <li class="page-item"><a class="page-link"
                                              href="?page=
+
 
 
 
@@ -327,6 +331,7 @@
                 {% if orders.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
 
 
 

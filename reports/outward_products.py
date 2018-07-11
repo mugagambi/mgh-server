@@ -1,12 +1,17 @@
 import datetime
+from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.shortcuts import redirect, render
+from django.utils import timezone
+from pytz import timezone as pytz_zone
 
 from core.models import Product, AggregationCenterProduct
 from reports import forms
 from sales import models
+
+AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
 
 
 # todo add the right permissions
@@ -48,7 +53,7 @@ def outward_product_summary_report(request, date_0: str, date_1: str):
         if models.OrderProduct.objects. \
                 filter(product=product,
                        order__date_delivery__range=(
-                       date_0, date_1)).exists() is False and models.PackageProduct.objects. \
+                               date_0, date_1)).exists() is False and models.PackageProduct.objects. \
                 filter(order_product__product=product,
                        order_product__order__date_delivery__range=(
                                date_0, date_1)).exists() is False and models.OrderlessPackage.objects. \
@@ -116,6 +121,166 @@ def outward_product_summary_report(request, date_0: str, date_1: str):
                         'diff': variance,
                         'total_return': total_return['total'],
                         'product_id': product.pk})
+    return render(request, 'reports/outward-products/report.html',
+                  {'outwards': outward,
+                   'date_0': date_0_datetime,
+                   'date_1': date_1_datetime,
+                   'str_date_0': str_date_0,
+                   'str_date_1': str_date_1})
+
+
+@login_required()
+def outward_product_summary_alt_report(request, date_0: str, date_1: str):
+    """
+        :param request:
+        :param date_0:
+        :param date_1:
+        :return:
+        """
+    str_date_0 = date_0
+    str_date_1 = date_1
+    date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
+    date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
+    date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
+    date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
+    available = AggregationCenterProduct.objects.filter(date__range=(date_0, date_1)). \
+        values('product__name').annotate(total=Sum('qty'))
+    ordered = models.OrderProduct.objects. \
+        filter(order__date_delivery__range=(date_0, date_1)). \
+        values('product__name', 'product__pk').annotate(total=Sum('qty'))
+    packaged = models.PackageProduct.objects. \
+        filter(order_product__order__date_delivery__range=(date_0, date_1)). \
+        values('order_product__product__name').annotate(total=Sum('qty_weigh'))
+    orderless = models.OrderlessPackage.objects. \
+        filter(date__range=(date_0, date_1)).values('product__name').annotate(total=Sum('qty'))
+    customer = models.ReceiptParticular.objects. \
+        filter(receipt__date__range=(date_0_datetime, date_1_datetime)).values('product__name'). \
+        annotate(total=Sum('qty'))
+    cash = models.CashReceiptParticular.objects. \
+        filter(cash_receipt__date__range=(date_0_datetime, date_1_datetime)). \
+        values('product__name').annotate(total=Sum('qty'))
+    returns = models.MarketReturn.objects. \
+        filter(date__range=(date_0, date_1)). \
+        values('product__name').annotate(total=Sum('qty'))
+    all_products = []
+    for item in available:
+        obj = {
+            'product': item['product__name'],
+            'available': item['total'],
+            'ordered': 0,
+            'packaged': 0,
+            'orderless': 0,
+            'customer': 0,
+            'cash': 0,
+            'total_sale': 0,
+            'total_return': 0
+        }
+        all_products.append(obj)
+    for item in ordered:
+        obj = {
+            'product': item['product__name'],
+            'available': 0,
+            'ordered': item['total'],
+            'packaged': 0,
+            'orderless': 0,
+            'customer': 0,
+            'cash': 0,
+            'total_return': 0
+        }
+        all_products.append(obj)
+    for item in packaged:
+        obj = {
+            'product': item['order_product__product__name'],
+            'available': 0,
+            'ordered': 0,
+            'packaged': item['total'],
+            'orderless': 0,
+            'customer': 0,
+            'cash': 0,
+            'total_return': 0
+        }
+        all_products.append(obj)
+    for item in orderless:
+        obj = {
+            'product': item['product__name'],
+            'available': 0,
+            'ordered': 0,
+            'packaged': 0,
+            'orderless': item['total'],
+            'customer': 0,
+            'cash': 0,
+            'total_return': 0
+        }
+        all_products.append(obj)
+    for item in customer:
+        obj = {
+            'product': item['product__name'],
+            'available': 0,
+            'ordered': 0,
+            'packaged': 0,
+            'orderless': 0,
+            'customer': item['total'],
+            'cash': 0,
+            'total_return': 0
+        }
+        all_products.append(obj)
+    for item in cash:
+        obj = {
+            'product': item['product__name'],
+            'available': 0,
+            'ordered': 0,
+            'packaged': 0,
+            'orderless': 0,
+            'customer': 0,
+            'cash': item['total'],
+            'total_return': 0
+        }
+        all_products.append(obj)
+    for item in returns:
+        obj = {
+            'product': item['product__name'],
+            'available': 0,
+            'ordered': 0,
+            'packaged': 0,
+            'orderless': 0,
+            'customer': 0,
+            'cash': 0,
+            'total_return': item['total']
+        }
+        all_products.append(obj)
+    outward = []
+    all_products.sort(key=lambda x: x['product'])
+    for k, v in groupby(all_products, key=lambda x: x['product']):
+        v = list(v)
+        obj = {
+            'product': k,
+            'available': sum(d['available'] for d in v),
+            'ordered': sum(d['ordered'] for d in v),
+            'packaged': sum(d['packaged'] for d in v),
+            'orderless': sum(d['orderless'] for d in v),
+            'customer': sum(d['customer'] for d in v),
+            'cash': sum(d['cash'] for d in v),
+            'total_return': sum(d['total_return'] for d in v),
+            'total_available': sum(d['available'] for d in v),
+        }
+        if not obj['packaged'] and not obj['orderless']:
+            obj['total_dispatch'] = 0
+        elif not obj['packaged']:
+            obj['total_dispatch'] = obj['orderless']
+        elif not obj['orderless']:
+            obj['total_dispatch'] = obj['packaged']
+        else:
+            obj['total_dispatch'] = obj['packaged'] + obj['orderless']
+        if not obj['customer'] and not obj['cash']:
+            obj['total_sale'] = 0
+        elif not obj['customer']:
+            obj['total_sale'] = obj['cash']
+        elif not obj['cash']:
+            obj['total_sale'] = obj['customer']
+        else:
+            obj['total_sale'] = obj['customer'] + obj['cash']
+        obj['variance'] = obj['total_dispatch'] - obj['total_sale'] - obj['total_return' or 0]
+        outward.append(obj)
     return render(request, 'reports/outward-products/report.html',
                   {'outwards': outward,
                    'date_0': date_0_datetime,
