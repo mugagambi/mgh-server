@@ -82,7 +82,14 @@ def outward_stock_summary_alt__report(request, date_0, date_1):
     cash_value = cash.aggregate(Sum('total'))
     grand_customer_value = customer_value['total__sum']
     grand_cash_value = cash_value['total__sum']
-    total_grand_value = grand_customer_value + grand_cash_value
+    if not grand_customer_value and not grand_cash_value:
+        total_grand_value = None
+    elif not grand_customer_value:
+        total_grand_value = grand_cash_value
+    elif not grand_cash_value:
+        total_grand_value = grand_customer_value
+    else:
+        total_grand_value = grand_customer_value + grand_cash_value
     return render(request, 'reports/outward-stock/report.html',
                   {'outwards': outward,
                    'grand_customer_value': grand_customer_value,
