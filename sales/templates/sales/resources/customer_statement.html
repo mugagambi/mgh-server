@@ -36,7 +36,13 @@
         {% for item in items %}
             <tr>
                 <td colspan="6"><b>{{ item.grouper }}</b></td>
-                <td><b>{{ item.grouper }}</b></td>
+                {% if item.list.0.receipt_id %}
+                    <td><b>Receipt No.{{ item.list.0.receipt_id }}</b></td>
+                {% elif item.list.0.return_id %}
+                    <td><b>Return No.{{ item.list.0.return_id }}</b></td>
+                {% else %}
+                    <td><b>-</b></td>
+                {% endif %}
             </tr>
             {% for item in item.list %}
                 <tr>
@@ -46,13 +52,7 @@
                     <td>{{ item.discount }}</td>
                     <td>{{ item.subtotal | safe | intcomma }}</td>
                     <td>{{ item.payment | intcomma }}</td>
-                    <td>{% if item.receipt_id %}
-                        Receipt No. {{ item.receipt_id }}
-                    {% elif item.return_id %}
-                        Return No. {{ item.return_id }}
-                    {% else %}
-                        -
-                    {% endif %}
+                    <td>-
                     </td>
                 </tr>
             {% endfor %}
