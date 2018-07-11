@@ -29,7 +29,7 @@ urlpatterns = [
     path('sales/outward-customer-product/<str:date_0>/<str:date_1>/<int:product_id>/',
          product_customer.outward_product_summary_report,
          name='outward-product-per-customer'),
-    path('sales/outward_stock/<str:date_0>/<str:date_1>/', outward_stock_summary.outward_stock_summary_report,
+    path('sales/outward_stock/<str:date_0>/<str:date_1>/', outward_stock_summary.outward_stock_summary_alt__report,
          name='outward_stock_report'),
     path('sales/sales_summary/period/', sales_summary.sales_summary_schedule,
          name='sales_summary_period'),

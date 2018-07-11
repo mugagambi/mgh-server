@@ -27,7 +27,7 @@
                 </td>
                 <td>{{ sale.sales | intcomma }}</td>
                 <td>{{ sale.cash | intcomma }}</td>
-                <td>{{ sale.sales|add:sale.cash | intcomma }}</td>
+                <td>{{ sale.sales|addition:sale.cash | intcomma }}</td>
             </tr>
         {% endfor %}
         </tbody>

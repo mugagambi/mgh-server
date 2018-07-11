@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load humanize %}
+{% load mathfilters %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2"> Outward Stock Summary Report <br>
@@ -39,9 +40,17 @@
                 <td>{{ outward.total_cash_qty | intcomma }}</td>
                 <td>{{ outward.total_cash_price_avg | floatformat:2 | intcomma }}</td>
                 <td>{{ outward.total_cash_value | floatformat:2 | intcomma }}</td>
-                <td>{{ outward.total_sale_qty | intcomma }}</td>
-                <td>{{ outward.total_sale_price_average | floatformat:2 |intcomma }}</td>
-                <td>{{ outward.total_sale_value | floatformat:2 | intcomma }}</td>
+                <td>{{ outward.total_customer_qty|addition:outward.total_cash_qty | intcomma }}</td>
+                {% if outward.total_customer_qty == 0 and outward.total_cash_value == 0 %}
+                    <td>0</td>
+                {% elif outward.total_customer_qty == 0 %}
+                    <td>{{ outward.total_cash_value|div:outward.total_cash_qty | floatformat:2|intcomma }}</td>
+                {% elif outward.total_cash_qty == 0 %}
+                    <td>{{ outward.total_customer_value|div:outward.total_customer_qty |floatformat:2|intcomma }}</td>
+                {% else %}
+                    <td>{{ outward.total_sale_avg|floatformat:2|intcomma }}</td>
+                {% endif %}
+                <td>{{ outward.total_customer_value|addition:outward.total_cash_value | floatformat:2| intcomma }}</td>
                 {% empty %}
                 <td class="text-center" colspan="10"><b>No data available in table</b></td>
             </tr>

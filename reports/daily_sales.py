@@ -148,5 +148,4 @@ def get_json_response(request, date_0, date_1):
         'cash': x['cash'] or 0,
     } for x in final_sales]
     serializer = CustomDailySalesChartSerializer(sales_summary_over_time, many=True)
-    print(serializer.data)
     return Response(serializer.data)

@@ -25,7 +25,7 @@ def export_customers(request):
     customer_resource = resources.CustomerResource()
     dataset = customer_resource.export()
     response = HttpResponse(dataset.csv, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="customer_%s.csv"' % str(datetime.now())
+    response['Content-Disposition'] = 'attachment; filename="customer_%s.csv"' % str(datetime.datetime.now())
     return response
 
 
