@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
     Reports dashboard
 {% endblock %}
@@ -8,7 +9,24 @@
             min-height: 170px;
             max-height: 170px;
         }
+
+        .reports h2 {
+            display: block;
+            -webkit-margin-before: 0.83em;
+            -webkit-margin-after: 0.83em;
+            -webkit-margin-start: 0px;
+            -webkit-margin-end: 0px;
+            margin: 0;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: left;
+            background: #28a745;
+            color: #fff;
+        }
+
     </style>
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
 {% endblock %}
 {% block breadcrump %}
     <nav aria-label="breadcrumb">
@@ -19,6 +37,34 @@
     </nav>
 {% endblock %}
 {% block content %}
+    <form class="form-inline">
+        <div class="form-group mx-sm-6 mb-4">
+            <select class="custom-select">
+                <option selected disabled>Click here to search for a report</option>
+                <option value="{% url 'total_orders_period' %}">Total Orders Report</option>
+                <option value="{% url 'trade-debtors' %}">Trade Debtors Report</option>
+                <option value="{% url 'sales-summary' %}">Payments Summary Report</option>
+                <option value="{% url 'outward_product_period' %}">Outward Products Summary Report</option>
+                <option value="{% url 'outward-product-per-customer-period' %}">Product Summary Report Per Customer
+                </option>
+                <option value="{% url 'outward_stock_period' %}">Outward Stock Summary Report</option>
+                <option value="{% url 'sales_summary_period' %}">Sales Summary Report</option>
+                <option value="{% url 'price_per_product_period' %}">Pricing Summary Report</option>
+                <option value="{% url 'daily_sales_period' %}">Daily Sales Report</option>
+                <option value="{% url 'customer_sales_period' %}">Daily Sales per Customer Report</option>
+                <option value="{% url 'customer_performance_period' %}">Customer Performance Report</option>
+                <option value="{% url 'product_sales_period' %}">Products Sales Report</option>
+                <option value="{% url 'daily_sales_product_period' %}">Daily Sales per Product Report</option>
+            </select>
+        </div>
+    </form>
+
+    <div class="reports">
+        <h2>Orders Reports</h2>
+        <br/>
+        <a href="" class="btn btn-success">Total Orders Report</a>
+    </div>
+    <br>
     <div class="row">
         <div class="col-md-2">
             <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
@@ -80,7 +126,7 @@
             <div class="card text-white bg-success mb-3 mr-1" style="max-width: 18rem;">
                 <a href="{% url 'price_per_product_period' %}" style="color: white;text-decoration: none;">
                     <div class="card-body">
-                        <h5 class="card-title">Max,Avg,Min Selling Price per Product Report</h5>
+                        <h5 class="card-title">Pricing Summary Report</h5>
                     </div>
                 </a>
             </div>
@@ -225,4 +271,15 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/select2.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('select').select2();
+            $('select').on('change', function () {
+                window.location.href = this.value;
+            })
+        });
+    </script>
 {% endblock %}

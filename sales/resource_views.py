@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Sum
@@ -11,6 +12,7 @@ from django.views import View
 from reports.forms import SaleSummaryDate
 from sales import models
 from sales import resources
+from . import tasks
 from .render_pdf import render_to_pdf
 
 
@@ -96,42 +98,6 @@ def export_sales_period(request):
 # todo add the right permissions
 @login_required()
 def export_customer_sales(request, date_0, date_1):
-    date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
-    date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
-    date_0_datetime = datetime.datetime.combine(date_0, datetime.time(0, 0))
-    date_1_datetime = datetime.datetime.combine(date_1, datetime.time(23, 59))
-    template = get_template('sales/resources/customer_sale_export.html')
-    receipts = models.Receipt.objects.filter(date__range=(date_0_datetime, date_1_datetime)). \
-        annotate(total_qty=Sum('receiptparticular__qty'), sub_total=Sum('receiptparticular__total'))
-    receipt_amount = receipts.aggregate(total=Sum('receiptparticular__total'))
-    total_balance = receipts.aggregate(total=Sum('receiptmisc__balance'))
-    total_amount_payable = (receipt_amount['total'] or 0) - (total_balance['total'] or 0)
-    total_payed = receipts.exclude(receiptpayment__type=4).aggregate(total=Sum('receiptpayment__amount'))
-    credit = receipts.filter(receiptpayment__type=4)
-    receipt_id = [payment.number for payment in credit]
-    total_credit = models.Receipt.objects.filter(number__in=receipt_id).values('number').aggregate(
-        total=Sum('receiptparticular__total'))
-    total_payed_amount = (total_payed['total'] or 0) + (total_credit['total'] or 0)
-    context = {
-        'date_0_datetime': date_0_datetime,
-        'date_1_datetime': date_1_datetime,
-        'receipts': receipts,
-        'receipt_amount': (receipt_amount['total'] or 0),
-        'total_balance': (total_balance['total'] or 0),
-        'total_amount_payable': total_amount_payable,
-        'total_payed': (total_payed['total'] or 0),
-        'total_credit': (total_credit['total'] or 0),
-        'total_payed_amount': total_payed_amount
-    }
-    html = template.render(context)
-    pdf = render_to_pdf('sales/resources/customer_sale_export.html', context)
-    if pdf:
-        response = HttpResponse(pdf, content_type='application/pdf')
-        filename = "customer_sales_from_%s_to_%s.pdf" % (date_0, date_1)
-        content = "inline; filename='%s'" % filename
-        download = request.GET.get("download")
-        if download:
-            content = "attachment; filename='%s'" % filename
-        response['Content-Disposition'] = content
-        return response
-    return HttpResponse("Not found")
+    tasks.export_customer_sales.delay(date_0, date_1)
+    messages.success(request, 'The system is exporting the pdf! Wait a moment and refresh this page.')
+    return redirect('invoices')

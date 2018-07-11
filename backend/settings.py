@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'import_export',
     'django_select2',
     'mathfilters',
+    'django_celery_results',
     'core.apps.CoreConfig',
     'sales.apps.SalesConfig',
     'reports.apps.ReportsConfig',
@@ -270,3 +271,9 @@ if not DEBUG:
             },
         },
     }
+# CELERY STUFF
+BROKER_URL = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Nairobi'
+CELERY_RESULT_BACKEND = 'django-db'
