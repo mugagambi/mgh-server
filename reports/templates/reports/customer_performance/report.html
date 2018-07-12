@@ -8,7 +8,6 @@
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'customer_performance_period' %}" class="btn btn-outline-success">Change Period</a>
     <hr/>
-    <h4 class="text-center">Sales Over Time (by {{ period }})</h4>
     <canvas id="myChart"></canvas>
     <h4 class="text-center">Description</h4>
     <p><b>Max Purchase: </b>Ksh.{{ high | intcomma }}, <b>Lowest Purchase: </b>Ksh. {{ low | intcomma }}, <b>Average
@@ -58,7 +57,7 @@
                         data: {
                             labels: labels,
                             datasets: [{
-                                label: "Ksh",
+                                label: "sales",
                                 backgroundColor: 'rgb(114,148,114)',
                                 borderColor: 'rgb(0, 0, 0)',
                                 data: defaultData,
@@ -66,7 +65,39 @@
                         },
 
                         // Configuration options go here
-                        options: {}
+                        options: {
+                            responsive: true,
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Sales per {{ period }}'
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true,
+                                        callback: function (value, index, values) {
+                                            if (parseInt(value) >= 1000) {
+                                                return 'Ksh.' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                            } else {
+                                                return 'Ksh.' + value;
+                                            }
+                                        }
+                                    }
+                                }]
+                            },
+                            tooltips: {
+                                callbacks: {
+                                    label: function (tooltipItem, data) {
+                                        return "Ksh." + Number(tooltipItem.yLabel).toFixed(0).replace(/./g, function (c, i, a) {
+                                            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
+                                        });
+                                    }
+                                }
+                            }
+                        }
                     });
                 },
                 error: function (err) {
