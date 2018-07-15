@@ -1,6 +1,6 @@
 from django.urls import path
 
-from reports import sales_summary, total_orders, product_sales, daily_sales_product
+from reports import sales_summary, total_orders, product_sales, daily_sales_product, cash_deposit
 from . import customer_performance
 from . import customer_sales
 from . import daily_orders
@@ -67,4 +67,7 @@ urlpatterns = [
     path('sales/daily-sales-product/period/', daily_sales_product.period, name='daily_sales_product_period'),
     path('sales/daily-sales-product/<str:date_0>/<str:date_1>/<int:product>/', daily_sales_product.report,
          name='daily_sales_product_report'),
+    path('sales/daily-cash-deposits/period/', cash_deposit.period, name='daily_cash_deposit_period'),
+    path('sales/daily-cash-deposits/<str:date_0>/<str:date_1>/', cash_deposit.report,
+         name='daily_cash_deposits_report'),
 ]
