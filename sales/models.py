@@ -43,7 +43,6 @@ class Customer(models.Model):
         return 'Shop name ' + str(self.shop_name) + ' , nick_name ' + str(self.nick_name)
 
     def clean(self):
-        print(self.notification_by)
         if self.notification_by == 'e':
             if not self.email:
                 raise ValidationError({'email': 'You need to enter email address'})
@@ -74,13 +73,13 @@ class Order(models.Model):
     def __str__(self):
         return 'order no. ' + str(self.number) + ' for ' + str(self.customer.shop_name)
 
-    # todo remove this piece of code. It's not efficient
+    # todo remove this piece of code. It's not efficient, but i can not establish if it is still in use
     def total_qty(self):
         if self.orderproduct_set.all().exists():
             return reduce((lambda x, y: x + y), [x.qty for x in self.orderproduct_set.all()])
         return 0
 
-    # todo remove this piece of code. It's not efficient
+    # todo remove this piece of code. It's not efficient, but i can not establish if it is still in use
     def total_price(self):
         if self.orderproduct_set.all().exists():
             return reduce((lambda x, y: x + y), [x.price.price for x in self.orderproduct_set.all()])

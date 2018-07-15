@@ -58,15 +58,27 @@ class UpdateCenter(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMi
     success_message = 'Center updated successfully'
 
 
+def get_center_descendants(obj):
+    if obj.aggregationcenterproduct_set.exists():
+        return True
+    if obj.orderdistributionpoint_set.exists():
+        return True
+    return False
+
+
 # TODO confirm if we remove delete & if so add the right permissions
 class DeleteCenter(LoginRequiredMixin, DeleteView):
     """
     Remove a center
     """
 
-    def post(self, request, *args, **kwargs):
-        messages.success(request, 'center removed successfully!')
-        return super().post(request, *args, **kwargs)
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if get_center_descendants(self.object):
+            messages.error(request, 'This center can not be deleted because it is already in use')
+            return redirect('centers-list')
+        messages.success(request, 'Center removed successfully')
+        return super(DeleteCenter, self).delete(request, *args, **kwargs)
 
     template_name = 'core/centers/delete.html'
     model = models.AggregationCenter
