@@ -118,11 +118,32 @@ class UpdateProduct(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = 'Product updated successfully'
 
 
+def product_foreign_keys(obj):
+    """Checks if the product foreign keys exists and return true/false"""
+    if obj.orderproduct_set.exists():
+        return True
+    if obj.receiptparticular_set.exists():
+        return True
+    if obj.cashreceiptparticular_set.exists():
+        return True
+    if obj.aggregationcenterproduct_set.exists():
+        return True
+    if obj.marketreturn_set.exists():
+        return True
+    if obj.return_set.exists():
+        return True
+    return False
+
+
 # TODO confirm if delete & if then add the right permissions
 class DeleteProduct(LoginRequiredMixin, DeleteView):
-    def post(self, request, *args, **kwargs):
-        messages.success(request, 'product removed successfully!')
-        return super().post(request, *args, **kwargs)
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if product_foreign_keys(self.object):
+            messages.error(request, 'This product can not be deleted because it\'s already in use')
+            return redirect('products-list')
+        messages.success(request, 'Product removed successfully')
+        return super(DeleteProduct, self).delete(request, *args, **kwargs)
 
     template_name = 'crud/delete.html'
     model = models.Product
