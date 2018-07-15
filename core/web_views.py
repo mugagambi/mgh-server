@@ -135,8 +135,9 @@ def product_foreign_keys(obj):
     return False
 
 
-# TODO confirm if delete & if then add the right permissions
-class DeleteProduct(LoginRequiredMixin, DeleteView):
+class DeleteProduct(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'core.delete_product'
+
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if product_foreign_keys(self.object):
