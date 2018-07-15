@@ -20,11 +20,12 @@ from django.views.generic import RedirectView
 from rest_framework_swagger.views import get_swagger_view
 
 from core.admin import custom_admin_site
-from core.views import handler500
+from core.views import handler500, handler403
 from sales.views import receipt
 
 schema_view = get_swagger_view(title='MGH API')
 handler500 = handler500
+handler403 = handler403
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='customers')),
     path('sales/receipt/<int:pk>/', receipt, name='receipt'),

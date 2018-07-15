@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, AccessMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, render, get_object_or_404
@@ -135,8 +135,10 @@ def product_foreign_keys(obj):
     return False
 
 
-class DeleteProduct(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+class DeleteProduct(LoginRequiredMixin, PermissionRequiredMixin, AccessMixin, DeleteView):
     permission_required = 'core.delete_product'
+    permission_denied_message = 'You don\'t have access to perform this action.Please contact the system administrator'
+    raise_exception = True
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()

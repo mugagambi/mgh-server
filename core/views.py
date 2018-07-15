@@ -19,6 +19,17 @@ def handler500(request):
     return TemplateResponse(request, 'core/500.html', context, status=500)
 
 
+def handler403(request):
+    """403 error handler which includes ``request`` in the context.
+
+    Templates: `403.html`
+    Context: None
+    """
+
+    context = {'request': request}
+    return TemplateResponse(request, 'core/403.html', context, status=403)
+
+
 # TODO send permissions short codes with the token payload
 def jwt_response_payload_handler(token, user=None, request=None):
     return {
