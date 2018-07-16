@@ -92,3 +92,7 @@ class DiscountForm(forms.ModelForm):
     class Meta:
         model = models.CustomerDiscount
         fields = ['product', 'discount']
+
+
+class CashReceiptPreForm(forms.Form):
+    date = forms.DateTimeField()

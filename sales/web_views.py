@@ -15,6 +15,7 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.html import format_html
+from django.utils.timezone import now
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, DeleteView
@@ -24,6 +25,7 @@ from django_select2.forms import Select2Widget
 from core.models import Product
 from sales import forms
 from sales import models
+from sales.forms import CashReceiptPreForm
 from sales.render_pdf import render_to_pdf
 from system_settings.models import Settings
 from utils import generate_unique_id
@@ -531,6 +533,13 @@ class CashSalesFilterSet(FilterSet):
 # todo add the right permissions
 @login_required()
 def cash_sales_list(request):
+    if request.method == 'POST':
+        form = CashReceiptPreForm(request.POST)
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            return redirect('add_cash_sales', date=date.strftime('%Y-%m-%d %H:%M'))
+    else:
+        form = CashReceiptPreForm(initial={'date': now()})
     sales = models.CashReceipt.objects.annotate(
         date_only=Cast('date', DateField())).values('date_only').annotate(Sum('cashreceiptparticular__total')).order_by(
         '-date_only')
@@ -542,7 +551,7 @@ def cash_sales_list(request):
         sales = paginator.page(1)
     except EmptyPage:
         sales = paginator.page(paginator.num_pages)
-    return render(request, 'sales/sales/cash-sale.html', {'sales': sales})
+    return render(request, 'sales/sales/cash-sale.html', {'sales': sales, 'form': form})
 
 
 # todo add the right permissions

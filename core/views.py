@@ -19,7 +19,7 @@ def handler500(request):
     return TemplateResponse(request, 'core/500.html', context, status=500)
 
 
-def handler403(request):
+def handler403(request, exception):
     """403 error handler which includes ``request`` in the context.
 
     Templates: `403.html`

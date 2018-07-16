@@ -22,7 +22,7 @@ class BankList(LoginRequiredMixin, ListView):
 
 
 @login_required()
-@permission_required('core.add_bank', raise_exception=True)
+@permission_required('cash_breakdown.add_bank', raise_exception=True)
 def create_banks(request):
     """
         Add  banks

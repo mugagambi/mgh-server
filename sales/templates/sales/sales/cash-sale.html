@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load humanize %}
+{% load crispy_forms_tags %}
 {% block styles %}
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
 {% endblock %}
 {% block content %}
     {% include 'includes/nav.html' %}
     <hr/>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h4 class="text-center">Open Air Market Sales Sales</h4>
+        <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal"
+                data-target="#exampleModalCenter">Add an Open Air Sale
+        </button>
         <a href="{% url 'cash_sale_period' %}" class="btn btn-outline-success btn-sm">Export as PDF</a>
     </div>
     <table class="table table-striped table-responsive-sm" style="width:100%">
@@ -40,6 +45,16 @@
                 {% if sales.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -95,6 +110,16 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -102,6 +127,16 @@
                 {% if sales.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -145,6 +180,41 @@
         <span data-feather="help-circle"> </span>
         To view all the items in a certain cash sale receipt click on view cash receipt
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Choose the date of the sale</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <input type="submit" class="btn btn-success" value="add items">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block scripts %}
+    <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $('#id_date').datetimepicker(
+                    {
+                        'format': 'Y-m-d h:s'
+                    });
+            });
+        });
+    </script>
 {% endblock %}
