@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, date
 import django_filters
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, AccessMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
@@ -96,10 +96,18 @@ class UpdateRegion(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     success_message = 'region updated successfully'
 
 
-class DeleteRegion(LoginRequiredMixin, DeleteView):
-    def post(self, request, *args, **kwargs):
-        messages.success(request, 'region removed successfully!')
-        return super().post(request, *args, **kwargs)
+class DeleteRegion(LoginRequiredMixin, PermissionRequiredMixin, AccessMixin, DeleteView):
+    permission_denied_message = 'You don\'t have the permission to perform this action'
+    raise_exception = True
+    permission_required = 'sales.delete_region'
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.customer_set.exists():
+            messages.error(request, 'This region can not be deleted because it is already in use')
+            return redirect('regions')
+        messages.success(request, 'Region removed successfully')
+        return super(DeleteRegion, self).delete(request, *args, **kwargs)
 
     template_name = 'sales/regions/delete.html'
     model = models.Region
