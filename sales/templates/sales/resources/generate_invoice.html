@@ -1,94 +1,232 @@
-{% load humanize %}
 {% load static %}
+{% load humanize %}
+{% load running_total %}
 <!doctype html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8">
     <title>Invoice for {{ customer.shop_name }} generated on {{ today }}</title>
+
     <style>
-        #customers td, #customers th {
-            border: 1px solid #ddd;
-            padding-top: 3px;
-            text-align: center;
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+            font-size: 16px;
+            line-height: 24px;
+            font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+            color: #555;
         }
 
-        #info td {
-            text-align: center;
+        .invoice-box table {
+            width: 100%;
+            line-height: inherit;
+            text-align: left;
+        }
+
+        .invoice-box table td {
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .invoice-box table tr td:nth-child(2) {
+            text-align: right;
+        }
+
+        .invoice-box table tr.top table td {
+            padding-bottom: 20px;
+        }
+
+        .invoice-box table tr.top table td.title {
+            font-size: 45px;
+            line-height: 45px;
+            color: #333;
+        }
+
+        .invoice-box table tr.information table td {
+            padding-bottom: 40px;
+            border-top: 2px solid #eee;
+        }
+
+        .invoice-box table tr.heading td {
+            background: #eee;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+
+        .invoice-box table tr.details td {
+            padding-bottom: 20px;
+        }
+
+        .invoice-box table tr.item td {
+            border-bottom: 1px solid #eee;
+        }
+
+        .invoice-box table tr.item.last td {
+            border-bottom: none;
+        }
+
+        .invoice-box table tr.total td:nth-child(5) {
+            border-top: 2px solid #eee;
+            font-weight: bold;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .invoice-box table tr.top table td {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+
+            .invoice-box table tr.information table td {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+        }
+
+        /** RTL **/
+        .rtl {
+            direction: rtl;
+            font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        }
+
+        .rtl table {
+            text-align: right;
+        }
+
+        .rtl table tr td:nth-child(2) {
+            text-align: left;
         }
     </style>
 </head>
-<body>
-<div class="address_block">
-    <h4><u>Meru Greens Horticulture Ltd Invoice </u></h4>
 
-    <table id="info">
-        <tr>
-            <th colspan="3">From</th>
-            <th colspan="3">To</th>
+<body>
+<div class="invoice-box">
+    <table cellpadding="0" cellspacing="0">
+        <tr class="top">
+            <td colspan="5">
+                <table>
+                    <tr>
+                        <td class="title" colspan="4">
+                            <img src="https://www.merugreens.com/img/logo.jpg" style="width:100%; max-width:300px;">
+                        </td>
+                    </tr>
+                </table>
+            </td>
         </tr>
         <tr>
-            <td colspan="6">
+            <td colspan="5">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <b>SALES INVOICE</b>
+                        </td>
+                        <td colspan="2">
+                            Created: {{ today }}<br>
+                            Due: {{ due_date }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr class="information">
+            <td colspan="5">
                 <table>
                     <tr>
                         <td>
-                            Meru Greens Horticulture Ltd.<br/>
-                            P.O BOX 1730 - 60200 <br/>
+                            <b>FROM</b><br>
+                            Meru Greens Horticulture Ltd.<br>
+                            P.O BOX 1730 - 60200<br>
                             MERU, KENYA<br/>
                             Phone: +254709751992<br/>
                             Email: <a href="mailto:sales@merugreens.com">sales@merugreens.com</a>
                         </td>
+
                         <td>
-                            {{ customer.shop_name }}<br/>
+                        <b>TO</b><br/>
+                            {{ customer.shop_name }}.<br>
                             {% if customer.phone_number %}
                                 Phone: {{ customer.phone_number }}
-                            {% endif %}<br/>
+                            {% endif %}<br/><br>
                             {% if customer.email %}
                                 {{ customer.email }}
                             {% endif %}
                         </td>
                     </tr>
                 </table>
+            </td>
+        </tr>
 
+        <tr class="heading">
+            <td>
+                Date
+            </td>
+
+            <td>
+                Item
+            </td>
+            <td>
+                Qty
+            </td>
+            <td>
+                @ (Ksh)
+            </td>
+            {% if has_discount %}
+                <td>Discount (%)</td>
+            {% endif %}
+            <td>Sub Total (Ksh)</td>
+        </tr>
+        {% regroup particulars by receipt.date as item_list %}
+        {% for item in item_list %}
+            <tr class="item {% if forloop.last %} last {% endif %}">
+                <td colspan="5">
+                    {{ item.grouper | date:"n-j-Y" }}
+                </td>
+            </tr>
+            {% for product in item.list %}
+                <tr class="item {% if forloop.last %} last {% endif %}">
+                    <td></td>
+                    <td>{{ product.product.name }}</td>
+                    <td>{{ product.qty }}</td>
+                    <td>{{ product.price | intcomma }}</td>
+                    {% if has_discount %}
+                        <td>{{ product.discount }}</td>
+                    {% endif %}
+                    <td>{{ product.total | floatformat:2 | intcomma }}</td>
+                </tr>
+            {% endfor %}
+            <tr class="total">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                {% if has_discount %}
+                    <td>Discount (%)</td>
+                {% endif %}
+                <td>
+                    Total: {{ item.list|invoice_receipt_total | intcomma }}
+                </td>
+            </tr>
+        {% endfor %}
+
+
+        <tr class="total">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            {% if has_discount %}
+                <td>Discount (%)</td>
+            {% endif %}
+            <td>
+                Grand Total: {{ receipt_balances.total | intcomma }}
             </td>
         </tr>
     </table>
-    <br/>
-    <br/>
-    <p style="text-align: right"><b>Created: </b>{{ today }}</p>
-    <p style="text-align: right"><b>Due: </b>{{ due_date }}</p>
-    <hr>
-    <h5 style="text-align: center;">Items</h5>
-    <table id="customers">
-        <tr>
-            <th>Date</th>
-            <th>Product</th>
-            <th>Qty</th>
-            <th>@ (Ksh)</th>
-            {% if has_discount %}
-                <th>Discount (%)</th>
-            {% endif %}
-            <th>Sub Total (Ksh)</th>
-        </tr>
-        {% for particular in particulars %}
-            <tr>
-                <td>{{ particular.receipt.date }}</td>
-                <td>{{ particular.product.name }}</td>
-                <td>{{ particular.qty }}</td>
-                <td>{{ particular.price | intcomma }}</td>
-                {% if has_discount %}
-                    <td>{{ particular.discount }}</td>
-                {% endif %}
-                <td>{{ particular.total | floatformat:2 | intcomma }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    <h3 style="text-align: right">Amount Due {{ due_date }}</h3>
-    <p style="text-align: right">Total Amount: <b>Ksh.{{ total_amount.total | intcomma }}</b></p>
-    <p style="text-align: right">Amount Payable: <b>Ksh.{{ receipt_balances.total | intcomma }}</b></p>
-
-    <p>Signature:
-        <sub>_____________________________________________________________________________________________</sub>
-    </p>
 </div>
 </body>
 </html>

@@ -1,10 +1,12 @@
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
 from django.db.models import Sum
 from django.http import HttpResponse
+from django.template.loader import render_to_string
 from django.utils import timezone
+from weasyprint import HTML
 
 from sales.models import Customer, ReceiptPayment, ReceiptParticular, Receipt
-from sales.render_pdf import render_to_pdf
 
 
 @login_required()
@@ -27,14 +29,12 @@ def generate_invoice(request, customer, due_date):
         'has_discount': has_discount,
         'today': today
     }
-    pdf = render_to_pdf('sales/resources/generate_invoice.html', context)
-    if pdf:
+    invoice_string = render_to_string('sales/resources/generate_invoice.html', context)
+    html = HTML(string=invoice_string)
+    html.write_pdf(target='/tmp/{}_{}_invoice.pdf'.format(today.strftime('%Y-%m-%d'), customer.shop_name))
+    fs = FileSystemStorage('/tmp')
+    with fs.open('{}_{}_invoice.pdf'.format(today.strftime('%Y-%m-%d'), customer.shop_name)) as pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
-        filename = "%s_invoice_on_%s" % (customer.shop_name, str(today))
-        content = "inline; filename='%s'" % filename
-        download = request.GET.get("download")
-        if download:
-            content = "attachment; filename='%s'" % filename
-        response['Content-Disposition'] = content
+        response['Content-Disposition'] = "inline; filename='{}_{}_invoice.pdf'".format(today.strftime('%Y-%m-%d'),
+                                                                                        customer.shop_name)
         return response
-    return HttpResponse("Not found")
