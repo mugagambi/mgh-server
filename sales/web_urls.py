@@ -4,6 +4,7 @@ from sales import discount_views
 from sales import extra_views
 from sales import generate_invoice_resource
 from sales import more_views
+from sales import returns_views
 from sales import settle_debts_views
 from sales import web_views
 
@@ -70,5 +71,6 @@ urlpatterns = [
     path('customers/settles/invoices/', settle_debts_views.settle_invoice_debt,
          name='settle_invoice'),
     path('invoice/generate/<str:customer>/<str:due_date>/', generate_invoice_resource.generate_invoice,
-         name='generate_invoice')
+         name='generate_invoice'),
+    path('all/returns/<str:pk>/update/', returns_views.UpdateReturn.as_view(), name='update_return')
 ]

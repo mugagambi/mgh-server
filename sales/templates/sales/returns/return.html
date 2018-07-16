@@ -17,10 +17,12 @@
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">{{ return.customer.shop_name }}, {{ return.product.name }} return details</h1>
+        <a href="{% url 'update_return' pk=return.number %}" class="btn btn-outline-success mb-1">Update
+        </a>
     </div>
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <table id="customers" class="table table-bordered table-responsive-md" style="width:100%">
+            <table id="customers" class="table table-bordered table-responsive-sm" style="width:100%">
                 <tr>
                     <th>Return Number:</th>
                     <td>{{ return.number }}</td>

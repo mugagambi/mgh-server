@@ -49,7 +49,9 @@
                 <td>Ksh. {{ return.credit_note |floatformat:2| intcomma }}</td>
                 <td>{{ return.replaced }}</td>
                 <td>
-                    <a href="{% url 'return' pk=return.number %}" class="btn btn-outline-success">Details
+                    <a href="{% url 'return' pk=return.number %}" class="btn btn-outline-success mb-1">Details
+                    </a>
+                    <a href="{% url 'update_return' pk=return.number %}" class="btn btn-outline-success mb-1">Update
                     </a>
                 </td>
             </tr>

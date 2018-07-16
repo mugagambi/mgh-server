@@ -54,7 +54,7 @@ class BbfForm(forms.ModelForm):
 class ReturnForm(forms.ModelForm):
     class Meta:
         model = models.Return
-        fields = ('customer', 'product', 'qty', 'price', 'reason', 'description')
+        fields = ('customer', 'product', 'qty', 'price', 'date', 'approved', 'replaced', 'reason', 'description')
         widgets = {'product': Select2Widget, 'customer': forms.HiddenInput}
 
 

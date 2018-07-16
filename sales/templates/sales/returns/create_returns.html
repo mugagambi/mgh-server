@@ -3,20 +3,27 @@
 {% load static %}
 {% block styles %}
     {{ form.media.css }}
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
 {% endblock %}
 {% block breadcrump %}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="{% url 'returns' %}">Returns</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Record Return</li>
+            <li class="breadcrumb-item"><a
+                    href="{% url 'returns' %}">{{ object.customer.shop_name }}, {{ object.product.name }} return
+                details</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{% if object %}Update {% else %}Record {% endif %}
+                Return
+            </li>
         </ol>
     </nav>
 
 {% endblock %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2">Record return for  {{ customer.shop_name }}</h1>
+        <h1 class="h2">{% if object %}Update {% else %}Record {% endif %} return
+            for {{ object.customer.shop_name }}</h1>
     </div>
     <div class="row">
         <div class="col-sm-5 offset-sm-3">
@@ -30,13 +37,25 @@
                 </div>
             </form>
             <br/>
-            <div class="alert alert-info" role="alert">
+            <div class="alert alert-warning" role="alert">
                 <span data-feather="help-circle"> </span>
-                Record a return.
+                {% if object %} updating a return will not affect the customer statement.Use something like bbfs
+                    balances to offset the account{% endif %}
             </div>
         </div>
     </div>
 {% endblock %}
 {% block scripts %}
     {{ form.media.js }}
+    <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $('#id_date').datetimepicker(
+                    {
+                        'format': 'Y-m-d h:s'
+                    });
+            });
+        });
+    </script>
 {% endblock %}
