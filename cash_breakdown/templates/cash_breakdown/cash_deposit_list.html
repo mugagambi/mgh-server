@@ -43,6 +43,8 @@
                            href="{% url 'update_deposit' pk=cash.pk %}">Update</a>
                     {% endif %}
                 </td>
+                {% empty %}
+                <td colspan="4">No data in the system</td>
             </tr>
         {% endfor %}
         </tbody>

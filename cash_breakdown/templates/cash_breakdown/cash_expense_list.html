@@ -45,6 +45,8 @@
                            title="Click to view all the day expenses">More Details</a>
                     {% endif %}
                 </td>
+            {% empty %}
+            <td colspan="3" class="text-center">No data in the system</td>
             </tr>
         {% endfor %}
         </tbody>

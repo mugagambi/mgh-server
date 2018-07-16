@@ -40,7 +40,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td><b>KES{{ group.list|running_total | intcomma}}</b></td>
+                <td><b>KES{{ group.list|running_total | intcomma }}</b></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -53,6 +53,7 @@
                 {% if sales.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?payed_page=
+
 
 
 
@@ -251,6 +252,7 @@
 
 
 
+
                                                      {{ sales.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -354,6 +356,7 @@
 
 
 
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -361,6 +364,7 @@
                 {% if sales.paginator.num_pages > sales.number|add:'4' %}
                     <li class="page-item"><a class="page-link"
                                              href="?payed_page=
+
 
 
 
@@ -546,6 +550,7 @@
 
 
 
+
                                 {{ sales.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                            aria-label="Next">
                             <span aria-hidden="true">Next</span>
@@ -566,83 +571,4 @@
     <hr/>
     <p><b>Totals from {{ date_0 }} to {{ date_1 }}</b></p>
     <p><b>Total Cash Deposits: </b>KES{{ total_deposit.amount__sum__sum | floatformat:2 | intcomma }}</p>
-    <div>
-        <canvas id="myChart"></canvas>
-    </div>
-{% endblock %}
-{% block scripts %}
-    <script src="{% static 'js/Chart.min.js' %}"></script>
-    <script>
-        $(document).ready(function () {
-            var api = '{% url 'daily_sales_charts' date_0=date_0_str date_1=date_1_str %}';
-            var defaultData = [];
-            var cashData = [];
-            var labels = [];
-            $.ajax({
-                method: 'GET',
-                url: api,
-                success: function (data) {
-                    $.each(data, function (index, value) {
-                        defaultData.push(value.customer);
-                        labels.push(value.period);
-                        cashData.push(value.cash)
-                    });
-                    var ctx = document.getElementById("myChart").getContext('2d');
-                    var myChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Customer Sales',
-                                data: defaultData,
-                                backgroundColor: 'rgba(10,148,5)',
-                                borderColor: 'rgba(0,0,0)',
-                                borderWidth: 1
-                            }, {
-                                label: 'Open Air Market Sales',
-                                data: cashData,
-                                backgroundColor: 'rgba(181,214,6)',
-                                borderColor: 'rgba(0,0,0)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            legend: {
-                                position: 'top',
-                            },
-                            title: {
-                                display: true,
-                                text: 'Sales per {{ period }}'
-                            },
-                            scales: {
-                                yAxes: [{
-                                    ticks: {
-                                        beginAtZero: true,
-                                        callback: function (value, index, values) {
-                                            if (parseInt(value) >= 1000) {
-                                                return 'Ksh.' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                                            } else {
-                                                return 'Ksh.' + value;
-                                            }
-                                        }
-                                    }
-                                }]
-                            },
-                            tooltips: {
-                                callbacks: {
-                                    label: function (tooltipItem, data) {
-                                        return "Ksh." + Number(tooltipItem.yLabel).toFixed(0).replace(/./g, function (c, i, a) {
-                                            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-
-        });
-    </script>
 {% endblock %}
