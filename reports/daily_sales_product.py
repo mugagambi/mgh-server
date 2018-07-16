@@ -1,4 +1,5 @@
 import datetime
+from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -54,29 +55,71 @@ def report(request, date_0, date_1, product):
         filter(cash_receipt__date__range=(date_0_datetime, date_1_datetime), product=product). \
         annotate(day=Trunc('cash_receipt__date', period, output_field=DateField(), )). \
         values('day').annotate(Sum('total'), Sum('qty')).order_by('day')
+    all_sales_graph = []
+    final_sales_graph = []
+    for sale in sale_bar_graph:
+        all_sales_graph.append({
+            'day': sale['day'],
+            'customer_amount': sale['total__sum'],
+            'customer_qty': sale['qty__sum'],
+            'cash_amount': 0,
+        })
+    for sale in cash_sales_bar_graph:
+        all_sales_graph.append({
+            'day': sale['day'],
+            'customer_amount': 0,
+            'cash_amount': sale['total__sum'],
+        })
+    all_sales_graph.sort(key=lambda x: x['day'])
+    for k, v in groupby(all_sales_graph, key=lambda x: x['day']):
+        v = list(v)
+        final_sales_graph.append({
+            'day': k,
+            'customer_amount': sum(d['customer_amount'] for d in v),
+            'cash_amount': sum(d['cash_amount'] for d in v),
+        })
+    all_sales = []
+    final_sales = []
+    for sale in sales:
+        all_sales.append({
+            'day': sale['day'],
+            'customer_amount': sale['total__sum'],
+            'customer_qty': sale['qty__sum'],
+            'cash_amount': 0,
+            'cash_qty': 0
+        })
+    for sale in cash_sales:
+        all_sales.append({
+            'day': sale['day'],
+            'customer_amount': 0,
+            'customer_qty': 0,
+            'cash_amount': sale['total__sum'],
+            'cash_qty': sale['qty__sum']
+        })
+    all_sales.sort(key=lambda x: x['day'])
+    for k, v in groupby(all_sales, key=lambda x: x['day']):
+        v = list(v)
+        final_sales.append({
+            'day': k,
+            'customer_amount': sum(d['customer_amount'] for d in v),
+            'customer_qty': sum(d['customer_qty'] for d in v),
+            'cash_amount': sum(d['cash_amount'] for d in v),
+            'cash_qty': sum(d['cash_qty'] for d in v),
+        })
     total_sales = sales.aggregate(Sum('total__sum'), Sum('qty__sum'))
     total_cash_sales = cash_sales.aggregate(Sum('total__sum'), Sum('qty__sum'))
     page = request.GET.get('payed_page', 1)
 
-    paginator = Paginator(sales, 10)
+    paginator = Paginator(final_sales, 10)
     try:
         sales = paginator.page(page)
     except PageNotAnInteger:
         sales = paginator.page(1)
     except EmptyPage:
         sales = paginator.page(paginator.num_pages)
-    page = request.GET.get('credit_page', 1)
-
-    paginator = Paginator(cash_sales, 10)
-    try:
-        cash_sales = paginator.page(page)
-    except PageNotAnInteger:
-        cash_sales = paginator.page(1)
-    except EmptyPage:
-        cash_sales = paginator.page(paginator.num_pages)
-    context_data = {'sales': sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime, 'cash_sales': cash_sales,
+    context_data = {'sales': sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime,
                     'total_sales': total_sales, 'total_cash_sales': total_cash_sales, 'period': period,
-                    'product': product, 'sale_bar_graph': sale_bar_graph, 'cash_sales_bar_graph': cash_sales_bar_graph}
+                    'product': product, 'sale_bar_graph': final_sales_graph}
     return render(request, 'reports/daily-sales-product/report.html', context_data)
 
 
