@@ -135,6 +135,7 @@ def trade_debtors(request):
 
 
 # todo add the right permissions
+# todo optimize this function
 @login_required()
 def customer_statement(request, customer, date_0=None, date_1=None):
     customer = get_object_or_404(models.Customer, pk=customer)

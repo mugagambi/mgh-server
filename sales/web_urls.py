@@ -5,6 +5,7 @@ from sales import extra_views
 from sales import generate_invoice_resource
 from sales import more_views
 from sales import open_air
+from sales import receipts
 from sales import returns_views
 from sales import settle_debts_views
 from sales import web_views
@@ -24,6 +25,7 @@ urlpatterns = [
     path('all/debtors/', extra_views.trade_debtors, name='trade-debtors'),
     path('all/bbfs/<str:customer>/', web_views.customer_bbfs, name='customer-bbfs'),
     path('all/customers/receipt/<str:pk>/', web_views.receipt_detail, name='sale-receipt'),
+    path('all/customers/receipt/<str:pk>/delete/', receipts.DeleteReceipt.as_view(), name='delete_sale_receipt'),
     path('all/receipt/create/', extra_views.add_receipt, name='create-sale-receipt'),
     path('all/cash/', web_views.cash_sales_list, name='cash-sales'),
     path('all/cash/add/<str:date>/', open_air.add_cash_receipt_particulars, name='add_cash_sales'),
