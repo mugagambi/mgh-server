@@ -68,9 +68,9 @@
                                 beginAtZero: true,
                                 callback: function (value, index, values) {
                                     if (parseInt(value) >= 1000) {
-                                        return 'Ksh.' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                                     } else {
-                                        return 'Ksh.' + value;
+                                        return value;
                                     }
                                 }
                             }
