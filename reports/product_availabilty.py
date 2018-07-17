@@ -1,5 +1,3 @@
-import datetime
-
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.shortcuts import redirect, render
@@ -31,10 +29,8 @@ def period(request):
 def report(request, date_0, date_1):
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
-    date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
-    date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
     products = models.AggregationCenterProduct.objects. \
-        filter(date__range=(date_0_datetime, date_1_datetime)). \
+        filter(date__range=(date_0, date_1)). \
         values('product__name').annotate(total_qty=Sum('qty')).order_by('product__name')
-    context = {'date_0': date_0_datetime, 'date_1': date_1_datetime, 'products': products}
+    context = {'date_0': date_0, 'date_1': date_1, 'products': products}
     return render(request, 'reports/product-availability/report.html', context)
