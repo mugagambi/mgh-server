@@ -56,6 +56,8 @@
                 <option value="{% url 'product_sales_period' %}">Products Sales Report</option>
                 <option value="{% url 'daily_sales_product_period' %}">Daily Sales per Product Report</option>
                 <option value="{% url 'daily_cash_deposit_period' %}">Daily Cash Deposits Report</option>
+                <option value="{% url 'cash_expenses' %}">Daily Cash Expenses Report</option>
+                <option value="{% url 'product_availability_period' %}">Product Availability Report</option>
             </select>
         </div>
     </form>
@@ -65,7 +67,7 @@
         <br/>
         <a href="{% url 'sales-summary' %}" class="btn btn-success mb-1">Payments Summary Report</a>
         <a href="{% url 'daily_cash_deposit_period' %}" class="btn btn-success mb-1">Daily Cash Deposits Report</a>
-        <a href="#" class="btn btn-success mb-1">Daily Cash Expenses Report</a>
+        <a href="{% url 'cash_expenses' %}" class="btn btn-success mb-1">Daily Cash Expenses Report</a>
 
         <hr/>
         <h2>Trade Debtors</h2>
@@ -83,7 +85,7 @@
             Per Customer</a>
         <a href="{% url 'outward_stock_period' %}" class="btn btn-success mb-1">Outward Stock Summary
             Report</a>
-        <a href="#" class="btn btn-success mb-1">Product Availability Report</a>
+        <a href="{% url 'product_availability_period' %}" class="btn btn-success mb-1">Product Availability Report</a>
         <a href="#" class="btn btn-success mb-1">Daily Product Availability Report</a>
         <hr/>
         <h2>Ordering</h2>

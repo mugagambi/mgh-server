@@ -8,6 +8,7 @@ from . import daily_sales
 from . import outward_products
 from . import outward_stock_summary
 from . import price_per_product
+from . import product_availabilty
 from . import product_customer
 from . import views
 
@@ -70,4 +71,7 @@ urlpatterns = [
     path('sales/daily-cash-deposits/period/', cash_deposit.period, name='daily_cash_deposit_period'),
     path('sales/daily-cash-deposits/<str:date_0>/<str:date_1>/', cash_deposit.report,
          name='daily_cash_deposits_report'),
+    path('sales/product-availability/period/', product_availabilty.period, name='product_availability_period'),
+    path('sales/product-availability/<str:date_0>/<str:date_1>/', product_availabilty.report,
+         name='product_availability_report'),
 ]

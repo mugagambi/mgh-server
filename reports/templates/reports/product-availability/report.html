@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load mathfilters %}
+{% load static %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2"> Product Availability Report</h1>
+    </div>
+    <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
+    <a href="{% url 'product_availability_period' %}" class="btn btn-outline-success">Change Period</a>
+    <hr/>
+    <table id="customers" class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Total Qty</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>
+                    {{ product.product__name }}
+                </td>
+                <td>{{ product.total_qty | intcomma }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            var defaultData = [{% for product in products %}
+                {{ product.total_qty }},
+            {% endfor %}
+            ];
+            var labels = [{% for  product in products%} '{{ product.product__name }}', {% endfor %}];
+            var ctx = document.getElementById("myChart").getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Product Qty',
+                        data: defaultData,
+                        backgroundColor: 'rgba(10,148,5)',
+                        borderColor: 'rgba(0,0,0)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Product Availability from {{ date_0 }} to {{ date_1 }}'
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                callback: function (value, index, values) {
+                                    if (parseInt(value) >= 1000) {
+                                        return 'Ksh.' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                    } else {
+                                        return 'Ksh.' + value;
+                                    }
+                                }
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                return "Ksh." + Number(tooltipItem.yLabel).toFixed(0).replace(/./g, function (c, i, a) {
+                                    return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+
+        });
+    </script>
+{% endblock %}
