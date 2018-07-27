@@ -4,6 +4,7 @@ from reports import sales_summary, total_orders, product_sales, daily_sales_prod
 from . import customer_performance
 from . import customer_sales
 from . import daily_orders
+from . import daily_orders_per_product
 from . import daily_product_availability
 from . import daily_sales
 from . import order_dispatch
@@ -83,4 +84,7 @@ urlpatterns = [
     path('sales/order-dispatch/period/', order_dispatch.period, name='order_dispatch_period'),
     path('sales/daily-product-availability/<str:date_0>/<str:date_1>/', order_dispatch.report,
          name='order_dispatch_report'),
+    path('sales/daily-orders-product/period/', daily_orders_per_product.period, name='daily_orders_product_period'),
+    path('sales/daily-orders-product/<str:date_0>/<str:date_1>/<int:product>/', daily_orders_per_product.report,
+         name='daily_orders_product_report'),
 ]
