@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load mathfilters %}
+{% load static %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2"> Order vs Dispatch Report</h1>
+    </div>
+    <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
+    <a href="{% url 'daily_sales_period' %}" class="btn btn-outline-success">Change Period</a>
+    <hr/>
+    <table id="customers" class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Orders</th>
+            <th scope="col">Customer Dispatch</th>
+            <th scope="col">Orderless Dispatch</th>
+            <th scope="col">Total Dispatch</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for data in data %}
+            <tr>
+                <td>
+                    {{ data.product }}
+                </td>
+                <td>{{ data.order_qty | intcomma }}</td>
+                <td>{{ data.customer_qty | intcomma }}</td>
+                <td>{{ data.orderless_qty | intcomma }}</td>
+                <td>{{ data.customer_qty|addition:data.orderless_qty | intcomma }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

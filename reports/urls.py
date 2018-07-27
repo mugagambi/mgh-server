@@ -6,6 +6,7 @@ from . import customer_sales
 from . import daily_orders
 from . import daily_product_availability
 from . import daily_sales
+from . import order_dispatch
 from . import outward_products
 from . import outward_stock_summary
 from . import price_per_product
@@ -79,4 +80,7 @@ urlpatterns = [
          name='daily_product_availability_period'),
     path('sales/daily-product-availability/<str:date_0>/<str:date_1>/<int:product>/', daily_product_availability.report,
          name='daily_product_availability_report'),
+    path('sales/order-dispatch/period/', order_dispatch.period, name='order_dispatch_period'),
+    path('sales/daily-product-availability/<str:date_0>/<str:date_1>/', order_dispatch.report,
+         name='order_dispatch_report'),
 ]

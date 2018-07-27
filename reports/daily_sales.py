@@ -33,7 +33,7 @@ def period(request):
     return render(request, 'reports/daily_sales/period.html',
                   {'form': form})
 
-
+@login_required()
 def report(request, date_0, date_1):
     period = get_date_period_in_range(date_0, date_1)
     date_0_str = date_0

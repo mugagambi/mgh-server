@@ -61,6 +61,7 @@
                 <option value="{% url 'daily_product_availability_period' %}">Daily Product Availability
                     Report
                 </option>
+                <option value="{% url 'order_dispatch_period' %}">Orders vs Dispatch reports</option>
             </select>
         </div>
     </form>
@@ -95,7 +96,7 @@
         <h2>Ordering</h2>
         <br/>
         <a href="{% url 'total_orders_period' %}" class="btn btn-success mb-1">Total Orders Report</a>
-        <a href="#" class="btn btn-success mb-1">Orders vs Dispatch Report</a>
+        <a href="{% url 'order_dispatch_period' %}" class="btn btn-success mb-1">Orders vs Dispatch Report</a>
         <a href="#" class="btn btn-success mb-1">Daily Orders per Product Report</a>
         <a href="#" class="btn btn-success mb-1">Daily Orders per Customer Report</a>
         <hr/>
