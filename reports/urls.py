@@ -14,6 +14,7 @@ from . import price_per_product
 from . import product_availabilty
 from . import product_customer
 from . import views
+from . import customer_orders
 
 urlpatterns = [
     path('index/', views.index, name='report-index'),
@@ -87,4 +88,7 @@ urlpatterns = [
     path('sales/daily-orders-product/period/', daily_orders_per_product.period, name='daily_orders_product_period'),
     path('sales/daily-orders-product/<str:date_0>/<str:date_1>/<int:product>/', daily_orders_per_product.report,
          name='daily_orders_product_report'),
+    path('sales/customer-products/period/', customer_orders.period, name='customer_order_period'),
+    path('sales/customer-products/<str:date_0>/<str:date_1>/<str:customer>/', customer_orders.report,
+         name='customer_order_report'),
 ]
