@@ -1,6 +1,7 @@
 from django.urls import path
 
 from reports import sales_summary, total_orders, product_sales, daily_sales_product, cash_deposit
+from . import customer_orders
 from . import customer_performance
 from . import customer_sales
 from . import daily_orders
@@ -13,8 +14,8 @@ from . import outward_stock_summary
 from . import price_per_product
 from . import product_availabilty
 from . import product_customer
+from . import sales_per_region
 from . import views
-from . import customer_orders
 
 urlpatterns = [
     path('index/', views.index, name='report-index'),
@@ -91,4 +92,7 @@ urlpatterns = [
     path('sales/customer-products/period/', customer_orders.period, name='customer_order_period'),
     path('sales/customer-products/<str:date_0>/<str:date_1>/<str:customer>/', customer_orders.report,
          name='customer_order_report'),
+    path('sales/sales-per-region/period/', sales_per_region.period, name='sales_per_region_period'),
+    path('sales/sales-per-region/<str:date_0>/<str:date_1>/', sales_per_region.report,
+         name='sales_per_region_report'),
 ]
