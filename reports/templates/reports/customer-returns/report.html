@@ -4,7 +4,7 @@
 {% load mathfilters %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2"> Customer Returns Report</h1>
+        <h1 class="h2"> Customers Returns Report</h1>
     </div>
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'total_orders_period' %}" class="btn btn-outline-success">Change Period</a>
@@ -55,6 +55,111 @@
                 <td>{{ return.total_credit |floatformat:2 | intcomma }}</td>
             </tr>
         {% endfor %}
+        <tr>
+            <td><b>Total Credit Note </b></td>
+            <td><b>-</b></td>
+            <td><b>{{ rotten_credit | floatformat:2 | intcomma }}</b></td>
+            <td><b>-</b></td>
+            <td><b>{{ unripe_credit | floatformat:2 | intcomma }}</b></td>
+            <td><b>-</b></td>
+            <td><b>{{ overripe_credit | floatformat:2 | intcomma }}</b></td>
+            <td><b>-</b></td>
+            <td><b>{{ poor_quality_credit | floatformat:2 | intcomma }}</b></td>
+            <td><b>-</b></td>
+            <td><b>{{ excess_credit | floatformat:2 | intcomma }}</b></td>
+            <td><b>-</b></td>
+            <td><b>{{ total_credit | floatformat:2 | intcomma }}</b></td>
+        </tr>
         </tbody>
     </table>
+    <div>
+        <canvas id="myChart" height="400"></canvas>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            var rotten = [{% for return in returns %} {{ return.rotten_qty  }}, {% endfor %}];
+            var unripe = [{% for return in returns %} {{ return.unripe_qty  }}, {% endfor %}];
+            var overripe = [{% for return in returns %} {{ return.overripe_qty  }}, {% endfor %}];
+            var poor_quality = [{% for return in returns %} {{ return.poor_quality_qty  }}, {% endfor %}];
+            var excess = [{% for return in returns %} {{ return.excess_qty  }}, {% endfor %}];
+            var labels = [{% for return in returns %} '{{ return.product }}', {% endfor %}];
+            var ctx = document.getElementById("myChart").getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'rotten',
+                        data: rotten,
+                        backgroundColor: 'rgba(10,148,5)',
+                        borderColor: 'rgba(0,0,0)',
+                        borderWidth: 1
+                    }, {
+                        label: 'un ripe',
+                        data: unripe,
+                        backgroundColor: 'rgba(227,95,102)',
+                        borderColor: 'rgba(0,0,0)',
+                        borderWidth: 1
+                    },
+                        {
+                            label: 'over ripe',
+                            data: overripe,
+                            backgroundColor: 'rgba(147,9,180)',
+                            borderColor: 'rgba(0,0,0)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'poor quality',
+                            data: poor_quality,
+                            backgroundColor: 'rgba(50,50,76)',
+                            borderColor: 'rgba(0,0,0)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'excess',
+                            data: excess,
+                            backgroundColor: 'rgba(5,179,255)',
+                            borderColor: 'rgba(0,0,0)',
+                            borderWidth: 1
+                        }]
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Customers returns per product by quantity from {{ date_0 }} to {{ date_1 }}'
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                callback: function (value, index, values) {
+                                    if (parseInt(value) >= 1000) {
+                                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                    } else {
+                                        return value;
+                                    }
+                                }
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                return Number(tooltipItem.xLabel).toFixed(0).replace(/./g, function (c, i, a) {
+                                    return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}

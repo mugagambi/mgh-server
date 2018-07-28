@@ -57,5 +57,13 @@ def report(request, date_0, date_1):
             'total_qty': sum(d['qty__sum'] for d in v),
             'total_credit': sum(d['credit_note'] for d in v),
         })
-    cxt = {'returns': final_returns, 'date_0': date_0_datetime, 'date_1': date_1_datetime}
+    rotten_credit = sum(r['rotten_credit'] for r in final_returns)
+    unripe_credit = sum(r['unripe_credit'] for r in final_returns)
+    overripe_credit = sum(r['overripe_credit'] for r in final_returns)
+    poor_quality_credit = sum(r['poor_quality_credit'] for r in final_returns)
+    excess_credit = sum(r['excess_credit'] for r in final_returns)
+    total_credit = sum(r['total_credit'] for r in final_returns)
+    cxt = {'returns': final_returns, 'date_0': date_0_datetime, 'date_1': date_1_datetime,
+           'rotten_credit': rotten_credit, 'unripe_credit': unripe_credit, 'overripe_credit': overripe_credit,
+           'poor_quality_credit': poor_quality_credit, 'excess_credit': excess_credit, 'total_credit': total_credit}
     return render(request, 'reports/customer-returns/report.html', cxt)
