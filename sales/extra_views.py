@@ -110,7 +110,7 @@ def add_receipt(request):
 # todo add the required permissions
 @login_required()
 def trade_debtors(request):
-    debtors = models.CustomerAccountBalance.objects.filter(~Q(amount=0.0)).order_by('customer__shop_name')
+    debtors = models.CustomerAccountBalance.objects.select_related('customer').filter(~Q(amount=0.0)).order_by('customer__shop_name')
     credit_total = debtors.filter(amount__gt=Decimal('0.0')).aggregate(total=Sum('amount'))
     debit_total = debtors.filter(amount__lt=Decimal('0.0')).aggregate(total=Sum('amount'))
     download = request.GET.get('download', None)
