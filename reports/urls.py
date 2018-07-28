@@ -1,6 +1,6 @@
 from django.urls import path
 
-from reports import sales_summary, total_orders, product_sales, daily_sales_product, cash_deposit
+from reports import sales_summary, total_orders, product_sales, daily_sales_product, cash_deposit, market_returns
 from . import customer_orders
 from . import customer_performance
 from . import customer_sales
@@ -95,4 +95,7 @@ urlpatterns = [
     path('sales/sales-per-region/period/', sales_per_region.period, name='sales_per_region_period'),
     path('sales/sales-per-region/<str:date_0>/<str:date_1>/', sales_per_region.report,
          name='sales_per_region_report'),
+    path('sales/market-returns/period/', market_returns.period, name='market_returns_period'),
+    path('sales/market-returns/<str:date_0>/<str:date_1>/', market_returns.report,
+         name='market_returns_report'),
 ]

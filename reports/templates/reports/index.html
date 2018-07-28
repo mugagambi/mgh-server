@@ -66,6 +66,7 @@
                     Report
                 </option>
                 <option value="{% url 'sales_per_region_period' %}">Customer Sales per Region</option>
+                <option value="{% url 'market_returns_period' %}">Market Returns Report</option>
             </select>
         </div>
     </form>
@@ -123,7 +124,7 @@
         <hr>
         <h2>Returns</h2>
         <br/>
-        <a href="#" class="btn btn-success mb-1">Market Returns Report</a>
+        <a href="{% url 'market_returns_period' %}" class="btn btn-success mb-1">Market Returns Report</a>
         <a href="#" class="btn btn-success mb-1">Daily Customer Returns Report</a>
         <a href="#" class="btn btn-success mb-1">Daily Returns per Customer Report</a>
         <hr>
