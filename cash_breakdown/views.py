@@ -44,7 +44,7 @@ def create_banks(request):
 class UpdateBank(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Bank
     fields = ('name',)
-    permission_required = 'core.change_bank'
+    permission_required = 'cash_breakdown.change_bank'
     success_message = 'Bank details have been updated'
     success_url = reverse_lazy('banks')
     template_name = 'cash_breakdown/update_bank.html'
@@ -63,7 +63,7 @@ class DeleteBank(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'crud/delete.html'
     model = Bank
     success_url = reverse_lazy('banks')
-    permission_required = 'bank.delete_bank'
+    permission_required = 'cash_breakdown.delete_bank'
 
 
 class CashDepositList(LoginRequiredMixin, ListView):
@@ -73,7 +73,7 @@ class CashDepositList(LoginRequiredMixin, ListView):
 
 
 @login_required()
-@permission_required('core.add_cashdeposit', raise_exception=True)
+@permission_required('cash_breakdown.add_cashdeposit', raise_exception=True)
 def add_deposits(request):
     """
         Add  banks
@@ -95,7 +95,7 @@ def add_deposits(request):
 class UpdateCashDeposit(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
     model = CashDeposit
     fields = ('bank', 'amount', 'date')
-    permission_required = 'core.change_cashdeposit'
+    permission_required = 'cash_breakdown.change_cashdeposit'
     success_message = 'Cash Deposit details have been updated'
     success_url = reverse_lazy('cash_deposits')
     template_name = 'cash_breakdown/cash_deposit_update.html'
@@ -125,7 +125,7 @@ def handle_cash_expense_date(request):
 
 
 @login_required()
-@permission_required('core.add_cashexpense', raise_exception=True)
+@permission_required('cash_breakdown.add_cashexpense', raise_exception=True)
 def create_expenses(request, date):
     """
         Add  cash expense
