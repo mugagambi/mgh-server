@@ -37,5 +37,6 @@ def report(request, date_0, date_1):
     sales = models.ReceiptParticular.objects. \
         filter(receipt__date__range=(date_0_datetime, date_1_datetime)). \
         values('receipt__customer__region__name').annotate(Sum('total')).order_by('receipt__customer__region__name')
-    cxt = {'sales': sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime}
+    total = sales.aggregate(total=Sum('total__sum'))
+    cxt = {'sales': sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime, 'total': total}
     return render(request, 'reports/sales-per-region/report.html', cxt)

@@ -24,6 +24,10 @@
                 <td>{{ sale.total__sum | intcomma }}</td>
             </tr>
         {% endfor %}
+        <tr>
+            <td><b>Total</b></td>
+            <td><b>Ksh. {{ total.total | intcomma }}</b></td>
+        </tr>
         </tbody>
     </table>
     <div>
