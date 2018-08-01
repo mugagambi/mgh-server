@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
+    {{ form.media.css }}
+{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2"> Daily Cash Breakdown Report</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="alert alert-warning" role="alert">
+                Select the date period to view the report
+            </div>
+            <br>
+            <form method="post">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <div class="form-group">
+                    <input type="submit" value="generate report" class="btn btn-outline-success mx-sm-3">
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $('#id_date_0').datetimepicker(
+                    {
+                        'format': 'Y-m-d',
+                        'timepicker': false
+                    });
+                $('#id_date_1').datetimepicker(
+                    {
+                        'format': 'Y-m-d',
+                        'timepicker': false
+                    });
+            });
+        });
+    </script>
+    {{ form.media.js }}
+{% endblock %}

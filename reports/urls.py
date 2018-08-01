@@ -1,7 +1,7 @@
 from django.urls import path
 
 from reports import sales_summary, total_orders, product_sales, daily_sales_product, cash_deposit, market_returns, \
-    customer_returns
+    customer_returns, cash_breakdown
 from . import customer_orders
 from . import customer_performance
 from . import customer_sales
@@ -102,4 +102,7 @@ urlpatterns = [
     path('sales/customer-returns/period/', customer_returns.period, name='customer_returns_period'),
     path('sales/customer-returns/<str:date_0>/<str:date_1>/', customer_returns.report,
          name='customer_returns_report'),
+    path('sales/cash-breakdown/period/', cash_breakdown.period, name='cash_breakdown_period'),
+    path('sales/cash-breakdown/<str:date_0>/<str:date_1>/', cash_breakdown.report,
+         name='cash_breakdown_report'),
 ]

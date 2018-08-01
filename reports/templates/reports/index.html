@@ -68,6 +68,7 @@
                 <option value="{% url 'sales_per_region_period' %}">Customer Sales per Region</option>
                 <option value="{% url 'market_returns_period' %}">Market Returns Report</option>
                 <option value="{% url 'customer_returns_period' %}">Customer Returns Report</option>
+                <option value="{% url 'cash_breakdown_period' %}">Daily Cash BreakDown Report</option>
             </select>
         </div>
     </form>
@@ -78,6 +79,7 @@
         <a href="{% url 'sales-summary' %}" class="btn btn-success mb-1">Payments Summary Report</a>
         <a href="{% url 'daily_cash_deposit_period' %}" class="btn btn-success mb-1">Daily Cash Deposits Report</a>
         <a href="{% url 'cash_expenses' %}" class="btn btn-success mb-1">Daily Cash Expenses Report</a>
+        <a href="{% url 'cash_breakdown_period' %}" class="btn btn-success mb-1">Daily Cash BreakDown Report</a>
 
         <hr/>
         <h2>Trade Debtors</h2>
