@@ -433,7 +433,7 @@ def add_payment(request, receipt):
 def update_payment(request, receipt, payment):
     receipt = get_object_or_404(models.Receipt, pk=receipt)
     payment = get_object_or_404(models.ReceiptPayment, receipt=receipt, pk=payment)
-    old_amount = payment.amount
+    old_amount = payment.amount if payment.type != 4 else 0
     if request.method == 'POST':
         form = forms.ReceiptPaymentForm(request.POST, instance=payment)
         if form.is_valid():
