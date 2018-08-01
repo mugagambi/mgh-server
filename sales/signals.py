@@ -123,6 +123,14 @@ def return_account(sender, instance, created, **kwargs):
                                            date=instance.date,
                                            type='R',
                                            returns=instance)
+    else:
+        if not instance.replaced and not CustomerAccount.objects.filter(returns=instance).exists():
+            CustomerAccount.objects.create(number=main_generate_unique_id(),
+                                           customer=instance.customer,
+                                           amount=Decimal(instance.qty) * Decimal(instance.price),
+                                           date=instance.date,
+                                           type='R',
+                                           returns=instance)
 
 
 @receiver(post_save, sender=ReceiptPayment)
