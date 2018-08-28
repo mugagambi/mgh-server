@@ -39,10 +39,10 @@ def report(request, date_0, date_1):
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
     date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
-    customer_sales = models.ReceiptPayment.objects.filter(type=3,
-                                                          receipt__date__range=(date_0_datetime, date_1_datetime)). \
-        annotate(day=Trunc('receipt__date', 'day', output_field=DateField(), )). \
+    customer_sales = models.CustomerAccount.objects.filter(via='C', type='A', date__range=(date_0, date_1)). \
+        annotate(day=Trunc('date', 'day', output_field=DateField(), )). \
         values('day').annotate(Sum('amount'))
+    print(models.CustomerAccount.objects.filter(via='C', type='A', date__range=(date_0, date_1)))
     cash_sales = models.CashReceiptPayment.objects.filter(type=2,
                                                           cash_receipt__date__range=
                                                           (date_0_datetime, date_1_datetime)). \
