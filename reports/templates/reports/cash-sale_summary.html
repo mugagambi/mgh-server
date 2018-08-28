@@ -10,10 +10,10 @@
     <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     <hr/>
     {% include 'reports/sales-summary-nav.html' %}
-    <h4 class="text-center">Cash Sale Summary</h4>
+    <h4 class="text-center">Cash Payments Summary</h4>
     <div class="row">
         <div class="col-md-6">
-            <h6 class="text-center">Customer Cash Sale Summary</h6>
+            <h6 class="text-center">Customer Cash Payments</h6>
             <table id="customers" class="table table-bordered">
                 <thead class="thead-dark">
                 <tr>
@@ -258,7 +258,7 @@
         </div>
         <div class="col-md-6">
             <h6 class="text-center" data-toggle="tooltip" data-placement="top" title="Open Air Market
-                Sales Summary">Open Air Market Sales Summary</h6>
+                Sales Summary">Open Air Market Cash Payments</h6>
             <table id="customers" class="table table-bordered">
                 <thead class="thead-dark">
                 <tr>
@@ -282,7 +282,7 @@
             </table>
             <hr/>
             <p><b>Showing {{ cash_receipts.start_index }} to {{ cash_receipts.end_index }}
-                of {{ cash_receipts.paginator.count }} cash receipts</b>
+                of {{ cash_receipts.paginator.count }} open air receipts</b>
                 {% if cash_receipts.has_other_pages %}
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
@@ -465,5 +465,5 @@
         </div>
     </div>
     <hr/>
-    <p><b>Total Cash Sale: </b> Ksh. {{ total_cash_summary | floatformat:2 | intcomma }}</p>
+    <p><b>Total Cash Payments: </b> Ksh. {{ total_cash_summary | floatformat:2 | intcomma }}</p>
 {% endblock %}

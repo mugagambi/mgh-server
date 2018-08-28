@@ -120,9 +120,11 @@ def mpesa_sale_summary_report(request, date_0, date_1):
     else:
         customer_total_amount_cash = {'total_amount': 0}
     customer_receipts = customer_report.values(
-        'receipt__number', 'phone_number', 'customer__number').annotate(total_amount=Sum('amount')).order_by(
-        '-total_amount')
-    pdf_cxt = {'customer_receipts': customer_receipts, 'date_0_datetime': date_0, 'date_1_datetime': date_1}
+        'receipt__number', 'phone_number', 'customer__number').annotate(total_amount=Sum('amount'),
+                                                                        time=F('date')).order_by('time')
+    pdf_context = {'date_0_datetime': date_0, 'date_1_datetime': date_1,
+                   'customer_receipts': customer_receipts,
+                   'customer_total_amount_cash': customer_total_amount_cash}
     customer_page = request.GET.get('customer_page', 1)
     paginator = Paginator(customer_receipts, 5)
     try:
@@ -131,9 +133,42 @@ def mpesa_sale_summary_report(request, date_0, date_1):
         customer_receipts = paginator.page(1)
     except EmptyPage:
         customer_receipts = paginator.page(paginator.num_pages)
+    cash_payments_receipts = models.CashReceipt.objects.filter(cashreceiptpayment__type=1, date__range=(date_0, date_1))
+    cash_report = models.CashReceiptParticular.objects.filter(cash_receipt__in=cash_payments_receipts)
+    if cash_report.exists():
+        cash_total_amount_cash = cash_payments_receipts.aggregate(total_amount=Sum('cashreceiptpayment__amount'))
+    else:
+        cash_total_amount_cash = {'total_amount': 0}
+    cash_receipts = cash_report.values('cash_receipt__number').annotate(total_amount=Sum('total'),
+                                                                        time=F('cash_receipt__date')).order_by('time')
+    pdf_context['cash_receipts'] = cash_receipts
+    pdf_context['cash_total_amount_cash'] = cash_total_amount_cash
+    download = request.GET.get('download', None)
+    if download:
+        invoice_string = render_to_string('reports/mpesa_sales_pdf.html', pdf_context)
+        html = HTML(string=invoice_string)
+        html.write_pdf(target='/tmp/mpesa_payments_from_{}_to_{}.pdf'.format(date_0_str, date_1_str))
+        fs = FileSystemStorage('/tmp')
+        with fs.open('mpesa_payments_from_{}_to_{}.pdf'.format(date_0_str, date_1_str)) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = "inline; filename='mpesa_payments_from_{}_to_{}.pdf'".format(
+                date_0_str, date_1_str)
+            return response
+    cash_page = request.GET.get('cash_page', 1)
+    paginator = Paginator(cash_receipts, 5)
+    try:
+        cash_receipts = paginator.page(cash_page)
+    except PageNotAnInteger:
+        cash_receipts = paginator.page(1)
+    except EmptyPage:
+        cash_receipts = paginator.page(paginator.num_pages)
+    total_cash_summary = customer_total_amount_cash['total_amount'] + cash_total_amount_cash['total_amount']
     args = {
         'customer_total_amount_cash': customer_total_amount_cash,
         'customer_receipts': customer_receipts,
+        'cash_receipts': cash_receipts,
+        'cash_total_amount_cash': cash_total_amount_cash,
+        'total_cash_summary': total_cash_summary,
         'date_0': date_0,
         'date_1': date_1
     }

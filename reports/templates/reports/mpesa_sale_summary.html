@@ -7,47 +7,52 @@
     </div>
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'sales-summary' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     <hr/>
     {% include 'reports/sales-summary-nav.html' %}
-    <h4 class="text-center">Paybill Sale Summary</h4>
-    <table id="customers" class="table table-bordered">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="col">Invoice Number</th>
-            <th>Phone Number</th>
-            <th scope="col">Amount</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for customer_receipt in customer_receipts %}
-            <tr>
-                <td>
-                    {% if customer_receipt.receipt__number %}
-                        <a href="{% url 'sale-receipt' pk=customer_receipt.receipt__number %}"
-                           data-toggle="tooltip" data-placement="top" title="View the invoice">
-                            {{ customer_receipt.receipt__number }}</a>
-                    {% else %}
-                        <a href="{% url 'customer_statement' customer=customer_receipt.customer__number %}"
-                           data-toggle="tooltip" data-placement="top" title="View account statement">
-                            Deposit</a>
-                    {% endif %}
-                </td>
-                <td>{{ customer_receipt.phone_number }}</td>
-                <td>{{ customer_receipt.total_amount | intcomma }}</td>
-            </tr>
-        {% endfor %}
+    <div class="row">
+        <div class="col-md-6">
+            <h6 class="text-center">Customer Paybill Payments</h6>
+            <table id="customers" class="table table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Invoice Number</th>
+                    <th>Phone Number</th>
+                    <th scope="col">Amount</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for customer_receipt in customer_receipts %}
+                    <tr>
+                        <td>{{ customer_receipt.time }}</td>
+                        <td>
+                            {% if customer_receipt.receipt__number %}
+                                <a href="{% url 'sale-receipt' pk=customer_receipt.receipt__number %}"
+                                   data-toggle="tooltip" data-placement="top" title="View the invoice">
+                                    {{ customer_receipt.receipt__number }}</a>
+                            {% else %}
+                                <a href="{% url 'customer_statement' customer=customer_receipt.customer__number %}"
+                                   data-toggle="tooltip" data-placement="top" title="View account statement">
+                                    Deposit</a>
+                            {% endif %}
+                        </td>
+                        <td>{{ customer_receipt.phone_number }}</td>
+                        <td>{{ customer_receipt.total_amount | intcomma }}</td>
+                    </tr>
+                {% endfor %}
 
-        </tbody>
-    </table>
-    <hr/>
-    <p><b>Showing {{ customer_receipts.start_index }} to {{ customer_receipts.end_index }}
-        of {{ customer_receipts.paginator.count }} customer receipts</b>
-        {% if customer_receipts.has_other_pages %}
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    {% if customer_receipts.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?customer_page=
+                </tbody>
+            </table>
+            <hr/>
+            <p><b>Showing {{ customer_receipts.start_index }} to {{ customer_receipts.end_index }}
+                of {{ customer_receipts.paginator.count }} customer receipts</b>
+                {% if customer_receipts.has_other_pages %}
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            {% if customer_receipts.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?customer_page=
 
 
 
@@ -68,23 +73,6 @@
 
 
 
-                                    {{ customer_receipts.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                               aria-label="Previous">
-                                <span aria-hidden="true">Previous</span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled"><a class="page-link"
-                                                          disabled
-                                                          aria-label="Previous">
-                            <span aria-hidden="true">Previous</span>
-                            <span class="sr-only">Previous</span>
-                        </a></li>
-                    {% endif %}
-                    {% if customer_receipts.number|add:'-4' > 1 %}
-                        <li class="page-item"><a class="page-link"
-                                                 href="?customer_page=
 
 
 
@@ -93,6 +81,23 @@
 
 
 
+                                            {{ customer_receipts.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">Previous</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><a class="page-link"
+                                                                  disabled
+                                                                  aria-label="Previous">
+                                    <span aria-hidden="true">Previous</span>
+                                    <span class="sr-only">Previous</span>
+                                </a></li>
+                            {% endif %}
+                            {% if customer_receipts.number|add:'-4' > 1 %}
+                                <li class="page-item"><a class="page-link"
+                                                         href="?customer_page=
 
 
 
@@ -104,20 +109,7 @@
 
 
 
-                                                         {{ customer_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                                                 aria-label="Previous">
-                            <span aria-hidden="true">&hellip;</span>
-                            <span class="sr-only">&hellip;</span>
-                        </a></li>
-                    {% endif %}
 
-                    {% for i in customer_receipts.paginator.page_range %}
-                        {% if customer_receipts.number == i %}
-                            <li class="page-item active"><a class="page-link" disabled>{{ i }} <span
-                                    class="sr-only">(current)</span></a>
-                            </li>
-                        {% elif i > customer_receipts.number|add:'-5' and i < customer_receipts.number|add:'5' %}
-                            <li class="page-item"><a class="page-link" href="?customer_page=
 
 
 
@@ -133,16 +125,22 @@
 
 
 
+                                                                 {{ customer_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                                         aria-label="Previous">
+                                    <span aria-hidden="true">&hellip;</span>
+                                    <span class="sr-only">&hellip;</span>
+                                </a></li>
+                            {% endif %}
 
+                            {% for i in customer_receipts.paginator.page_range %}
+                                {% if customer_receipts.number == i %}
+                                    <li class="page-item active"><a class="page-link" disabled>{{ i }} <span
+                                            class="sr-only">(current)</span></a>
+                                    </li>
+                                {% elif i > customer_receipts.number|add:'-5' and i < customer_receipts.number|add:'5' %}
+                                    <li class="page-item"><a class="page-link" href="?customer_page=
 
 
-                                    {{ i }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                    {% if customer_receipts.paginator.num_pages > customer_receipts.number|add:'4' %}
-                        <li class="page-item"><a class="page-link"
-                                                 href="?customer_page=
 
 
 
@@ -160,15 +158,6 @@
 
 
 
-                                                         {{ customer_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                                                 aria-label="Previous">
-                            <span aria-hidden="true">&hellip;</span>
-                            <span class="sr-only">&hellip;</span>
-                        </a></li>
-                    {% endif %}
-                    {% if customer_receipts.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?customer_page=
 
 
 
@@ -176,6 +165,13 @@
 
 
 
+                                            {{ i }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if customer_receipts.paginator.num_pages > customer_receipts.number|add:'4' %}
+                                <li class="page-item"><a class="page-link"
+                                                         href="?customer_page=
 
 
 
@@ -186,24 +182,316 @@
 
 
 
-                                    {{ customer_receipts.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
-                               aria-label="Next">
-                                <span aria-hidden="true">Next</span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled">
-                            <a class="page-link" disabled aria-label="Next">
-                                <span aria-hidden="true">Next</span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
-        {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                 {{ customer_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                                         aria-label="Previous">
+                                    <span aria-hidden="true">&hellip;</span>
+                                    <span class="sr-only">&hellip;</span>
+                                </a></li>
+                            {% endif %}
+                            {% if customer_receipts.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?customer_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            {{ customer_receipts.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">Next</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" disabled aria-label="Next">
+                                        <span aria-hidden="true">Next</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            <hr>
+            <p><b>Total</b>: Ksh. {{ customer_total_amount_cash.total_amount | intcomma }}</p>
+            <hr/>
+        </div>
+        <div class="col-md-6">
+            <h6 class="text-center" data-toggle="tooltip" data-placement="top" title="Open Air Market
+                Sales Summary">Open Air Market Paybill Payments</h6>
+            <table id="customers" class="table table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Invoice Number</th>
+                    <th scope="col">Phone Number</th>
+                    <th scope="col">Amount</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cash_receipt in cash_receipts %}
+                    <tr>
+                        <td>{{ cash_receipt.time }}</td>
+                        <td>
+                            <a href="{% url 'cash-sales' %}"> {{ cash_receipt.cash_receipt__number }}</a>
+                        </td>
+                        <td>{{ cash_receipt.phone_number }}</td>
+                        <td>{{ cash_receipt.total_amount | floatformat:2 | intcomma }}</td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+            <hr/>
+            <p><b>Showing {{ cash_receipts.start_index }} to {{ cash_receipts.end_index }}
+                of {{ cash_receipts.paginator.count }} open air receipts</b>
+                {% if cash_receipts.has_other_pages %}
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            {% if cash_receipts.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?cash_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            {{ cash_receipts.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'cash_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">Previous</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><a class="page-link"
+                                                                  disabled
+                                                                  aria-label="Previous">
+                                    <span aria-hidden="true">Previous</span>
+                                    <span class="sr-only">Previous</span>
+                                </a></li>
+                            {% endif %}
+                            {% if cash_receipts.number|add:'-4' > 1 %}
+                                <li class="page-item"><a class="page-link"
+                                                         href="?cash_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                 {{ cash_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'cash_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                                         aria-label="Previous">
+                                    <span aria-hidden="true">&hellip;</span>
+                                    <span class="sr-only">&hellip;</span>
+                                </a></li>
+                            {% endif %}
+
+                            {% for i in cash_receipts.paginator.page_range %}
+                                {% if cash_receipts.number == i %}
+                                    <li class="page-item active"><a class="page-link" disabled>{{ i }} <span
+                                            class="sr-only">(current)</span></a>
+                                    </li>
+                                {% elif i > cash_receipts.number|add:'-5' and i < cash_receipts.number|add:'5' %}
+                                    <li class="page-item"><a class="page-link" href="?cash_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            {{ i }}{% for key, value in request.GET.items %}{% if key != 'cash_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if cash_receipts.paginator.num_pages > cash_receipts.number|add:'4' %}
+                                <li class="page-item"><a class="page-link"
+                                                         href="?cash_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                 {{ cash_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'cash_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                                         aria-label="Previous">
+                                    <span aria-hidden="true">&hellip;</span>
+                                    <span class="sr-only">&hellip;</span>
+                                </a></li>
+                            {% endif %}
+                            {% if cash_receipts.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?cash_page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            {{ cash_receipts.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'cash_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">Next</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" disabled aria-label="Next">
+                                        <span aria-hidden="true">Next</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            <hr>
+            <p><b>Total: </b>Ksh. {{ cash_total_amount_cash.total_amount | floatformat:2 | intcomma }}</p>
+        </div>
+    </div>
     <hr>
-    <p><b>Total</b>: Ksh. {{ customer_total_amount_cash.total_amount | intcomma }}</p>
-    <hr/>
+    <p><b>Total Paybill Payments: </b> Ksh. {{ total_cash_summary | floatformat:2 | intcomma }}</p>
 {% endblock %}
