@@ -12,6 +12,7 @@
     <h4 class="text-center">Cash Sale Summary</h4>
     <div class="row">
         <div class="col-md-6">
+            <a href="{{ request.path }}?download=true" class="btn btn-sm btn-success mb-1 text-center">Export Customer Cash Sale Summary as CSV</a>
             <h6 class="text-center">Customer Cash Sale Summary</h6>
             <table id="customers" class="table table-bordered">
                 <thead class="thead-dark">
@@ -50,6 +51,9 @@
                             {% if customer_receipts.has_previous %}
                                 <li class="page-item">
                                     <a class="page-link" href="?customer_page=
+
+
+
 
 
 
@@ -112,6 +116,9 @@
 
 
 
+
+
+
                                                                  {{ customer_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                          aria-label="Previous">
                                     <span aria-hidden="true">&hellip;</span>
@@ -147,6 +154,9 @@
 
 
 
+
+
+
                                             {{ i }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                                     </li>
                                 {% endif %}
@@ -154,6 +164,9 @@
                             {% if customer_receipts.paginator.num_pages > customer_receipts.number|add:'4' %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?customer_page=
+
+
+
 
 
 
@@ -203,6 +216,9 @@
 
 
 
+
+
+
                                             {{ customer_receipts.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Next">
                                         <span aria-hidden="true">Next</span>
@@ -224,8 +240,9 @@
             <p><b>Total</b>: Ksh. {{ customer_total_amount_cash.total_amount | intcomma }}</p>
         </div>
         <div class="col-md-6">
-            <h6 class="text-center" data-toggle="tooltip" data-placement="top" title="Cash Sale Summary">Cash Sale
-                Summary</h6>
+            <a href="#" class="btn btn-sm btn-success mb-1">Export Open Air Market Sales Summary as CSV</a>
+            <h6 class="text-center" data-toggle="tooltip" data-placement="top" title="Open Air Market
+                Sales Summary">Open Air Market Sales Summary</h6>
             <table id="customers" class="table table-bordered">
                 <thead class="thead-dark">
                 <tr>
@@ -254,6 +271,9 @@
                             {% if cash_receipts.has_previous %}
                                 <li class="page-item">
                                     <a class="page-link" href="?cash_page=
+
+
+
 
 
 
@@ -305,6 +325,9 @@
 
 
 
+
+
+
                                                                  {{ cash_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'cash_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                          aria-label="Previous">
                                     <span aria-hidden="true">&hellip;</span>
@@ -319,6 +342,9 @@
                                     </li>
                                 {% elif i > cash_receipts.number|add:'-5' and i < cash_receipts.number|add:'5' %}
                                     <li class="page-item"><a class="page-link" href="?cash_page=
+
+
+
 
 
 
@@ -356,6 +382,9 @@
 
 
 
+
+
+
                                                                  {{ cash_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'cash_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                          aria-label="Previous">
                                     <span aria-hidden="true">&hellip;</span>
@@ -365,6 +394,9 @@
                             {% if cash_receipts.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?cash_page=
+
+
+
 
 
 
