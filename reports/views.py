@@ -3,7 +3,7 @@ import datetime
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
@@ -50,21 +50,11 @@ def cash_sale_summary_report(request, date_0, date_1):
     else:
         customer_total_amount_cash = {'total_amount': 0}
     customer_receipts = customer_report.values(
-        'receipt__number', 'customer__number').annotate(total_amount=Sum('amount')).order_by('-total_amount')
-    download = request.GET.get('download', None)
-    if download:
-        customer_pdf_context = {'date_0_datetime': date_0, 'date_1_datetime': date_1,
-                                'customer_receipts': customer_receipts,
-                                'customer_total_amount_cash': customer_total_amount_cash}
-        invoice_string = render_to_string('reports/cash_sale_customers_pdf.html', customer_pdf_context)
-        html = HTML(string=invoice_string)
-        html.write_pdf(target='/tmp/customer_cash_payments_from_{}_to_{}.pdf'.format(date_0_str, date_1_str))
-        fs = FileSystemStorage('/tmp')
-        with fs.open('customer_cash_payments_from_{}_to_{}.pdf'.format(date_0_str, date_1_str)) as pdf:
-            response = HttpResponse(pdf, content_type='application/pdf')
-            response['Content-Disposition'] = "inline; filename='customer_cash_payments_from_{}_to_{}.pdf'".format(
-                date_0_str, date_1_str)
-            return response
+        'receipt__number', 'customer__number').annotate(total_amount=Sum('amount'), time=F('date')).order_by(
+        'time')
+    pdf_context = {'date_0_datetime': date_0, 'date_1_datetime': date_1,
+                   'customer_receipts': customer_receipts,
+                   'customer_total_amount_cash': customer_total_amount_cash}
     customer_page = request.GET.get('customer_page', 1)
     paginator = Paginator(customer_receipts, 5)
     try:
@@ -79,7 +69,21 @@ def cash_sale_summary_report(request, date_0, date_1):
                                                                           type=2).aggregate(total_amount=Sum('amount'))
     else:
         cash_total_amount_cash = {'total_amount': 0}
-    cash_receipts = cash_report.values('cash_receipt__number').annotate(total_amount=Sum('total'))
+    cash_receipts = cash_report.values('cash_receipt__number').annotate(total_amount=Sum('total'),
+                                                                        time=F('cash_receipt__date')).order_by('time')
+    pdf_context['cash_receipts'] = cash_receipts
+    pdf_context['cash_total_amount_cash'] = cash_total_amount_cash
+    download = request.GET.get('download', None)
+    if download:
+        invoice_string = render_to_string('reports/cash_sale_customers_pdf.html', pdf_context)
+        html = HTML(string=invoice_string)
+        html.write_pdf(target='/tmp/customer_cash_payments_from_{}_to_{}.pdf'.format(date_0_str, date_1_str))
+        fs = FileSystemStorage('/tmp')
+        with fs.open('customer_cash_payments_from_{}_to_{}.pdf'.format(date_0_str, date_1_str)) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = "inline; filename='customer_cash_payments_from_{}_to_{}.pdf'".format(
+                date_0_str, date_1_str)
+            return response
     cash_page = request.GET.get('cash_page', 1)
     paginator = Paginator(cash_receipts, 5)
     try:
