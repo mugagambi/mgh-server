@@ -63,10 +63,10 @@ def cash_sale_summary_report(request, date_0, date_1):
         customer_receipts = paginator.page(1)
     except EmptyPage:
         customer_receipts = paginator.page(paginator.num_pages)
-    cash_report = models.CashReceiptParticular.objects.filter(cash_receipt__date__range=(date_0, date_1))
+    cash_payments_receipts = models.CashReceipt.objects.filter(cashreceiptpayment__type=2, date__range=(date_0, date_1))
+    cash_report = models.CashReceiptParticular.objects.filter(cash_receipt__in=cash_payments_receipts)
     if cash_report.exists():
-        cash_total_amount_cash = models.CashReceiptPayment.objects.filter(cash_receipt__date__range=(date_0, date_1),
-                                                                          type=2).aggregate(total_amount=Sum('amount'))
+        cash_total_amount_cash = cash_payments_receipts.aggregate(total_amount=Sum('cashreceiptpayment__amount'))
     else:
         cash_total_amount_cash = {'total_amount': 0}
     cash_receipts = cash_report.values('cash_receipt__number').annotate(total_amount=Sum('total'),
@@ -108,6 +108,8 @@ def cash_sale_summary_report(request, date_0, date_1):
 # TODO add the right permissions
 @login_required()
 def mpesa_sale_summary_report(request, date_0, date_1):
+    date_0_str = date_0
+    date_1_str = date_1
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0 = datetime.datetime.combine(date_0, datetime.time(0, 0))
@@ -120,6 +122,7 @@ def mpesa_sale_summary_report(request, date_0, date_1):
     customer_receipts = customer_report.values(
         'receipt__number', 'phone_number', 'customer__number').annotate(total_amount=Sum('amount')).order_by(
         '-total_amount')
+    pdf_cxt = {'customer_receipts': customer_receipts, 'date_0_datetime': date_0, 'date_1_datetime': date_1}
     customer_page = request.GET.get('customer_page', 1)
     paginator = Paginator(customer_receipts, 5)
     try:

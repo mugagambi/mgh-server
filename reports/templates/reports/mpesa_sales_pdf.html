@@ -1,0 +1,82 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>M-pesa Paybill Payments Summary Report from {{ date_0_datetime }} to {{ date_1_datetime }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+<h4><u>Cash Payments Summary Report from {{ date_0_datetime }} to {{ date_1_datetime }}</u></h4>
+<table id="customers">
+    <tr>
+        <th>Date</th>
+        <th>Invoice Number</th>
+        <th>Amount Paid</th>
+    </tr>
+    <tr>
+        <td colspan="3"><b>Customer Cash Sale Summary</b></td>
+    </tr>
+    {% for customer_receipt in customer_receipts %}
+        <tr>
+        <td>{{ customer_receipt.time }}</td>
+            <td>
+                {% if customer_receipt.receipt__number %}
+                    Receipt No.{{ customer_receipt.receipt__number }}
+                {% else %}
+                    Deposit
+                {% endif %}
+            </td>
+            <td>{{ customer_receipt.total_amount | intcomma }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="2"><b>Total</b></td>
+        <td><b>{{ customer_total_amount_cash.total_amount | intcomma }}</b></td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+    </tr>
+    <tr>
+        <td colspan="3"><b>Open Air Market Sales Summary</b></td>
+    </tr>
+    {% for cash_receipt in cash_receipts %}
+        <tr>
+        <td>{{ cash_receipt.time }}</td>
+            <td>
+                {{ cash_receipt.cash_receipt__number }}
+            </td>
+            <td>{{ cash_receipt.total_amount | floatformat:2 | intcomma }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="2"><b>Total</b></td>
+        <td><b>{{ cash_total_amount_cash.total_amount | intcomma }}</b></td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+    </tr>
+    <tr>
+        <td colspan="2"><b>Grand Total</b></td>
+        <td>
+            <b>{{ cash_total_amount_cash.total_amount | addition:customer_total_amount_cash.total_amount | intcomma }}</b>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
