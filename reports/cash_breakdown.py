@@ -39,17 +39,14 @@ def report(request, date_0, date_1):
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
     date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
-    customer_sales = models.CustomerAccount.objects.filter(via='C', type='A', date__range=(date_0, date_1)). \
+    customer_sales = models.CustomerAccount.objects.filter(via='C', date__range=(date_0_datetime, date_1_datetime)). \
         annotate(day=Trunc('date', 'day', output_field=DateField(), )). \
         values('day').annotate(Sum('amount'))
-    print(models.CustomerAccount.objects.filter(via='C', type='A', date__range=(date_0, date_1)))
+    print(models.CustomerAccount.objects.filter(via='C', date__range=(date_0_datetime, date_1_datetime)))
     cash_sales = models.CashReceiptPayment.objects.filter(type=2,
                                                           cash_receipt__date__range=
                                                           (date_0_datetime, date_1_datetime)). \
         annotate(day=Trunc('cash_receipt__date', 'day', output_field=DateField(), )). \
-        values('day').annotate(Sum('amount'))
-    cash_deposits = models.CustomerDeposit.objects.filter(via='C', date__range=(date_0_datetime, date_1_datetime)). \
-        annotate(day=Trunc('date', 'day', output_field=DateField(), )). \
         values('day').annotate(Sum('amount'))
     deposits = CashDeposit.objects.filter(date__range=(date_0, date_1)).values('date').annotate(Sum('amount'))
     expenses = CashExpense.objects.filter(date__range=(date_0, date_1)).values('date').annotate(Sum('amount'))
@@ -62,16 +59,6 @@ def report(request, date_0, date_1):
             'deposit': 0,
             'expense': 0,
             'customer_deposits': 0
-        }
-        temp_data.append(d)
-    for deposit in cash_deposits:
-        d = {
-            'day': deposit['day'],
-            'customer': deposit['amount__sum'],
-            'cash': 0,
-            'deposit': 0,
-            'expense': 0,
-            'customer_deposits': deposit['amount__sum']
         }
         temp_data.append(d)
     for sale in cash_sales:
