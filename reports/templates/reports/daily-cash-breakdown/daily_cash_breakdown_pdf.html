@@ -1,0 +1,58 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Daily Cash Breakdown Report From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+<h4><u>Daily Cash Breakdown Report From {{ date_0 }} to {{ date_1 }}</u></h4>
+<table id="customers">
+    <tr>
+        <th>Day</th>
+        <th>Cash Collected</th>
+        <th>Bank Deposits</th>
+        <th>Expenses</th>
+        <th>Variance</th>
+    </tr>
+    {% for data in data %}
+        <tr>
+            <td>
+                {{ data.day }}
+            </td>
+            <td>
+                {{ data.cash_collected | intcomma }}</td>
+            <td>{{ data.deposit | intcomma }}</td>
+            <td>{{ data.expense | intcomma }}</td>
+            <td>{{ data.variance | intcomma }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="4"></td>
+    </tr>
+    <tr>
+        <td><b>Total</b></td>
+        <td><b>{{ total_collected | intcomma }}</b></td>
+        <td><b>{{ deposits | intcomma }}</b></td>
+        <td><b>{{ expenses | intcomma }}</b></td>
+        <td><b>{{ variance | intcomma }}</b></td>
+    </tr>
+</table>
+</body>
+</html>

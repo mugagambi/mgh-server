@@ -8,6 +8,7 @@
     </div>
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'cash_breakdown_period' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     <hr/>
     <table id="customers" class="table table-bordered">
         <thead class="thead-dark">
@@ -31,7 +32,8 @@
                     {{ data.cash_collected | intcomma }}</td>
                 <td data-toggle="tooltip" data-placement="top"
                     title="Total banks deposits this day">{{ data.deposit | intcomma }}<br/>
-                    <a href="{% url 'daily_cash_deposits_report' date_0=date_0_str date_1=date_1_str %}">view deposits per bank</a></td>
+                    <a href="{% url 'daily_cash_deposits_report' date_0=date_0_str date_1=date_1_str %}">view deposits
+                        per bank</a></td>
                 <td>{{ data.expense | intcomma }}</td>
                 <td data-toggle="tooltip" data-placement="top"
                     title="Calculated by the formulae: (cash collected - bank deposits - expenses)">{{ data.variance | intcomma }}</td>

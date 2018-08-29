@@ -2,11 +2,15 @@ import datetime
 from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
 from django.db.models import DateField, Sum
 from django.db.models.functions import Trunc
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
 from pytz import timezone as pytz_zone
+from weasyprint import HTML
 
 from cash_breakdown.models import CashDeposit, CashExpense
 from reports import forms
@@ -111,4 +115,15 @@ def report(request, date_0, date_1):
     context_data = {'date_0_str': date_0_str, 'date_1_str': date_1_str, 'date_0': date_0_datetime,
                     'date_1': date_1_datetime, 'data': data, 'total_collected': total_collected,
                     'deposits': deposits, 'expenses': expenses, 'variance': variance}
+    download = request.GET.get('download', None)
+    if download:
+        invoice_string = render_to_string('reports/daily-cash-breakdown/daily_cash_breakdown_pdf.html', context_data)
+        html = HTML(string=invoice_string)
+        html.write_pdf(target='/tmp/daily_cash_breakdown_from_{}_to_{}.pdf'.format(date_0_str, date_1_str))
+        fs = FileSystemStorage('/tmp')
+        with fs.open('daily_cash_breakdown_from_{}_to_{}.pdf'.format(date_0_str, date_1_str)) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = "inline; filename='daily_cash_breakdown_from_{}_to_{}.pdf'".format(
+                date_0_str, date_1_str)
+            return response
     return render(request, 'reports/daily-cash-breakdown/report.html', context_data)
