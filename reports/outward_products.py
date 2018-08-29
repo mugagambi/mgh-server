@@ -2,10 +2,14 @@ import datetime
 from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
 from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
 from pytz import timezone as pytz_zone
+from weasyprint import HTML
 
 from core.models import Product, AggregationCenterProduct
 from reports import forms
@@ -281,9 +285,20 @@ def outward_product_summary_alt_report(request, date_0: str, date_1: str):
             obj['total_sale'] = obj['customer'] + obj['cash']
         obj['variance'] = obj['total_dispatch'] - obj['total_sale'] - obj['total_return' or 0]
         outward.append(obj)
-    return render(request, 'reports/outward-products/report.html',
-                  {'outwards': outward,
-                   'date_0': date_0_datetime,
-                   'date_1': date_1_datetime,
-                   'str_date_0': str_date_0,
-                   'str_date_1': str_date_1})
+    context = {'outwards': outward,
+               'date_0': date_0_datetime,
+               'date_1': date_1_datetime,
+               'str_date_0': str_date_0,
+               'str_date_1': str_date_1}
+    download = request.GET.get('download', None)
+    if download:
+        invoice_string = render_to_string('reports/outward-products/outward_products_report_pdf.html', context)
+        html = HTML(string=invoice_string)
+        html.write_pdf(target='/tmp/outward_product_summary_from_{}_to_{}.pdf'.format(str_date_0, str_date_1))
+        fs = FileSystemStorage('/tmp')
+        with fs.open('outward_product_summary_from_{}_to_{}.pdf'.format(str_date_0, str_date_1)) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = "inline; filename='outward_product_summary_from_{}_to_{}.pdf'".format(
+                str_date_0, str_date_1)
+            return response
+    return render(request, 'reports/outward-products/report.html', context)

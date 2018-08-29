@@ -1,0 +1,67 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Outward Products Summary Report From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @page {
+            size: landscape;
+        }
+
+    </style>
+</head>
+<body>
+<h4><u>Outward Products Summary Report From {{ date_0 }} to {{ date_1 }}</u></h4>
+<table id="customers">
+    <tr>
+        <th>Product</th>
+        <th>Available</th>
+        <th>Ordered</th>
+        <th>Customer Dispatch</th>
+        <th>Orderless Dispatch</th>
+        <th>Total Dispatch</th>
+        <th>Customer Sales</th>
+        <th>Cash Sales</th>
+        <th>Total Sales</th>
+        <th>Market Returns</th>
+        <th>Variance</th>
+    </tr>
+    {% for outward in outwards %}
+        <tr>
+            <td>{{ outward.product }}</td>
+            <td>
+                {{ outward.total_available | intcomma }}
+            </td>
+            <td>{{ outward.ordered | intcomma }}</td>
+            <td>{{ outward.packaged | intcomma }}</td>
+            <td>{{ outward.orderless | intcomma }}</td>
+            <td>{{ outward.total_dispatch | intcomma }}</td>
+            <td>{{ outward.customer | intcomma }}</td>
+            <td>{{ outward.cash | intcomma }}</td>
+            <td>{{ outward.total_sale | intcomma }}</td>
+            <td>{{ outward.total_return | intcomma }}</td>
+            <td>
+                {{ outward.variance | intcomma }}</td>
+            {% empty %}
+            <td class="text-center" colspan="11"><b>No data available in table</b></td>
+        </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
