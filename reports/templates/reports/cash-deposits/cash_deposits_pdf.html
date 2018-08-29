@@ -56,12 +56,12 @@
             <td><b>Ksh.{{ group.list|running_total | intcomma }}</b></td>
         </tr>
     {% endfor %}
-<tr>
-    <td colspan="4"></td>
-</tr>
+    <tr>
+        <td colspan="4"></td>
+    </tr>
     <tr>
         <td colspan="3"><b>Grand Total</b></td>
-        <td><b>{{ customer_total_amount_cash.total_amount | intcomma }}</b></td>
+        <td><b>{{ total_deposit.amount__sum__sum | floatformat:2 | intcomma }}</b></td>
     </tr>
 </table>
 </body>
