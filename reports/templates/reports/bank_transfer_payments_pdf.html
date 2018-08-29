@@ -39,7 +39,6 @@
                     Deposit - {{ customer_receipt.customer_name }}
                 {% endif %}
             </td>
-            <td>{{ customer_receipt.cheque }}</td>
             <td>{{ customer_receipt.total_amount | intcomma }}</td>
         </tr>
     {% endfor %}
