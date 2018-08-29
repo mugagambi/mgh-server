@@ -229,6 +229,8 @@ def cheque_sale_summary_report(request, date_0, date_1):
 # TODO add the right permissions
 @login_required()
 def bank_transfer_sale_summary_report(request, date_0, date_1):
+    date_0_str = date_0
+    date_1_str = date_1
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0 = datetime.datetime.combine(date_0, datetime.time(0, 0))
@@ -239,8 +241,22 @@ def bank_transfer_sale_summary_report(request, date_0, date_1):
     else:
         customer_total_amount_cash = {'total_amount': 0}
     customer_receipts = customer_report.values(
-        'receipt__number', 'customer__number').annotate(total_amount=Sum('amount')).order_by(
-        '-total_amount')
+        'receipt__number', 'customer__number').annotate(total_amount=Sum('amount'), time=F('date'),
+                                                        customer_name=F('customer__shop_name')).order_by('time')
+    pdf_context = {'date_0_datetime': date_0, 'date_1_datetime': date_1,
+                   'customer_receipts': customer_receipts,
+                   'customer_total_amount_cash': customer_total_amount_cash}
+    download = request.GET.get('download', None)
+    if download:
+        invoice_string = render_to_string('reports/bank_transfer_payments_pdf.html', pdf_context)
+        html = HTML(string=invoice_string)
+        html.write_pdf(target='/tmp/bank_transfer_payments_from_{}_to_{}.pdf'.format(date_0_str, date_1_str))
+        fs = FileSystemStorage('/tmp')
+        with fs.open('bank_transfer_payments_from_{}_to_{}.pdf'.format(date_0_str, date_1_str)) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = "inline; filename='bank_transfer_payments_from_{}_to_{}.pdf'".format(
+                date_0_str, date_1_str)
+            return response
     customer_page = request.GET.get('customer_page', 1)
     paginator = Paginator(customer_receipts, 5)
     try:

@@ -7,6 +7,7 @@
     </div>
     <h3>Report from {{ date_0 | date:"H:i D d M Y" }} to {{ date_1 | date:"H:i D d M Y" }}</h3>
     <a href="{% url 'sales-summary' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     <hr/>
     {% include 'reports/sales-summary-nav.html' %}
     <h4 class="text-center">Bank Transfers Sale Summary</h4>
@@ -69,6 +70,7 @@
 
 
 
+
                                     {{ customer_receipts.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                aria-label="Previous">
                                 <span aria-hidden="true">Previous</span>
@@ -86,6 +88,7 @@
                     {% if customer_receipts.number|add:'-4' > 1 %}
                         <li class="page-item"><a class="page-link"
                                                  href="?customer_page=
+
 
 
 
@@ -143,6 +146,7 @@
 
 
 
+
                                     {{ i }}{% for key, value in request.GET.items %}{% if key != 'customer_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                             </li>
                         {% endif %}
@@ -150,6 +154,7 @@
                     {% if customer_receipts.paginator.num_pages > customer_receipts.number|add:'4' %}
                         <li class="page-item"><a class="page-link"
                                                  href="?customer_page=
+
 
 
 
@@ -179,6 +184,7 @@
                     {% if customer_receipts.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?customer_page=
+
 
 
 
