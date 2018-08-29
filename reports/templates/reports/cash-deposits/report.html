@@ -8,7 +8,8 @@
         <h1 class="h2"> Daily Cash Deposits Report</h1>
     </div>
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
-    <a href="{% url 'daily_sales_period' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{% url 'daily_cash_deposit_period' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     <hr/>
     <table id="customers" class="table table-bordered">
         <thead class="thead-dark">
@@ -31,16 +32,18 @@
                 <td></td>
             </tr>
             {% for sale in group.list %}
-                <td></td>
-                <td>{{ sale.bank__name }}</td>
-                <td>KES{{ sale.amount__sum | intcomma }}</td>
-                <td></td>
+                <tr>
+                    <td></td>
+                    <td>{{ sale.bank__name }}</td>
+                    <td>Ksh.{{ sale.amount__sum | intcomma }}</td>
+                    <td></td>
+                </tr>
             {% endfor %}
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td><b>KES{{ group.list|running_total | intcomma }}</b></td>
+                <td><b>Ksh.{{ group.list|running_total | intcomma }}</b></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -53,6 +56,8 @@
                 {% if sales.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?payed_page=
+
+
 
 
 
@@ -253,6 +258,8 @@
 
 
 
+
+
                                                      {{ sales.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -267,6 +274,8 @@
                         </li>
                     {% elif i > sales.number|add:'-5' and i < sales.number|add:'5' %}
                         <li class="page-item"><a class="page-link" href="?payed_page=
+
+
 
 
 
@@ -453,6 +462,8 @@
 
 
 
+
+
                                                      {{ sales.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -462,6 +473,8 @@
                 {% if sales.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?payed_page=
+
+
 
 
 

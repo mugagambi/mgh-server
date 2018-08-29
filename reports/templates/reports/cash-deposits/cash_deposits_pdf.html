@@ -1,0 +1,68 @@
+{% load humanize %}
+{% load mathfilters %}
+{% load running_total %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Daily Cash Deposits Report from {{ date_0_datetime }} to {{ date_1_datetime }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+<h4><u>Daily Cash Deposits Report from {{ date_0_datetime }} to {{ date_1_datetime }}</u></h4>
+<table id="customers">
+    <tr>
+        <th>Day</th>
+        <th>Bank</th>
+        <th>Amount</th>
+        <th>Day's Total</th>
+    </tr>
+    {% regroup sales by day as sales_list %}
+    {% for group in sales_list %}
+        <tr>
+            <td>
+                <b>{{ group.grouper }}</b>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        {% for sale in group.list %}
+            <tr>
+                <td></td>
+                <td>{{ sale.bank__name }}</td>
+                <td>Ksh.{{ sale.amount__sum | intcomma }}</td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>Ksh.{{ group.list|running_total | intcomma }}</b></td>
+        </tr>
+    {% endfor %}
+<tr>
+    <td colspan="4"></td>
+</tr>
+    <tr>
+        <td colspan="3"><b>Grand Total</b></td>
+        <td><b>{{ customer_total_amount_cash.total_amount | intcomma }}</b></td>
+    </tr>
+</table>
+</body>
+</html>

@@ -2,14 +2,18 @@ import datetime
 from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import DateField, Sum
 from django.db.models.functions import Trunc
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
 from pytz import timezone as pytz_zone
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from weasyprint import HTML
 
 from cash_breakdown import models
 from reports import forms
@@ -46,6 +50,7 @@ def report(request, date_0, date_1):
         filter(date__range=(date_0_datetime, date_1_datetime)). \
         annotate(day=Trunc('date', 'day', output_field=DateField(), )). \
         values('day', 'bank__name').annotate(Sum('amount')).order_by('day')
+    pdf_context = {'sales': deposits_qs, 'date_0_datetime': date_0_datetime, 'date_1_datetime': date_1_datetime}
     page = request.GET.get('payed_page', 1)
 
     paginator = Paginator(deposits_qs, 20)
@@ -56,6 +61,18 @@ def report(request, date_0, date_1):
     except EmptyPage:
         sales = paginator.page(paginator.num_pages)
     total_deposit = deposits_qs.aggregate(Sum('amount__sum'))
+    pdf_context['total_deposit'] = total_deposit
+    download = request.GET.get('download', None)
+    if download:
+        invoice_string = render_to_string('reports/cash-deposits/cash_deposits_pdf.html', pdf_context)
+        html = HTML(string=invoice_string)
+        html.write_pdf(target='/tmp/daily_cash_deposits_from_{}_to_{}.pdf'.format(date_0_str, date_1_str))
+        fs = FileSystemStorage('/tmp')
+        with fs.open('daily_cash_deposits_from_{}_to_{}.pdf'.format(date_0_str, date_1_str)) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = "inline; filename='daily_cash_deposits_from_{}_to_{}.pdf'".format(
+                date_0_str, date_1_str)
+            return response
     context_data = {'sales': sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime,
                     'total_deposit': total_deposit,
                     'date_0_str': date_0_str, 'date_1_str': date_1_str,
