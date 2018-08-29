@@ -1,0 +1,53 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Cheque Payments Summary Report from {{ date_0_datetime }} to {{ date_1_datetime }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+<h4><u>Cheque Payments Summary Report from {{ date_0_datetime }} to {{ date_1_datetime }}</u></h4>
+<table id="customers">
+    <tr>
+        <th>Date</th>
+        <th>Invoice Number</th>
+        <th>Cheque Number</th>
+        <th>Amount Paid</th>
+    </tr>
+    {% for customer_receipt in customer_receipts %}
+        <tr>
+            <td>{{ customer_receipt.time }}</td>
+            <td>
+                {% if customer_receipt.receipt__number %}
+                    Receipt No.{{ customer_receipt.receipt__number }} - {{ customer_receipt.customer_name }}
+                {% else %}
+                    Deposit - {{ customer_receipt.customer_name }}
+                {% endif %}
+            </td>
+            <td>{{ customer_receipt.cheque }}</td>
+            <td>{{ customer_receipt.total_amount | intcomma }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="3"><b>Total</b></td>
+        <td><b>{{ customer_total_amount_cash.total_amount | intcomma }}</b></td>
+    </tr>
+</table>
+</body>
+</html>

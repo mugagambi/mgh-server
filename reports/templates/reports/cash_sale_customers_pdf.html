@@ -34,12 +34,12 @@
     </tr>
     {% for customer_receipt in customer_receipts %}
         <tr>
-        <td>{{ customer_receipt.time }}</td>
+            <td>{{ customer_receipt.time }}</td>
             <td>
                 {% if customer_receipt.receipt__number %}
-                    Receipt No.{{ customer_receipt.receipt__number }}
+                    Receipt No.{{ customer_receipt.receipt__number }} - {{ customer_receipt.customer_name }}
                 {% else %}
-                    Deposit
+                    Deposit  - {{ customer_receipt.customer_name }}
                 {% endif %}
             </td>
             <td>{{ customer_receipt.total_amount | intcomma }}</td>
@@ -57,7 +57,7 @@
     </tr>
     {% for cash_receipt in cash_receipts %}
         <tr>
-        <td>{{ cash_receipt.time }}</td>
+            <td>{{ cash_receipt.time }}</td>
             <td>
                 {{ cash_receipt.cash_receipt__number }}
             </td>

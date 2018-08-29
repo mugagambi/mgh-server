@@ -38,9 +38,9 @@
             <td>{{ customer_receipt.time }}</td>
             <td>
                 {% if customer_receipt.receipt__number %}
-                    Receipt No.{{ customer_receipt.receipt__number }}
+                    Receipt No.{{ customer_receipt.receipt__number }} - {{ customer_receipt.customer_name }}
                 {% else %}
-                    Deposit
+                    Deposit - {{ customer_receipt.customer_name }}
                 {% endif %}
             </td>
             <td>{{ customer_receipt.phone_number }}</td>
