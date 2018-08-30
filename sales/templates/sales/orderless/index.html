@@ -35,6 +35,11 @@
                     {% if perms.sales.change_orderlesspackage %}
                         <a href="{% url 'update_orderless' %}?product_id={{ order.product_id }}&date={{ order.date | date:"Y-m-d" }}&old_qty={{ order.total_qty }}"
                            class="btn btn-outline-success">Update</a>
+                    {% endif %}
+                    {% if perms.sales.delete_orderlesspackage %}
+                        <a href="{% url 'remove_orderless' %}?product_id={{ order.product_id }}&date={{ order.date | date:"Y-m-d" }}"
+                           class="btn btn-outline-danger"
+                           onclick="return confirm('Are you sure you want to delete this orderless package?')">Remove</a>
                     {% endif %}</td>
                 {% empty %}
                 <td class="text-center" colspan="3"><b>No data available in table</b></td>
@@ -51,6 +56,8 @@
                 {% if orderless.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
@@ -124,6 +131,8 @@
 
 
 
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -131,6 +140,8 @@
                 {% if orderless.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 

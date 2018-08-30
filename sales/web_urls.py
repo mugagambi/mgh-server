@@ -55,6 +55,7 @@ urlpatterns = [
     path('orders/orderless/update/',
          orderless_dispatch_view.update_orderless_dispatch,
          name='update_orderless'),
+    path('orders/orderless/remove/', orderless_dispatch_view.remove_orderless_dispatch, name='remove_orderless'),
     path('orders/orderless/create/', orderless_dispatch_view.CreateOrderlessDispatch.as_view(),
          name='add_orderless'),
     path('order_distribute/', web_views.order_distribution_list, name='orders-distribute'),

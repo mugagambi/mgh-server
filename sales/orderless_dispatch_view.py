@@ -38,7 +38,7 @@ def update_orderless_dispatch(request):
         messages.error(request, 'You need to provide the date')
         return redirect(request.META.get('HTTP_REFERER'))
     old_qty = request.GET.get('old_qty', None)
-    if not date:
+    if not old_qty:
         messages.error(request, 'You need to provide the previous qty')
         return redirect(request.META.get('HTTP_REFERER'))
     product = get_object_or_404(Product, pk=product_id)
@@ -52,3 +52,21 @@ def update_orderless_dispatch(request):
             return redirect('orderless_dispatch')
     form = OrderlessDispatchUpdateForm(initial={'new_qty': old_qty})
     return render(request, 'sales/orderless/create.html', {'object': product, 'date': date, 'form': form})
+
+
+@login_required()
+@permission_required('sales.delete_orderlesspackage')
+def remove_orderless_dispatch(request):
+    product_id = request.GET.get('product_id', None)
+    if not product_id:
+        messages.error(request, 'You need to provide the product')
+        return redirect(request.META.get('HTTP_REFERER'))
+    date = request.GET.get('date', None)
+    if not date:
+        messages.error(request, 'You need to provide the date')
+        return redirect(request.META.get('HTTP_REFERER'))
+    product = get_object_or_404(Product, pk=product_id)
+    date = parse_date(date)
+    OrderlessPackage.objects.select_related('product').filter(product=product, date=date).delete()
+    messages.success(request, 'package removed successfully')
+    return redirect('orderless_dispatch')
