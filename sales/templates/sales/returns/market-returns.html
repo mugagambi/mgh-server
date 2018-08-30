@@ -25,6 +25,7 @@
             <th>qty</th>
             <th>State</th>
             <th>date</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -40,6 +41,12 @@
                 <td>
                     {{ return.date }}
                 </td>
+                <td>
+                    {% if perms.sales.change_marketreturn %}
+                        <a href="{% url 'update_market_return' %}?product_id={{ return.product_pk }}&date={{ return.date | date:"Y-m-d" }}&old_qty={{ return.total_qty }}&state={{ return.type }}"
+                           class="btn btn-outline-success">Update</a>
+                    {% endif %}
+                </td>
                 {% empty %}
                 <td colspan="8">No data available in table</td>
             </tr>
@@ -54,6 +61,8 @@
                 {% if returns.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
@@ -138,6 +147,8 @@
 
 
 
+
+
                                                      {{ returns.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -152,6 +163,8 @@
                         </li>
                     {% elif i > returns.number|add:'-5' and i < returns.number|add:'5' %}
                         <li class="page-item"><a class="page-link" href="?page=
+
+
 
 
 
@@ -222,6 +235,8 @@
 
 
 
+
+
                                                      {{ returns.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -231,6 +246,8 @@
                 {% if returns.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 

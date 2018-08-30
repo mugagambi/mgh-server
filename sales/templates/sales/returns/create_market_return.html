@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
+{% endblock %}
+{% block breadcrump %}
+    {% include 'includes/nav.html' %}
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'market_returns' %}">Market Returns</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Market Returns</li>
+        </ol>
+    </nav>
+{% endblock %}
+{% block content %}
+    {% include 'sales/returns/returns-nav.html' %}
+    <hr/>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h4> {% if object %} Update {% if state == 'U' %}
+            UnSalvageable{% elif state == 'S' %}
+            Salvageable
+        {% endif %} market return for {{ object.name }} on {{ date }} {% else %} Add
+            Market Return{% endif %} </h4>
+    </div>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <form method="post">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <input type="submit" class="btn btn-success" value="Save">
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'js/select2.min.js' %}"></script>
+    <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select').css('width', '100%').select2();
+            $('.dateinput').datetimepicker(
+                {
+                    'format': 'Y-m-d',
+                    'timepicker': false
+                });
+        });
+    </script>
+{% endblock %}

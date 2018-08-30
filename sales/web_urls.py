@@ -70,6 +70,8 @@ urlpatterns = [
     path('all/returns/market/', more_views.market_returns, name='market_returns'),
     path('all/returns/market/create/', market_returns_view.CreateOrderlessDispatch.as_view(),
          name='create_market_return'),
+    path('all/returns/market/update/', market_returns_view.update_market_return,
+         name='update_market_return'),
     path('all/returns/customers/<str:pk>/', extra_views.return_details, name='return'),
     path('all/returns/record/<str:customer>/', extra_views.record_return, name='record-return'),
     path('all/customers/receipt/<str:pk>/add-particular', extra_views.add_receipt_particular,

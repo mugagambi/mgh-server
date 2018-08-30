@@ -100,7 +100,7 @@ class AddDeposit(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 @login_required()
 def market_returns(request):
     returns = models.MarketReturn.objects.select_related('product').values('product__name', 'date', 'type'). \
-        order_by('-date').annotate(total_qty=Sum('qty'))
+        order_by('-date').annotate(total_qty=Sum('qty'), product_pk=F('product__id'))
     paginator = Paginator(returns, 50)
     page = request.GET.get('page', 1)
     try:
