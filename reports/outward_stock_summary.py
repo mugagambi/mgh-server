@@ -1,14 +1,18 @@
 import datetime
 from itertools import groupby
+from pathlib import Path
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
 from pytz import timezone as pytz_zone
+from weasyprint import HTML
 
 from reports import forms
 from sales import models
+from utils import export_pdf
 
 AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
 
@@ -31,6 +35,8 @@ def outward_stock_summary_period(request):
 
 @login_required()
 def outward_stock_summary_alt__report(request, date_0, date_1):
+    str_date_0 = date_0
+    str_date_1 = date_1
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
@@ -90,10 +96,21 @@ def outward_stock_summary_alt__report(request, date_0, date_1):
         total_grand_value = grand_customer_value
     else:
         total_grand_value = grand_customer_value + grand_cash_value
-    return render(request, 'reports/outward-stock/report.html',
-                  {'outwards': outward,
-                   'grand_customer_value': grand_customer_value,
-                   'grand_cash_value': grand_cash_value,
-                   'total_grand_value': total_grand_value,
-                   'date_0': date_0_datetime,
-                   'date_1': date_1_datetime})
+    context = {'outwards': outward,
+               'grand_customer_value': grand_customer_value,
+               'grand_cash_value': grand_cash_value,
+               'total_grand_value': total_grand_value,
+               'date_0': date_0_datetime,
+               'date_1': date_1_datetime}
+    download = request.GET.get('download', None)
+    if download:
+        # todo implement this code for all exports using weasyprint
+        folder = '/tmp'
+        filename = 'outward_stock_summary_from_{}_to_{}.pdf'.format(str_date_0, str_date_1)
+        file = Path(filename)
+        if not file.is_file():
+            invoice_string = render_to_string('reports/outward-stock/outward_stock_report_pdf.html', context)
+            html = HTML(string=invoice_string)
+            html.write_pdf(target='/tmp/outward_stock_summary_from_{}_to_{}.pdf'.format(str_date_0, str_date_1))
+        return export_pdf(folder, filename=filename)
+    return render(request, 'reports/outward-stock/report.html', context=context)

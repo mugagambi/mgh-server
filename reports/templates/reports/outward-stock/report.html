@@ -8,6 +8,7 @@
             <small>from {{ date_0 }} to {{ date_1 }}</small>
         </h1>
         <a href="{% url 'outward_product_period' %}" class="btn btn-outline-success">Change Period</a>
+        <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     </div>
     <p>All totals in respective units</p>
     <table id="customers" class="table table-bordered table-striped table-responsive-md" style="width:100%">

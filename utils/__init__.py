@@ -3,6 +3,8 @@ import random
 from urllib.parse import urlencode
 
 from django.contrib import admin
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import reverse
 from django.utils.html import format_html
@@ -169,3 +171,17 @@ def main_generate_unique_id():
     sqstring = str(sqlist).replace(':', '').replace('\'', '').replace(',', '').replace(' ', '').replace('.', ''). \
         replace('[', '').replace(']', '')
     return sqstring[:10]
+
+
+def export_pdf(folder, filename):
+    """
+    Given a folder and filename this function exports a the file through http content disposition inline
+    :param folder:
+    :param filename:
+    :return: HttpResponse
+    """
+    fs = FileSystemStorage(folder)
+    with fs.open(filename) as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = "inline; filename='{filename}'".format(filename=filename)
+        return response
