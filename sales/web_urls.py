@@ -5,6 +5,7 @@ from sales import extra_views
 from sales import generate_invoice_resource
 from sales import more_views
 from sales import open_air
+from sales import orderless_dispatch_view
 from sales import receipts
 from sales import returns_views
 from sales import settle_debts_views
@@ -50,6 +51,12 @@ urlpatterns = [
     path('customers/<str:pk>/discounts/add/', web_views.add_discounts, name='add-discounts'),
     path('customers/<str:pk>/place-order/<str:date_given>/', web_views.place_order, name='place-order'),
     path('orders/', web_views.order_list, name='orders'),
+    path('orders/orderless/', more_views.orderless_dispatch, name='orderless_dispatch'),
+    path('orders/orderless/update/',
+         orderless_dispatch_view.update_orderless_dispatch,
+         name='update_orderless'),
+    path('orders/orderless/create/', orderless_dispatch_view.CreateOrderlessDispatch.as_view(),
+         name='add_orderless'),
     path('order_distribute/', web_views.order_distribution_list, name='orders-distribute'),
     path('orders/distribute/<str:order_product>/', web_views.distribute_order, name='distribute-order'),
     path('orders/<str:order>/more/', web_views.add_more_products, name='more-items'),
@@ -69,7 +76,6 @@ urlpatterns = [
          name='update-sale-payment'),
     path('all/customers/receipt/particular/<str:item>/update/', extra_views.update_particular,
          name='update-receipt-particular'),
-    path('orderless/dispatch/', more_views.orderless_dispatch, name='orderless_dispatch'),
     path('customers/settles/<str:deposit>/invoices/', settle_debts_views.settle_debt,
          name='settle_debt_invoices'),
     path('customers/settles/invoices/', settle_debts_views.settle_invoice_debt,

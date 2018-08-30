@@ -1,12 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% block styles %}
     {% include 'includes/filter_css.html' %}
 {% endblock %}
 {% block content %}
     {% include 'includes/order-nav.html' %}
+    <hr/>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2"> Orderless Dispatch</h1>
+        {% if perms.sales.add_orderlesspackage %}
+            <a href="{% url 'add_orderless' %}" class="btn btn-outline-success">
+                Add orderless dispatch
+            </a>
+        {% endif %}
     </div>
     {% include 'includes/filter_by.html' %}
     <table id="customers" class="table table-striped table-responsive-md" style="width:100%">
@@ -15,6 +22,7 @@
             <th>Product</th>
             <th>Qty</th>
             <th>Date</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -23,6 +31,11 @@
                 <td>{{ order.product__name }}</td>
                 <td>{{ order.total_qty }}</td>
                 <td>{{ order.date }}</td>
+                <td>
+                    {% if perms.sales.change_orderlesspackage %}
+                        <a href="{% url 'update_orderless' %}?product_id={{ order.product_id }}&date={{ order.date | date:"Y-m-d" }}&old_qty={{ order.total_qty }}"
+                           class="btn btn-outline-success">Update</a>
+                    {% endif %}</td>
                 {% empty %}
                 <td class="text-center" colspan="3"><b>No data available in table</b></td>
             </tr>
@@ -38,6 +51,22 @@
                 {% if orderless.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -79,6 +108,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -86,6 +131,22 @@
                 {% if orderless.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

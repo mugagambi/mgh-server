@@ -96,3 +96,12 @@ class DiscountForm(forms.ModelForm):
 
 class CashReceiptPreForm(forms.Form):
     date = forms.DateTimeField()
+
+
+class OrderlessDispatchChooseForm(forms.Form):
+    product = forms.ModelChoiceField(queryset=Product.objects.all())
+    date = forms.DateField()
+
+
+class OrderlessDispatchUpdateForm(forms.Form):
+    new_qty = forms.DecimalField(max_digits=15, decimal_places=2)

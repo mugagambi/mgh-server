@@ -3,7 +3,7 @@
         <span data-feather="plus"></span>
         Place Orders
     </a>
-    <a class="nav-item nav-link {% if 'orders' in request.path %}
+    <a class="nav-item nav-link {% if 'orders' in request.path and '/orders/orderless/' not in request.path %}
                         active
                         {% endif %}" href="{% url 'orders' %}">
         <span data-feather="shopping-bag"></span>
