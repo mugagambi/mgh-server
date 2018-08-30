@@ -7,7 +7,7 @@
         <h1 class="h2"> Outward Stock Summary Report <br>
             <small>from {{ date_0 }} to {{ date_1 }}</small>
         </h1>
-        <a href="{% url 'outward_product_period' %}" class="btn btn-outline-success">Change Period</a>
+        <a href="{% url 'outward_stock_period' %}" class="btn btn-outline-success">Change Period</a>
         <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     </div>
     <p>All totals in respective units</p>
@@ -16,7 +16,7 @@
         <tr>
             <th rowspan="2">Product</th>
             <th colspan="3">Customer Sales</th>
-            <th colspan="3">Cash Sales</th>
+            <th colspan="3">Open Air Sales</th>
             <th colspan="3">Total Sales</th>
         </tr>
         <tr>
