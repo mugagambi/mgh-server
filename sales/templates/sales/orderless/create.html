@@ -9,7 +9,8 @@
     {% include 'includes/order-nav.html' %}
     <hr/>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2"> {% if object %} Update {% else %} Add {% endif %} Orderless Package</h1>
+        <h3> {% if object %} Update Orderless Package for {{ object.name }} on {{ date }} {% else %} Add
+            Orderless Package{% endif %} </h3>
     </div>
     <div class="row">
         <div class="col-md-6 offset-md-3">
