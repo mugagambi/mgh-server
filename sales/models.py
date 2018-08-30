@@ -52,8 +52,8 @@ class Customer(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        self.shop_name = self.shop_name.lower()
-        self.nick_name = self.nick_name.lower()
+        self.shop_name = self.shop_name.title()
+        self.nick_name = self.nick_name.title()
         super(Customer, self).save(force_insert=False, force_update=False, using=None,
                                    update_fields=None)
 

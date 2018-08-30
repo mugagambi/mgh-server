@@ -23,7 +23,7 @@
         <tbody>
         {% for outward in outwards %}
             <tr>
-                <td>{{ outward.customer.shop_name }}</td>
+                <td>{{ outward.customer }}</td>
                 <td>{{ outward.ordered | intcomma }}</td>
                 <td>{{ outward.packaged | intcomma }}</td>
                 <td>{{ outward.total_sold | intcomma }}</td>
@@ -35,11 +35,11 @@
         {% endfor %}
         <tr>
             <td><b>Grand Total</b></td>
-            <td><b>{{ total_ordered }}</b></td>
-            <td><b>{{ total_packaged }}</b></td>
-            <td><b>{{ total_sold }}</b></td>
-            <td><b>{{ total_return }}</b></td>
-            <td><b>{{ variance }}</b></td>
+            <td><b>{{ total_ordered | intcomma }}</b></td>
+            <td><b>{{ total_packaged | intcomma }}</b></td>
+            <td><b>{{ total_sold | intcomma }}</b></td>
+            <td><b>{{ total_return| intcomma }}</b></td>
+            <td><b>{{ variance| intcomma }}</b></td>
         </tr>
         </tbody>
     </table>
