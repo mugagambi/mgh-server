@@ -5,12 +5,22 @@
     <link rel="stylesheet" href="{% static 'css/select2.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
 {% endblock %}
+{% block breadcrump %}
+    {% include 'includes/nav.html' %}
+    <br/>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'market_returns' %}">Market Returns</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Market Returns</li>
+        </ol>
+    </nav>
+{% endblock %}
 {% block content %}
-    {% include 'includes/order-nav.html' %}
     <hr/>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h3> {% if object %} Update Orderless Package for {{ object.name }} on {{ date }} {% else %} Add
-            Orderless Package{% endif %} </h3>
+            Market Return{% endif %} </h3>
     </div>
     <div class="row">
         <div class="col-md-6 offset-md-3">
@@ -24,22 +34,15 @@
 {% endblock %}
 {% block scripts %}
     <script src="{% static 'js/select2.min.js' %}"></script>
-    <script>
-        $(document).ready(function () {
-            $('.select').css('width', '100%').select2();
-        });
-    </script>
     <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
     <script>
         $(document).ready(function () {
-            $(function () {
-                $('.dateinput').datetimepicker(
-                    {
-                        'format': 'Y-m-d',
-                        'timepicker': false
-                    });
-            });
-        })
-
+            $('.select').css('width', '100%').select2();
+            $('.dateinput').datetimepicker(
+                {
+                    'format': 'Y-m-d',
+                    'timepicker': false
+                });
+        });
     </script>
 {% endblock %}
