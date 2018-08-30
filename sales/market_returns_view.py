@@ -58,3 +58,25 @@ def update_market_return(request):
     form = OrderlessDispatchUpdateForm(initial={'new_qty': old_qty})
     return render(request, 'sales/returns/create_market_return.html',
                   {'object': product, 'date': date, 'form': form, 'state': state})
+
+
+@login_required()
+@permission_required('sales.delete_marketreturn')
+def remove_market_return(request):
+    product_id = request.GET.get('product_id', None)
+    if not product_id:
+        messages.error(request, 'You need to provide the product')
+        return redirect(request.META.get('HTTP_REFERER'))
+    date = request.GET.get('date', None)
+    if not date:
+        messages.error(request, 'You need to provide the date')
+        return redirect(request.META.get('HTTP_REFERER'))
+    state = request.GET.get('state', None)
+    if not state:
+        messages.error(request, 'You need to provide if Salvageable or UnSalvageable')
+        return redirect(request.META.get('HTTP_REFERER'))
+    product = get_object_or_404(Product, pk=product_id)
+    date = parse_date(date)
+    MarketReturn.objects.select_related('product').filter(product=product, date=date, type=state).delete()
+    messages.success(request, 'Return removed successfully')
+    return redirect('market_returns')
