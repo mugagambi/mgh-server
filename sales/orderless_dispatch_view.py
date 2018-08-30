@@ -68,5 +68,5 @@ def remove_orderless_dispatch(request):
     product = get_object_or_404(Product, pk=product_id)
     date = parse_date(date)
     OrderlessPackage.objects.select_related('product').filter(product=product, date=date).delete()
-    messages.success(request, 'package removed successfully')
+    messages.success(request, 'package removed- successfully')
     return redirect('orderless_dispatch')

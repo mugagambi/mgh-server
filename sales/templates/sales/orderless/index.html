@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 {% load crispy_forms_tags %}
 {% block styles %}
     {% include 'includes/filter_css.html' %}
@@ -48,14 +49,45 @@
         </tbody>
     </table>
     <hr/>
-    <p><b>Showing {{ orderless.start_index }} to {{ orderless.end_index }} of {{ orderless.paginator.count }}
-        orderless</b></p>
+    <p><b>Showing {{ orderless.start_index }} to {{ orderless.end_index }} of {{ orderless.paginator.count | intcomma }}
+        orderless </b></p>
     {% if orderless.has_other_pages %}
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 {% if orderless.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -99,12 +131,112 @@
                         <span class="sr-only">Previous</span>
                     </a></li>
                 {% endif %}
+                {% if orderless.number|add:'-4' > 1 %}
+                    <li class="page-item"><a class="page-link"
+                                             href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                     {{ orderless.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                             aria-label="Previous">
+                        <span aria-hidden="true">&hellip;</span>
+                        <span class="sr-only">&hellip;</span>
+                    </a></li>
+                {% endif %}
+
                 {% for i in orderless.paginator.page_range %}
                     {% if orderless.number == i %}
-                        <li class="page-item active"><a class="page-link" disabled>{{ i }} <span class="sr-only">(current)</span></a>
+                        <li class="page-item active"><a class="page-link" disabled>{{ i }} <span
+                                class="sr-only">(current)</span></a>
                         </li>
-                    {% else %}
+                    {% elif i > orderless.number|add:'-5' and i < orderless.number|add:'5' %}
                         <li class="page-item"><a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -137,9 +269,105 @@
                         </li>
                     {% endif %}
                 {% endfor %}
+                {% if orderless.paginator.num_pages > orderless.number|add:'4' %}
+                    <li class="page-item"><a class="page-link"
+                                             href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                     {{ orderless.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                             aria-label="Previous">
+                        <span aria-hidden="true">&hellip;</span>
+                        <span class="sr-only">&hellip;</span>
+                    </a></li>
+                {% endif %}
                 {% if orderless.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
