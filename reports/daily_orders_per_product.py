@@ -1,4 +1,5 @@
 import datetime
+from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -33,7 +34,6 @@ def period(request):
 
 def report(request, date_0, date_1, product):
     product = get_object_or_404(models.Product, pk=product)
-    period = get_date_period_in_range(date_0, date_1)
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
@@ -42,10 +42,64 @@ def report(request, date_0, date_1, product):
         filter(order__created_at__range=(date_0_datetime, date_1_datetime), product=product). \
         annotate(day=Trunc('order__created_at', 'day', output_field=DateField(), )). \
         values('day').annotate(Sum('qty')).order_by('day')
-    total_orders = orders.aggregate(Sum('qty__sum'))
+    packages = models.PackageProduct.objects.filter(
+        order_product__order__date_delivery__range=(date_0_datetime, date_1_datetime),
+        order_product__product=product).annotate(
+        day=Trunc('order_product__order__date_delivery', 'day', output_field=DateField())).values('day').annotate(
+        Sum('qty_weigh')).order_by('day')
+    orderless_dispatch = models.OrderlessPackage.objects.select_related('product').filter(
+        date__range=(date_0, date_1), product=product).annotate(
+        day=Trunc('date', 'day', output_field=DateField())).values('day').annotate(
+        Sum('qty')).order_by('day')
+    temp_data = []
+    for order in orders:
+        temp_data.append({
+            'day': order['day'],
+            'order': order['qty__sum'],
+            'packaged': 0,
+            'orderless': 0
+        })
+    for package in packages:
+        temp_data.append({
+            'day': package['day'],
+            'order': 0,
+            'packaged': package['qty_weigh__sum'],
+            'orderless': 0
+        })
+    for order in orderless_dispatch:
+        temp_data.append({
+            'day': order['day'],
+            'order': 0,
+            'packaged': 0,
+            'orderless': order['qty__sum']
+        })
+    print(temp_data)
+    temp_data.sort(key=lambda x: x['day'])
+    print(temp_data)
+    final_data = []
+    for k, v in groupby(temp_data, key=lambda x: x['day']):
+        v = list(v)
+        orders = sum(d['order'] for d in v)
+        packages = sum(d['packaged'] for d in v)
+        orderless = sum(d['orderless'] for d in v)
+        total_dispatch = packages + orderless
+        variance = total_dispatch - orders
+        final_data.append({
+            'day': k,
+            'order': orders,
+            'packages': packages,
+            'orderless': orderless,
+            'total_dispatch': total_dispatch,
+            'variance': variance
+        })
+    total_orders = sum(d['order'] for d in final_data)
+    total_customer = sum(d['packages'] for d in final_data)
+    total_orderless = sum(d['orderless'] for d in final_data)
+    total_dispatch = sum(d['total_dispatch'] for d in final_data)
+    total_variance = total_dispatch - total_orders
     page = request.GET.get('payed_page', 1)
 
-    paginator = Paginator(orders, 10)
+    paginator = Paginator(final_data, 31)
     try:
         orders = paginator.page(page)
     except PageNotAnInteger:
@@ -53,19 +107,7 @@ def report(request, date_0, date_1, product):
     except EmptyPage:
         orders = paginator.page(paginator.num_pages)
     context_data = {'orders': orders, 'date_0': date_0_datetime, 'date_1': date_1_datetime,
-                    'total_orders': total_orders, 'period': period,
-                    'product': product}
+                    'total_orders': total_orders, 'total_dispatch': total_dispatch,
+                    'product': product, 'variance': total_variance, 'total_customer': total_customer,
+                    'total_orderless': total_orderless}
     return render(request, 'reports/daily-orders-per-product/report.html', context_data)
-
-
-def get_date_period_in_range(date_0, date_1):
-    date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
-    date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
-    delta = date_1 - date_0
-    if delta.days == 30:
-        return 'hour'
-    if 32 > delta.days > 1:
-        return 'day'
-    if 365 > delta.days > 33:
-        return 'month'
-    return 'month'
