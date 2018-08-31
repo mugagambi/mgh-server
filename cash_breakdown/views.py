@@ -2,7 +2,6 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-# Create your views here.
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Sum
 from django.forms import modelformset_factory
@@ -69,7 +68,16 @@ class DeleteBank(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 class CashDepositList(LoginRequiredMixin, ListView):
     model = CashDeposit
     template_name = 'cash_breakdown/cash_deposit_list.html'
-    queryset = CashDeposit.objects.select_related('bank').all()
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super(CashDepositList, self).get_context_data(object_list=None, **kwargs)
+        ctx['banks'] = Bank.objects.all()
+        return ctx
+
+    def get_queryset(self):
+        bank = self.request.GET.get('bank', None)
+        date = self.request.GET.get('bank', None)
+        return CashDeposit.objects.select_related('bank').all().order_by('-date')
 
 
 @login_required()
