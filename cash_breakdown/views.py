@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, AccessMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import modelformset_factory
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.dateparse import parse_date
 from django.utils.timezone import now
@@ -165,3 +165,28 @@ def create_expenses(request, date):
     else:
         form = CashExpenseForm()
         return render(request, 'cash_breakdown/add_expenses.html', {'form': form, 'date': date})
+
+
+class UpdateCashExpense(LoginRequiredMixin, PermissionRequiredMixin, AccessMixin, SuccessMessageMixin, UpdateView):
+    model = CashExpense
+    fields = ('amount', 'narration')
+    permission_required = 'cash_breakdown.change_cashexpense'
+    permission_denied_message = 'You don\'t have enough permissions to perform this task'
+    raise_exception = True
+    success_message = 'Cash Expense updated successfully'
+    success_url = reverse_lazy('cash_expenses')
+    template_name = 'cash_breakdown/update_cash_expens.html'
+
+
+@login_required()
+@permission_required('cash_breakdown.delete_cashexpense', raise_exception=True)
+def remove_expenses(request, pk):
+    """
+        Add  cash expense
+        :param request:
+        :return response:
+        """
+    expense = get_object_or_404(CashExpense, pk=pk)
+    expense.delete()
+    messages.success(request, 'expense removed successfully')
+    return redirect('cash_expenses')

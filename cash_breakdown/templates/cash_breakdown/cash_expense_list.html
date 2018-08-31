@@ -43,9 +43,10 @@
                 <td>
                     {% if perms.cash_breakdown.change_cashdeposit %}
                         <a class="btn btn-outline-success btn-sm mb-1"
-                           href="#">Update</a>
-                        <a class="btn btn-outline-success btn-sm mb-1"
-                           href="#">Remove</a>
+                           href="{% url 'update_cash_expense' pk=expense.id %}">Update</a>
+                        <a class="btn btn-outline-danger btn-sm mb-1"
+                           onclick="return confirm('Are you sure you want to remove this expense?')"
+                           href="{% url 'remove_cash_expense' pk=expense.id %}">Remove</a>
                     {% endif %}
                 </td>
                 {% empty %}
