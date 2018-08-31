@@ -17,6 +17,7 @@
             <th scope="col">Customer Dispatch</th>
             <th scope="col">Orderless Dispatch</th>
             <th scope="col">Total Dispatch</th>
+            <th scope="col">Variance</th>
         </tr>
         </thead>
         <tbody>
@@ -28,7 +29,8 @@
                 <td>{{ data.order_qty | intcomma }}</td>
                 <td>{{ data.customer_qty | intcomma }}</td>
                 <td>{{ data.orderless_qty | intcomma }}</td>
-                <td>{{ data.customer_qty|addition:data.orderless_qty | intcomma }}</td>
+                <td>{{ data.total_dispatch| intcomma }}</td>
+                <td>{{ data.variance| intcomma }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -42,7 +44,7 @@
     <script>
         $(document).ready(function () {
             var orders = [{% for data in data %} {{ data.order_qty  }}, {% endfor %}];
-            var dispatch = [{% for data in data %}{{ data.customer_qty|addition:data.orderless_qty}},{% endfor %}];
+            var dispatch = [{% for data in data %}{{ data.customer_qty|addition:data.orderless_qty}}, {% endfor %}];
             var labels = [{% for data in data %} '{{ data.product }}', {% endfor %}];
             var ctx = document.getElementById("myChart").getContext('2d');
             var myChart = new Chart(ctx, {

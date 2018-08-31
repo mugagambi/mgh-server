@@ -68,11 +68,17 @@ def report(request, date_0, date_1):
     all_data.sort(key=lambda x: x['product'])
     for k, v in groupby(all_data, key=lambda x: x['product']):
         v = list(v)
+        order_qty = sum(d['order_qty'] for d in v)
+        customer_qty = sum(d['customer_qty'] for d in v)
+        orderless_qty = sum(d['orderless_qty'] for d in v)
+        total_dispatch = customer_qty + orderless_qty
         final_data.append({
             'product': k,
-            'order_qty': sum(d['order_qty'] for d in v),
-            'customer_qty': sum(d['customer_qty'] for d in v),
-            'orderless_qty': sum(d['orderless_qty'] for d in v),
+            'order_qty': order_qty,
+            'customer_qty': customer_qty,
+            'orderless_qty': orderless_qty,
+            'total_dispatch': total_dispatch,
+            'variance': total_dispatch - order_qty
         })
     total_orders = orders.aggregate(Sum('qty__sum'))
     total_customer_dispatch = customer_dispatch.aggregate(Sum('qty_weigh__sum'))
