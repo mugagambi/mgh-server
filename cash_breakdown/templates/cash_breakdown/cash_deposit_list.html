@@ -32,12 +32,14 @@
                 <select class="custom-select" name="bank">
                     <option selected value="">Bank</option>
                     {% for bank in banks %}
-                        <option value="{{ bank.id }}">{{ bank.name }}</option>
+                        <option value="{{ bank.id }}" {% if bank_id == bank.id %}
+                                selected {% endif %}>{{ bank.name }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="col">
-                <input type="text" class="dateinput form-control" name="date" placeholder="Deposit Date">
+                <input type="text" class="dateinput form-control" id="date" name="date" placeholder="Deposit Date"
+                        {% if request.GET.date %} value="{{ request.GET.date }}" {% endif %}>
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary mb-2">Filter</button>

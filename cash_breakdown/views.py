@@ -8,6 +8,7 @@ from django.forms import modelformset_factory
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
+from django.utils.dateparse import parse_date
 from django.utils.timezone import now
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, UpdateView, DeleteView
@@ -72,11 +73,22 @@ class CashDepositList(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         ctx = super(CashDepositList, self).get_context_data(object_list=None, **kwargs)
         ctx['banks'] = Bank.objects.all()
+        if self.request.GET.get('bank'):
+            ctx['bank_id'] = int(self.request.GET.get('bank'))
         return ctx
 
     def get_queryset(self):
         bank = self.request.GET.get('bank', None)
-        date = self.request.GET.get('bank', None)
+        date = self.request.GET.get('date', None)
+        if bank and date:
+            date = parse_date(date)
+            return CashDeposit.objects.select_related('bank').filter(bank_id=bank, date=date).order_by('-date')
+        elif bank:
+            print(bank)
+            return CashDeposit.objects.select_related('bank').filter(bank_id=bank).order_by('-date')
+        elif date:
+            date = parse_date(date)
+            return CashDeposit.objects.select_related('bank').filter(date=date).order_by('-date')
         return CashDeposit.objects.select_related('bank').all().order_by('-date')
 
 
