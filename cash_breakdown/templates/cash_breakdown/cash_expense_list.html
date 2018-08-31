@@ -38,7 +38,7 @@
         {% for expense in cashexpense_list %}
             <tr>
                 <td>{{ expense.date }}</td>
-                <td>{{ expense.amount }}</td>
+                <td>{{ expense.amount | intcomma }}</td>
                 <td>{{ expense.narration }}</td>
                 <td>
                     {% if perms.cash_breakdown.change_cashdeposit %}

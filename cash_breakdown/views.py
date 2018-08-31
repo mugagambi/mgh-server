@@ -136,9 +136,9 @@ def handle_cash_expense_date(request):
     if form.is_valid():
         date = form.cleaned_data['date']
         try:
-            CashExpense.objects.get(date=date)
+            expense = CashExpense.objects.get(date=date)
             messages.success(request, 'update cash expense')
-            return redirect('cash_expenses')
+            return redirect('update_cash_expense', pk=expense.pk)
         except CashExpense.DoesNotExist:
             return redirect(reverse('create_cash_expense', kwargs={'date': str(date)}))
     messages.error(request, 'To proceed you need to select date')
