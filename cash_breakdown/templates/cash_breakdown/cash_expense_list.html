@@ -38,7 +38,8 @@
         {% for expense in cashexpense_list %}
             <tr>
                 <td>{{ expense.date }}</td>
-                <td>{{ expense.total_amount }}</td>
+                <td>{{ expense.amount }}</td>
+                <td>{{ expense.narration }}</td>
                 <td>
                     {% if perms.cash_breakdown.change_cashdeposit %}
                         <a class="btn btn-outline-success btn-sm mb-1"

@@ -3,7 +3,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Sum
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
@@ -123,7 +122,7 @@ class UpdateCashDeposit(LoginRequiredMixin, PermissionRequiredMixin, SuccessMess
 class CashExpenseList(LoginRequiredMixin, ListView):
     model = CashExpense
     template_name = 'cash_breakdown/cash_expense_list.html'
-    queryset = CashExpense.objects.values('date').annotate(total_amount=Sum('amount'))
+    queryset = CashExpense.objects.all().order_by('-date')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         form = CashExpenseDateModal(initial={'date': now()})
