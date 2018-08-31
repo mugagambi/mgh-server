@@ -1,0 +1,62 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Product Summary Report Per Customer for {{ product.name }} From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @page {
+            size: landscape;
+        }
+
+    </style>
+</head>
+<body>
+<h4><u>Product Summary Report Per Customer for {{ product.name }} From {{ date_0 }} to {{ date_1 }}</u></h4>
+<table id="customers">
+    <tr>
+        <th>Customer</th>
+        <th>Ordered</th>
+        <th>Packaged</th>
+        <th>Sold</th>
+        <th>Return</th>
+        <th>Variance</th>
+    </tr>
+    {% for outward in outwards %}
+        <tr>
+            <td>{{ outward.customer }}</td>
+            <td>{{ outward.ordered | intcomma }}</td>
+            <td>{{ outward.packaged | intcomma }}</td>
+            <td>{{ outward.total_sold | intcomma }}</td>
+            <td>{{ outward.total_return | intcomma }}</td>
+            <td>{{ outward.variance | intcomma }}</td>
+            {% empty %}
+            <td class="text-center" colspan="6"><b>No data available in table</b></td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td><b>Grand Total</b></td>
+        <td><b>{{ total_ordered | intcomma }}</b></td>
+        <td><b>{{ total_packaged | intcomma }}</b></td>
+        <td><b>{{ total_sold | intcomma }}</b></td>
+        <td><b>{{ total_return| intcomma }}</b></td>
+        <td><b>{{ variance| intcomma }}</b></td>
+    </tr>
+</table>
+</body>
+</html>

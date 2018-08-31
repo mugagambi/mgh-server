@@ -1,13 +1,17 @@
 import datetime
 from itertools import groupby
+from pathlib import Path
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.shortcuts import redirect, render, get_object_or_404
+from django.template.loader import render_to_string
+from weasyprint import HTML
 
 from core.models import Product
 from reports import forms
 from sales import models
+from utils import export_pdf
 
 
 @login_required()
@@ -27,111 +31,10 @@ def outward_product_customer_summary_period(request):
                   {'form': form})
 
 
-def items_exist(customer, product_id, date_0, date_1, datetime_0, datetime_1):
-    if models.OrderProduct.objects.filter(product__id=product_id, order__date_delivery__range=(date_0, date_1),
-                                          order__customer__id=customer).exists():
-        return True
-    if models.PackageProduct.objects.filter(order_product__product=product_id,
-                                            order_product__order__date_delivery__range=(
-                                                    date_0, date_1),
-                                            order_product__order__customer__id=customer).exists():
-        return True
-    if models.ReceiptParticular.objects.filter(product__id=product_id,
-                                               receipt__customer__id=customer,
-                                               receipt__date__range=(
-                                                       datetime_0, datetime_1)).exists():
-        return True
-    if models.Return.objects.filter(product__id=product_id,
-                                    customer__id=customer, date__range=(datetime_0, datetime_1)).exists():
-        return True
-    return False
-
-
-# todo add the right permissions
-# todo use the sub aggregates already calculated
-@login_required()
-def outward_product_summary_report(request, date_0, date_1, product_id):
-    date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
-    date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
-    date_0_datetime = datetime.datetime.combine(date_0, datetime.time(0, 0))
-    date_1_datetime = datetime.datetime.combine(date_1, datetime.time(23, 59))
-    product = get_object_or_404(Product, pk=product_id)
-    outward = []
-    qs = models.Customer.objects.all()
-    for customer in qs:
-        if not models.OrderProduct.objects.filter(product=product,
-                                                  order__date_delivery__range=(date_0, date_1),
-                                                  order__customer=customer).exists():
-            if not models.ReceiptParticular.objects.filter(product=product, receipt__customer=customer,
-                                                           receipt__date__range=(date_0_datetime,
-                                                                                 date_1_datetime)).exists():
-                if not models.Return.objects.filter(product=product, customer=customer,
-                                                    date__range=(date_0_datetime, date_1_datetime)).exists():
-                    continue
-        total_ordered = models.OrderProduct.objects.filter(product=product,
-                                                           order__date_delivery__range=(date_0, date_1),
-                                                           order__customer=customer).aggregate(total=Sum('qty'))
-        if not total_ordered['total']:
-            total_ordered['total'] = 0
-        total_packaged = models.PackageProduct.objects.filter(order_product__product=product,
-                                                              order_product__order__customer=customer,
-                                                              order_product__order__date_delivery__range=(
-                                                                  date_0, date_1)).aggregate(total=Sum('qty_weigh'))
-        if not total_packaged['total']:
-            total_packaged['total'] = 0
-        total_sold = models.ReceiptParticular.objects.filter(product=product,
-                                                             receipt__customer=customer,
-                                                             receipt__date__range=(date_0_datetime, date_1_datetime)). \
-            aggregate(total=Sum('qty'))
-        if not total_sold['total']:
-            total_sold['total'] = 0
-        total_return = models.Return.objects.filter(product=product, customer=customer,
-                                                    date__range=(date_0_datetime, date_1_datetime)).aggregate(
-            total=Sum('qty'))
-        if not total_return['total']:
-            total_return['total'] = 0
-        variance = total_packaged['total'] - total_sold['total'] - total_return['total']
-        outward.append({'customer': customer, 'ordered': total_ordered['total'],
-                        'packaged': total_packaged['total'],
-                        'total_sold': total_sold['total'],
-                        'total_return': total_return['total'],
-                        'variance': variance})
-    total_ordered = models.OrderProduct.objects.filter(product=product,
-                                                       order__date_delivery__range=(date_0, date_1)).aggregate(
-        total=Sum('qty'))
-    if not total_ordered['total']:
-        total_ordered['total'] = 0
-    total_packaged = models.PackageProduct.objects.filter(order_product__product=product,
-                                                          order_product__order__date_delivery__range=(
-                                                              date_0, date_1)).aggregate(total=Sum('qty_weigh'))
-    if not total_packaged['total']:
-        total_packaged['total'] = 0
-    total_sold = models.ReceiptParticular.objects.filter(product=product,
-                                                         receipt__date__range=(
-                                                             date_0_datetime, date_1_datetime)).aggregate(
-        total=Sum('qty'))
-    if not total_sold['total']:
-        total_sold['total'] = 0
-    total_return = models.Return.objects.filter(product=product,
-                                                date__range=(date_0_datetime, date_1_datetime)).aggregate(
-        total=Sum('qty'))
-    if not total_return['total']:
-        total_return['total'] = 0
-    variance = total_packaged['total'] - total_sold['total'] - total_return['total']
-    return render(request, 'reports/outward-product-customer/report.html',
-                  {'outwards': outward,
-                   'date_0': date_0_datetime,
-                   'date_1': date_1_datetime,
-                   'product': product,
-                   'total_ordered': total_ordered['total'],
-                   'total_packaged': total_packaged['total'],
-                   'total_sold': total_sold['total'],
-                   'total_return': total_return['total'],
-                   'variance': variance})
-
-
 @login_required()
 def outward_product_summary_report_alt(request, date_0, date_1, product_id):
+    str_date_0 = date_0
+    str_date_1 = date_1
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0_datetime = datetime.datetime.combine(date_0, datetime.time(0, 0))
@@ -216,4 +119,14 @@ def outward_product_summary_report_alt(request, date_0, date_1, product_id):
                'total_sold': total_sold,
                'total_return': total_return,
                'variance': variance}
+    download = request.GET.get('download', None)
+    if download:
+        folder = '/tmp'
+        filename = 'product_summary_per_customer_from_{}_to_{}.pdf'.format(str_date_0, str_date_1)
+        file = Path(filename)
+        if not file.is_file():
+            invoice_string = render_to_string('reports/outward-product-customer/report_pdf.html', context)
+            html = HTML(string=invoice_string)
+            html.write_pdf(target='/tmp/{filename}'.format(filename=filename))
+        return export_pdf(folder, filename=filename)
     return render(request, 'reports/outward-product-customer/report.html', context)
