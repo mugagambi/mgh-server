@@ -1,4 +1,3 @@
-from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -6,14 +5,13 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
-from django.utils import timezone
 from django.utils.dateparse import parse_date
 from django.utils.timezone import now
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, UpdateView, DeleteView
 
 from cash_breakdown.models import Bank, CashDeposit, CashExpense
-from .form import CashExpenseDateModal
+from .form import CashExpenseDateModal, CashExpenseForm
 
 
 class BankList(LoginRequiredMixin, ListView):
@@ -137,7 +135,12 @@ def handle_cash_expense_date(request):
     form = CashExpenseDateModal(request.POST)
     if form.is_valid():
         date = form.cleaned_data['date']
-        return redirect(reverse('create_cash_expense', kwargs={'date': str(date)}))
+        try:
+            CashExpense.objects.get(date=date)
+            messages.success(request, 'update cash expense')
+            return redirect('cash_expenses')
+        except CashExpense.DoesNotExist:
+            return redirect(reverse('create_cash_expense', kwargs={'date': str(date)}))
     messages.error(request, 'To proceed you need to select date')
     return redirect('cash_expenses')
 
@@ -150,18 +153,15 @@ def create_expenses(request, date):
         :param request:
         :return response:
         """
-    date = timezone.datetime.strptime(date, '%Y-%m-%d').date()
-    expense_formset = modelformset_factory(CashExpense, fields=('amount', 'narration'), extra=0, min_num=1,
-                                           widgets={'narration': forms.Textarea(attrs={'rows': 2})})
+    date = parse_date(date)
     if request.method == 'POST':
-        formset = expense_formset(request.POST)
-        if formset.is_valid():
-            instances = formset.save(commit=False)
-            for instance in instances:
-                instance.date = date
-                instance.save()
-            messages.success(request, 'Expenses added successfully!')
-            return redirect(reverse_lazy('cash_expenses'))
+        form = CashExpenseForm(request.POST)
+        if form.is_valid():
+            expense = form.save(commit=False)
+            expense.date = date
+            expense.save()
+            messages.success(request, 'Expense added successsfully')
+            return redirect('cash_expenses')
     else:
-        formset = expense_formset(queryset=CashExpense.objects.none())
-    return render(request, 'cash_breakdown/add_expenses.html', {'formset': formset})
+        form = CashExpenseForm()
+        return render(request, 'cash_breakdown/add_expenses.html', {'form': form, 'date': date})

@@ -1,18 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% load static %}
-{% block styles %}
-    <style>
-        .delete-row {
-            color: red;
-            float: right;
-        }
-
-        .delete-row:hover {
-            color: red;
-        }
-    </style>
-{% endblock %}
 {% block breadcrump %}
     {% include 'cash_breakdown/nav.html' %}
     <br/>
@@ -31,27 +19,10 @@
 
             <form method="post" id="formset">
                 {% csrf_token %}
-                {{ formset.management_form }}
-                <div id="form-container">
-                    {% for form in formset %}
-                        <h5 class="text-center">New Expense</h5>
-                        {{ form | crispy }}
-                    {% endfor %}
-                </div>
-                <div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
+                <h5 class="text-center">New Expense on {{ date }}</h5>
+                {{ form | crispy }}
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>
-{% endblock %}
-{% block scripts %}
-    <script src="{% static 'js/jquery.formset.js' %}"></script>
-    <script type="text/javascript">
-        $(function () {
-            $('#form-container').formset({
-                prefix: '{{ formset.prefix }}'
-            });
-        })
-    </script>
 {% endblock %}
