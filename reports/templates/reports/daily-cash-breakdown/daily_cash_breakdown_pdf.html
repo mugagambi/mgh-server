@@ -19,6 +19,10 @@
         table {
             border-collapse: collapse;
         }
+
+        @page {
+            size: landscape;
+        }
     </style>
 </head>
 <body>
@@ -54,5 +58,12 @@
         <td><b>{{ variance | intcomma }}</b></td>
     </tr>
 </table>
+<p><b><u>NB:</u></b></p>
+<p><b> Cash Collected is calculated by summing all cash customer sales , cash open air sales and cash deposits for
+    the day</b></p>
+<p><b>The variance is calculated by the formulae: (cash collected - bank deposits - expenses), and hence - variance
+    means more cash was banked or/and used in expense than collected and + variance means there is unaccounted cash
+    from cash collected during the day.This only applies if all cash collected per day is deposited in the bank or/and
+    used in expenses</b></p>
 </body>
 </html>

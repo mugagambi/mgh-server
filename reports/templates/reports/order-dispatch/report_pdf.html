@@ -1,0 +1,56 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Order vs Dispatch Report From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @page {
+            size: landscape;
+        }
+
+    </style>
+</head>
+<body>
+<h4><u>Order vs Dispatch Report From {{ date_0 }} to {{ date_1 }}</u></h4>
+<table id="customers">
+    <tr>
+        <th scope="col">Product</th>
+        <th scope="col">Orders</th>
+        <th scope="col">Customer Dispatch</th>
+        <th scope="col">Orderless Dispatch</th>
+        <th scope="col">Total Dispatch</th>
+        <th scope="col">Variance</th>
+    </tr>
+    {% for data in data %}
+        <tr>
+            <td>
+                {{ data.product }}
+            </td>
+            <td>{{ data.order_qty | intcomma }}</td>
+            <td>{{ data.customer_qty | intcomma }}</td>
+            <td>{{ data.orderless_qty | intcomma }}</td>
+            <td>{{ data.total_dispatch| intcomma }}</td>
+            <td>{{ data.variance| intcomma }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<p><b>NB: The variance is calculated by the formula (Total Dispatch - Orders) and hence + variance means there were more
+    dispatch than orders and vice versa</b></p>
+</body>
+</html>
