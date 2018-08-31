@@ -30,7 +30,7 @@
         <div class="row">
             <div class="col">
                 <select class="custom-select" name="bank">
-                    <option selected value="">Bank</option>
+                    <option selected value="">All Bank</option>
                     {% for bank in banks %}
                         <option value="{{ bank.id }}" {% if bank_id == bank.id %}
                                 selected {% endif %}>{{ bank.name }}</option>

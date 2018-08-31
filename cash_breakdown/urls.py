@@ -13,5 +13,4 @@ urlpatterns = [
     path('cash-expenses/', views.CashExpenseList.as_view(), name='cash_expenses'),
     path('cash-expenses/form/', views.handle_cash_expense_date, name='cash_expenses_date'),
     path('cash-expenses/create/<str:date>/', views.create_expenses, name='create_cash_expense'),
-    path('cash-expenses/<str:date>/', views.expense_detail, name='expenses')
 ]

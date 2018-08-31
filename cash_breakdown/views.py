@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
@@ -84,7 +84,6 @@ class CashDepositList(LoginRequiredMixin, ListView):
             date = parse_date(date)
             return CashDeposit.objects.select_related('bank').filter(bank_id=bank, date=date).order_by('-date')
         elif bank:
-            print(bank)
             return CashDeposit.objects.select_related('bank').filter(bank_id=bank).order_by('-date')
         elif date:
             date = parse_date(date)
@@ -124,7 +123,7 @@ class UpdateCashDeposit(LoginRequiredMixin, PermissionRequiredMixin, SuccessMess
 class CashExpenseList(LoginRequiredMixin, ListView):
     model = CashExpense
     template_name = 'cash_breakdown/cash_expense_list.html'
-    queryset = CashExpense.objects.values('date').annotate(total_amount=Sum('amount'))
+    queryset = CashExpense.objects.values('date').annotate(total_amount=Sum('amount'), narration=F('expense'))
 
     def get_context_data(self, *, object_list=None, **kwargs):
         form = CashExpenseDateModal(initial={'date': now()})
@@ -168,10 +167,3 @@ def create_expenses(request, date):
         formset = expense_formset(queryset=CashExpense.objects.none())
     return render(request, 'cash_breakdown/add_expenses.html', {'formset': formset})
 
-
-@login_required()
-def expense_detail(request, date):
-    date = timezone.datetime.strptime(date, '%Y-%m-%d').date()
-    expenses = CashExpense.objects.filter(date=date)
-    return render(request, 'cash_breakdown/expenses_list.html', {'expenses': expenses,
-                                                                 'date': date})
