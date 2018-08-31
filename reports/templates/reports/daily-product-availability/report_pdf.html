@@ -1,0 +1,50 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Product Availability Report From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @page {
+            size: landscape;
+        }
+
+    </style>
+</head>
+<body>
+<h4><u>Product Availability Report From {{ date_0 }} to {{ date_1 }}</u></h4>
+<table id="customers">
+    <tr>
+        <th scope="col">Day</th>
+        <th scope="col">Total Qty</th>
+    </tr>
+    {% for product in items %}
+        <tr>
+            <td>
+                {{ product.date }}
+            </td>
+            <td>{{ product.total_qty | intcomma }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td><b>Total</b></td>
+        <td><b>{{ total | intcomma }}</b></td>
+    </tr>
+</table>
+</body>
+</html>

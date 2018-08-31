@@ -1,5 +1,6 @@
 import datetime
 import random
+from pathlib import Path
 from urllib.parse import urlencode
 
 from django.contrib import admin
@@ -7,7 +8,9 @@ from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import reverse
+from django.template.loader import render_to_string
 from django.utils.html import format_html
+from weasyprint import HTML
 
 
 def admin_change_url(obj):
@@ -171,6 +174,25 @@ def main_generate_unique_id():
     sqstring = str(sqlist).replace(':', '').replace('\'', '').replace(',', '').replace(' ', '').replace('.', ''). \
         replace('[', '').replace(']', '')
     return sqstring[:10]
+
+
+def handle_pdf_export(folder: str, filename: str, context: dict, template: str):
+    """
+    prepare pdf for export
+    :param folder:
+    :param filename:
+    :param context:
+    :param template:
+    :return: export_pdf()
+    """
+    folder = folder
+    filename = filename
+    file = Path(filename)
+    if not file.is_file():
+        invoice_string = render_to_string(template, context)
+        html = HTML(string=invoice_string)
+        html.write_pdf(target='{folder}/{filename}'.format(folder=folder, filename=filename))
+    return export_pdf(folder, filename=filename)
 
 
 def export_pdf(folder, filename):
