@@ -7,7 +7,8 @@
         <h1 class="h2">Daily Product Availability Report for {{ product.name }}</h1>
     </div>
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
-    <a href="{% url 'product_availability_period' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{% url 'daily_product_availability_period' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     <hr/>
     <table id="customers" class="table table-bordered">
         <thead class="thead-dark">

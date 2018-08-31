@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.utils.html import format_html
 from weasyprint import HTML
 
@@ -185,8 +186,6 @@ def handle_pdf_export(folder: str, filename: str, context: dict, template: str):
     :param template:
     :return: export_pdf()
     """
-    folder = folder
-    filename = filename
     file = Path(filename)
     if not file.is_file():
         invoice_string = render_to_string(template, context)
@@ -195,9 +194,9 @@ def handle_pdf_export(folder: str, filename: str, context: dict, template: str):
     return export_pdf(folder, filename=filename)
 
 
-def export_pdf(folder, filename):
+def export_pdf(folder: str, filename: str):
     """
-    Given a folder and filename this function exports a the file through http content disposition inline
+    Given a folder and filename, this function exports a the file through http content disposition inline
     :param folder:
     :param filename:
     :return: HttpResponse
@@ -207,3 +206,12 @@ def export_pdf(folder, filename):
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = "inline; filename='{filename}'".format(filename=filename)
         return response
+
+
+def get_date_period_in_range(date_0: str, date_1: str):
+    date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
+    date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
+    delta = date_1 - date_0
+    if 32 > delta.days > 1:
+        return 'day'
+    return 'month'
