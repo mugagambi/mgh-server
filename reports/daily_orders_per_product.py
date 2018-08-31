@@ -42,10 +42,6 @@ def report(request, date_0, date_1, product):
         filter(order__created_at__range=(date_0_datetime, date_1_datetime), product=product). \
         annotate(day=Trunc('order__created_at', 'day', output_field=DateField(), )). \
         values('day').annotate(Sum('qty')).order_by('day')
-    orders_bar_graph = models.OrderProduct.objects. \
-        filter(order__created_at__range=(date_0_datetime, date_1_datetime), product=product). \
-        annotate(day=Trunc('order__created_at', period, output_field=DateField(), )). \
-        values('day').annotate(Sum('qty')).order_by('day')
     total_orders = orders.aggregate(Sum('qty__sum'))
     page = request.GET.get('payed_page', 1)
 
@@ -58,7 +54,7 @@ def report(request, date_0, date_1, product):
         orders = paginator.page(paginator.num_pages)
     context_data = {'orders': orders, 'date_0': date_0_datetime, 'date_1': date_1_datetime,
                     'total_orders': total_orders, 'period': period,
-                    'product': product, 'orders_graph': orders_bar_graph}
+                    'product': product}
     return render(request, 'reports/daily-orders-per-product/report.html', context_data)
 
 
