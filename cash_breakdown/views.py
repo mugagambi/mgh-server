@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Sum, F
+from django.db.models import Sum
 from django.forms import modelformset_factory
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
@@ -123,7 +123,7 @@ class UpdateCashDeposit(LoginRequiredMixin, PermissionRequiredMixin, SuccessMess
 class CashExpenseList(LoginRequiredMixin, ListView):
     model = CashExpense
     template_name = 'cash_breakdown/cash_expense_list.html'
-    queryset = CashExpense.objects.values('date').annotate(total_amount=Sum('amount'), narration=F('expense'))
+    queryset = CashExpense.objects.values('date').annotate(total_amount=Sum('amount'))
 
     def get_context_data(self, *, object_list=None, **kwargs):
         form = CashExpenseDateModal(initial={'date': now()})
@@ -166,4 +166,3 @@ def create_expenses(request, date):
     else:
         formset = expense_formset(queryset=CashExpense.objects.none())
     return render(request, 'cash_breakdown/add_expenses.html', {'formset': formset})
-
