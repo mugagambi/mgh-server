@@ -1,5 +1,6 @@
 # todo add the right permissions
 import datetime
+from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
@@ -39,5 +40,39 @@ def report(request, date_0, date_1, customer):
     orders = models.OrderProduct.objects.filter(order__created_at__range=(date_0_datetime, date_1_datetime),
                                                 order__customer=customer). \
         values('product__name').annotate(Sum('qty')).order_by('product__name')
-    context = {'date_0': date_0_datetime, 'date_1': date_1_datetime, 'orders': orders, 'customer': customer}
+    packages = models.PackageProduct.objects.filter(
+        order_product__order__date_delivery__range=(date_0_datetime, date_1_datetime),
+        order_product__order__customer=customer).values('order_product__product__name').annotate(
+        Sum('qty_weigh')).order_by('order_product__product__name')
+    temp_data = []
+    for order in orders:
+        temp_data.append({
+            'product': order['product__name'],
+            'order': order['qty__sum'],
+            'packaged': 0,
+        })
+    for package in packages:
+        temp_data.append({
+            'product': package['order_product__product__name'],
+            'order': 0,
+            'packaged': package['qty_weigh__sum'],
+        })
+    temp_data.sort(key=lambda x: x['product'])
+    final_data = []
+    for k, v in groupby(temp_data, key=lambda x: x['product']):
+        v = list(v)
+        orders = sum(d['order'] for d in v)
+        packages = sum(d['packaged'] for d in v)
+        variance = packages - orders
+        final_data.append({
+            'product': k,
+            'order': orders,
+            'packages': packages,
+            'variance': variance
+        })
+    total_orders = sum(d['order'] for d in final_data)
+    total_packages = sum(d['packages'] for d in final_data)
+    total_variance = total_packages - total_orders
+    context = {'date_0': date_0_datetime, 'date_1': date_1_datetime, 'data': final_data, 'customer': customer,
+               'total_orders': total_orders, 'total_packages': total_packages, 'total_variance': total_variance}
     return render(request, 'reports/customer-order/report.html', context)

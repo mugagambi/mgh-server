@@ -76,9 +76,7 @@ def report(request, date_0, date_1, product):
             'packaged': 0,
             'orderless': order['qty__sum']
         })
-    print(temp_data)
     temp_data.sort(key=lambda x: x['day'])
-    print(temp_data)
     final_data = []
     for k, v in groupby(temp_data, key=lambda x: x['day']):
         v = list(v)

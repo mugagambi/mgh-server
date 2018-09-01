@@ -3,7 +3,7 @@
 {% load static %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2"> {{ customer.shop_name }} orders report</h1>
+        <h1 class="h2"> {{ customer.shop_name }} orders vs dispatch report</h1>
     </div>
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'customer_order_period' %}" class="btn btn-outline-success">Change Period</a>
@@ -12,77 +12,31 @@
         <thead class="thead-dark">
         <tr>
             <th scope="col">Product</th>
-            <th scope="col">Total Qty Ordered</th>
+            <th scope="col">Ordered</th>
+            <th scope="col">Dispatched</th>
+            <th scope="col">Variance</th>
         </tr>
         </thead>
         <tbody>
-        {% for order in orders %}
+        {% for data in data %}
             <tr>
                 <td>
-                    {{ order.product__name }}
+                    {{ data.product }}
                 </td>
-                <td>{{ order.qty__sum | intcomma }}</td>
+                <td>{{ data.order | intcomma }}</td>
+                <td>{{ data.packages | intcomma }}</td>
+                <td>{{ data.variance | intcomma }}</td>
             </tr>
         {% endfor %}
+        <tr>
+            <td colspan="4"></td>
+        </tr>
+        <tr>
+            <td><b>Grand Total</b></td>
+            <td><b>{{ total_orders }}</b></td>
+            <td><b>{{ total_packages }}</b></td>
+            <td><b>{{ total_variance }}</b></td>
+        </tr>
         </tbody>
     </table>
-    <div>
-        <canvas id="myChart" height="400"></canvas>
-    </div>
-{% endblock %}
-{% block scripts %}
-    <script src="{% static 'js/Chart.min.js' %}"></script>
-    <script>
-        $(document).ready(function () {
-            var orders = [{% for data in orders %} {{ data.qty__sum  }}, {% endfor %}];
-            var labels = [{% for data in orders %} '{{ data.product__name }}', {% endfor %}];
-            var ctx = document.getElementById("myChart").getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'horizontalBar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Orders',
-                        data: orders,
-                        backgroundColor: 'rgba(10,148,5)',
-                        borderColor: 'rgba(0,0,0)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: '{{ customer.shop_name }} orders from {{ date_0 }} to {{ date_1 }}'
-                    },
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                callback: function (value, index, values) {
-                                    if (parseInt(value) >= 1000) {
-                                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                                    } else {
-                                        return value;
-                                    }
-                                }
-                            }
-                        }]
-                    },
-                    tooltips: {
-                        callbacks: {
-                            label: function (tooltipItem, data) {
-                                return Number(tooltipItem.xLabel).toFixed(0).replace(/./g, function (c, i, a) {
-                                    return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
-                                });
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
 {% endblock %}

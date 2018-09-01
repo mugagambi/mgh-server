@@ -65,6 +65,7 @@
                 <option value="{% url 'daily_orders_product_period' %}">Daily Orders vs Dispatch per Product
                     Report
                 </option>
+                <option value="{% url 'customer_order_period' %}">Orders vs Dispatch per Customer Report</option>
                 <option value="{% url 'sales_per_region_period' %}">Customer Sales per Region</option>
                 <option value="{% url 'market_returns_period' %}">Market Returns Report</option>
                 <option value="{% url 'customer_returns_period' %}">Customer Returns Report</option>
@@ -105,9 +106,11 @@
         <br/>
         <a href="{% url 'total_orders_period' %}" class="btn btn-success mb-1">Total Orders Report</a>
         <a href="{% url 'order_dispatch_period' %}" class="btn btn-success mb-1">Orders vs Dispatch Report</a>
-        <a href="{% url 'daily_orders_product_period' %}" class="btn btn-success mb-1">Daily Orders vs Dispatch per Product
+        <a href="{% url 'daily_orders_product_period' %}" class="btn btn-success mb-1">Daily Orders vs Dispatch per
+            Product
             Report</a>
-        <a href="{% url 'customer_order_period' %}" class="btn btn-success mb-1">Orders per Customer Report</a>
+        <a href="{% url 'customer_order_period' %}" class="btn btn-success mb-1">Orders vs Dispatch per Customer
+            Report</a>
         <hr/>
         <h2>Sales</h2>
         <br/>
