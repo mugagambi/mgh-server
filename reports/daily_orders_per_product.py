@@ -2,6 +2,7 @@ import datetime
 from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import DateField, Sum
 from django.db.models.functions import Trunc
@@ -111,4 +112,4 @@ def report(request, date_0, date_1, product):
                     'total_orders': total_orders, 'total_dispatch': total_dispatch,
                     'product': product, 'variance': total_variance, 'total_customer': total_customer,
                     'total_orderless': total_orderless}
-    return HttpResponseServerError()
+    raise ImproperlyConfigured('testing error for slack with sentry')
