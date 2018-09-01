@@ -2,11 +2,9 @@ import datetime
 from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import DateField, Sum
 from django.db.models.functions import Trunc
-from django.http import HttpResponseServerError
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from pytz import timezone as pytz_zone
@@ -112,4 +110,4 @@ def report(request, date_0, date_1, product):
                     'total_orders': total_orders, 'total_dispatch': total_dispatch,
                     'product': product, 'variance': total_variance, 'total_customer': total_customer,
                     'total_orderless': total_orderless}
-    raise ImproperlyConfigured('testing error for slack with sentry')
+    return render(request, 'reports/daily-orders-per-product/report.html', context_data)
