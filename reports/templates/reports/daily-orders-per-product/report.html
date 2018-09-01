@@ -8,6 +8,7 @@
     </div>
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'daily_orders_product_period' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     <hr/>
     <table id="customers" class="table table-bordered">
         <thead class="thead-dark">
@@ -56,6 +57,7 @@
                     {% if orders.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?payed_page=
+
 
 
 
@@ -234,6 +236,7 @@
 
 
 
+
                                                          {{ orders.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                  aria-label="Previous">
                             <span aria-hidden="true">&hellip;</span>
@@ -248,6 +251,7 @@
                             </li>
                         {% elif i > orders.number|add:'-5' and i < orders.number|add:'5' %}
                             <li class="page-item"><a class="page-link" href="?payed_page=
+
 
 
 
@@ -412,6 +416,7 @@
 
 
 
+
                                                          {{ orders.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                  aria-label="Previous">
                             <span aria-hidden="true">&hellip;</span>
@@ -421,6 +426,7 @@
                     {% if orders.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?payed_page=
+
 
 
 

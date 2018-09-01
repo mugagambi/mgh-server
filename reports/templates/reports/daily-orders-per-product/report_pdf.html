@@ -1,0 +1,69 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Daily Orders vs Dispatch Report for {{ product.name }} From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @page {
+            size: landscape;
+        }
+
+    </style>
+</head>
+<body>
+<h4><u>Daily Orders vs Dispatch Report for {{ product.name }} From {{ date_0 }} to {{ date_1 }}</u></h4>
+<table id="customers">
+    <tr>
+        <th scope="col">Day</th>
+        <th>Ordered</th>
+        <th>Customer Dispatch</th>
+        <th>Orderless Dispatch</th>
+        <th>Total Dispatch</th>
+        <th>Variance</th>
+    </tr>
+    {% for order in orders %}
+        <tr>
+            <td>
+                {{ order.day }}
+            </td>
+            <td>{{ order.order | intcomma }}</td>
+            <td>
+                {{ order.packages | intcomma }}
+            </td>
+            <td>{{ order.orderless | intcomma }}</td>
+            <td>{{ order.total_dispatch | intcomma }}</td>
+            <td>{{ order.variance | intcomma }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="6"></td>
+    </tr>
+    <tr>
+        <td><b>Grand Total</b></td>
+        <td><b>{{ total_orders | intcomma }}</b></td>
+        <td><b>{{ total_customer | intcomma }}</b></td>
+        <td><b>{{ total_orderless | intcomma }}</b></td>
+        <td><b>{{ total_dispatch | intcomma }}</b></td>
+        <td><b>{{ variance | intcomma }}</b></td>
+    </tr>
+</table>
+<p><b>NB: The variance is calculated by the formula (Total Dispatch - Orders) and hence + variance means there were more
+    dispatch than orders and vice versa</b></p>
+</body>
+</html>

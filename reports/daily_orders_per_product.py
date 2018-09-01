@@ -11,6 +11,7 @@ from pytz import timezone as pytz_zone
 
 from reports import forms
 from sales import models
+from utils import handle_pdf_export
 
 AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
 
@@ -33,6 +34,8 @@ def period(request):
 
 
 def report(request, date_0, date_1, product):
+    str_date_0 = date_0
+    str_date_1 = date_1
     product = get_object_or_404(models.Product, pk=product)
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
@@ -110,4 +113,9 @@ def report(request, date_0, date_1, product):
                     'total_orders': total_orders, 'total_dispatch': total_dispatch,
                     'product': product, 'variance': total_variance, 'total_customer': total_customer,
                     'total_orderless': total_orderless}
+    download = request.GET.get('download', None)
+    if download:
+        filename = 'daily_orders_vs_dispatch_per_product_from_{}_to_{}'.format(str_date_0, str_date_1)
+        return handle_pdf_export(folder='/tmp', filename=filename, context=context_data,
+                                 template='reports/daily-orders-per-product/report_pdf.html')
     return render(request, 'reports/daily-orders-per-product/report.html', context_data)
