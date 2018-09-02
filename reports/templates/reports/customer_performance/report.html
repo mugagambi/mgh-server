@@ -7,26 +7,27 @@
     </div>
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'customer_performance_period' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     <hr/>
     <canvas id="myChart"></canvas>
     <h4 class="text-center">Description</h4>
-    <p><b>Max Purchase: </b>Ksh.{{ high | intcomma }}, <b>Lowest Purchase: </b>Ksh. {{ low | intcomma }}, <b>Average
-        Spending per Purchase: </b>Ksh. {{ average.average | floatformat:2 |intcomma }}, <b>Total
+    <p><b>Highest Sale: </b>Ksh.{{ high | intcomma }}, <b>Lowest Sale: </b>Ksh. {{ low | intcomma }}, <b>Average
+        Spending per Sale: </b>Ksh. {{ average.average | floatformat:2 |intcomma }}, <b>Total
         Spent: </b>Ksh. {{ total_purchase.total_purchase | intcomma }}</p>
-    <p class="text-center"><b><u>Total Purchases per Product</u></b></p>
+    <p class="text-center"><b><u>Total Sales per Product</u></b></p>
     <table id="customers" class="table table-bordered table-responsive-sm">
         <thead class="thead-dark">
         <tr>
             <th scope="col">Product</th>
             <th scope="col">Total Qty</th>
-            <th scope="col">Total Purchase</th>
+            <th scope="col">Total Sale</th>
         </tr>
         </thead>
         <tbody>
         {% for product in products %}
             <tr>
                 <td>{{ product.product__name }}</td>
-                <td>{{ product.total_qty }}</td>
+                <td>{{ product.total_qty | intcomma }}</td>
                 <td>Ksh. {{ product.total_purchase | intcomma }}</td>
             </tr>
         {% endfor %}

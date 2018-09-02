@@ -1,0 +1,56 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ customer.shop_name }} Performance Report From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @page {
+            size: landscape;
+        }
+
+    </style>
+</head>
+<body>
+
+<h4><u>{{ customer.shop_name }} Performance Report From {{ date_0 }} to {{ date_1 }}</u></h4>
+<p>Download {{ customer.shop_name }} daily sales report, <a
+        href="{{ daily_sales_url }}?download=true">
+    here</a>
+</p>
+<h4>Description</h4>
+<p><b>Highest Sale: </b>Ksh.{{ high | intcomma }}, <b>Lowest Sale: </b>Ksh. {{ low | intcomma }}, <b>Average
+    Spending per Sale: </b>Ksh. {{ average.average | floatformat:2 |intcomma }}, <b>Total
+    Spent: </b>Ksh. {{ total_purchase.total_purchase | intcomma }}</p>
+<p><b><u>Total Sales per Product</u></b></p>
+<table id="customers">
+    <tr>
+        <th scope="col">Product</th>
+        <th scope="col">Total Qty</th>
+        <th scope="col">Total Sale</th>
+    </tr>
+    {% for product in products %}
+        <tr>
+            <td>{{ product.product__name }}</td>
+            <td>{{ product.total_qty| intcomma }}</td>
+            <td>Ksh. {{ product.total_purchase | intcomma }}</td>
+        </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Min, Max, DateField, Sum, Avg
 from django.db.models.functions import Trunc
 from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from pytz import timezone as pytz_zone
 from rest_framework.decorators import api_view
@@ -13,6 +14,7 @@ from rest_framework.response import Response
 from reports import forms
 from reports.serializers import DailySalesChartSerializer
 from sales import models
+from utils import handle_pdf_export
 
 AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
 
@@ -76,11 +78,18 @@ def report(request, date_0, date_1, customer):
                  total_purchase=Sum('total')).order_by('-total_purchase')
     high = summary_range.get('high', 0)
     low = summary_range.get('low', 0)
+    daily_sales_url = request.build_absolute_uri(
+        reverse('customer_sales_report', kwargs={'date_0': date_0_str, 'date_1': date_1_str, 'customer': customer.pk}))
     context_data = {'date_0': date_0_datetime,
                     'date_1': date_1_datetime, 'customer': customer, 'period': period,
                     'products': products, 'high': high, 'low': low, 'average': average,
                     'total_purchase': total_purchase,
-                    'date_0_str': date_0_str, 'date_1_str': date_1_str}
+                    'date_0_str': date_0_str, 'date_1_str': date_1_str, 'daily_sales_url': daily_sales_url}
+    download = request.GET.get('download', None)
+    if download:
+        filename = 'customer_performance_from_{}_to_{}'.format(date_0_str, date_1_str)
+        return handle_pdf_export(folder='/tmp', filename=filename, context=context_data,
+                                 template='reports/customer_performance/report_pdf.html')
     return render(request, 'reports/customer_performance/report.html', context_data)
 
 
