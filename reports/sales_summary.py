@@ -35,27 +35,30 @@ def sales_summary_report(request, date_0, date_1):
     date_0 = datetime.datetime.combine(date_0, datetime.time(0, 0))
     date_1 = datetime.datetime.combine(date_1, datetime.time(23, 59))
     payed = models.ReceiptPayment.objects.select_related('receipt').filter(
-        receipt__date__range=(date_0, date_1)).exclude(type=4)
-    if payed.exists():
-        payed_total = payed.aggregate(total_amount=Sum('amount'))
+        receipt__date__range=(date_0, date_1)).exclude(type=4).values('receipt_id')
+    receipt_ids = [r['receipt_id'] for r in payed]
+    receipts = models.Receipt.objects.filter(number__in=receipt_ids)
+    if receipts.exists():
+        payed_total = receipts.aggregate(total_amount=Sum('receiptparticular__total'))
     else:
         payed_total = {'total_amount': 0}
-    payed_receipts = payed.values('receipt__number').annotate(total_amount=Sum('amount')).order_by(
-        '-total_amount')
+    print('disaster')
+    payed_receipts = receipts.annotate(total_amount=Sum('receiptparticular__total')). \
+        values('number', 'total_amount', 'date', 'customer__shop_name').order_by('date')
     cash_sale = models.CashReceiptParticular.objects.select_related('cash_receipt').filter(
         cash_receipt__date__range=(date_0, date_1)).aggregate(
         total_amount=Sum(F('qty') * F('price')))
     # todo stop aggregating total
     credit_payments = models.ReceiptPayment.objects.select_related('receipt').filter(
         receipt__date__range=(date_0, date_1), type=4)
-    receipt_id = [payment.receipt.number for payment in credit_payments]
-    credit = models.Receipt.objects.filter(number__in=receipt_id).values('number').annotate(
-        Sum('receiptparticular__total'))
+    receipt_id = [payment.receipt_id for payment in credit_payments]
+    credit = models.Receipt.objects.filter(number__in=receipt_id).annotate(
+        Sum('receiptparticular__total')).values('number', 'receiptparticular__total__sum', 'date')
     if credit.exists():
         credit_total = credit.aggregate(total_amount=Sum('receiptparticular__total__sum'))
     else:
         credit_total = {'receiptparticular__total__sum': 0}
-    credit_receipts = credit.order_by('-receiptparticular__total__sum')
+    credit_receipts = credit.order_by('date')
     payed_page = request.GET.get('payed_page', 1)
     paginator = Paginator(payed_receipts, 5)
     try:
