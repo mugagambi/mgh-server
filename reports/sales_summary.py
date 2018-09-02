@@ -7,9 +7,10 @@ from django.shortcuts import redirect, render
 
 from reports import forms
 from sales import models
-
-
 # todo add the required permissions
+from utils import handle_pdf_export
+
+
 @login_required()
 def sales_summary_schedule(request):
     if request.method == 'POST':
@@ -30,6 +31,8 @@ def sales_summary_schedule(request):
 # todo use the pre-aggregated data
 @login_required()
 def sales_summary_report(request, date_0, date_1):
+    str_date_0 = date_0
+    str_date_1 = date_1
     date_0 = datetime.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0 = datetime.datetime.combine(date_0, datetime.time(0, 0))
@@ -53,12 +56,14 @@ def sales_summary_report(request, date_0, date_1):
         receipt__date__range=(date_0, date_1), type=4)
     receipt_id = [payment.receipt_id for payment in credit_payments]
     credit = models.Receipt.objects.filter(number__in=receipt_id).annotate(
-        Sum('receiptparticular__total')).values('number', 'receiptparticular__total__sum', 'date')
+        Sum('receiptparticular__total')).values('number', 'receiptparticular__total__sum', 'date', 'customer__shop_name')
     if credit.exists():
         credit_total = credit.aggregate(total_amount=Sum('receiptparticular__total__sum'))
     else:
         credit_total = {'receiptparticular__total__sum': 0}
     credit_receipts = credit.order_by('date')
+    pdf_context = {'payed_receipts': payed_receipts, 'date_0': date_0, 'date_1': date_1, 'payed_total': payed_total,
+                   'cash_sale': cash_sale, 'credit_receipts': credit_receipts, 'credit_total': credit_total}
     payed_page = request.GET.get('payed_page', 1)
     paginator = Paginator(payed_receipts, 5)
     try:
@@ -84,4 +89,9 @@ def sales_summary_report(request, date_0, date_1):
         'date_0': date_0,
         'date_1': date_1
     }
+    download = request.GET.get('download', None)
+    if download:
+        filename = 'sales_summary_from_{}_to_{}'.format(str_date_0, str_date_1)
+        return handle_pdf_export(folder='/tmp', filename=filename, context=pdf_context,
+                                 template='reports/sales-summary/report_pdf.html')
     return render(request, 'reports/sales-summary/sale_summary_report.html', args)

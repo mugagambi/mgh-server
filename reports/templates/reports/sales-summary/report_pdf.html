@@ -1,0 +1,74 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Sales Summary Report From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @page {
+            size: landscape;
+        }
+
+    </style>
+</head>
+<body>
+<h4><u>Sales Summary Report From {{ date_0 }} to {{ date_1 }}</u></h4>
+<table id="customers">
+    <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Invoice Number</th>
+        <th scope="col">Amount</th>
+    </tr>
+    <tr>
+        <td colspan="3"><b>Payed Sales</b></td>
+    </tr>
+    {% for payed_receipt in payed_receipts %}
+        <tr>
+            <td>{{ payed_receipt.date }}</td>
+            <td>
+                {{ payed_receipt.number }} - {{ payed_receipt.customer__shop_name }}
+            </td>
+            <td>{{ payed_receipt.total_amount | intcomma }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="3"></td>
+    </tr>
+    <tr>
+        <td colspan="3"><b>Credit Sales</b></td>
+    </tr>
+    {% for credit_receipt in credit_receipts %}
+        <tr>
+            <td>{{ credit_receipt.date }}</td>
+            <td>
+                {{ credit_receipt.number }} - {{ credit_receipt.customer__shop_name }}
+            </td>
+            <td>{{ credit_receipt.receiptparticular__total__sum | floatformat:2 | intcomma }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<p><b>Customer Payed sales: </b>{{ payed_total.total_amount | floatformat:2 | intcomma }}</p>
+<p><b>Open Air Market Sales: </b> {{ cash_sale.total_amount | floatformat:2 |intcomma }}</p>
+<p><b>Total Payed Amount</b>:
+    Ksh. {{ payed_total.total_amount|addition:cash_sale.total_amount|floatformat:2 | intcomma }}</p>
+<p><b>Total credit amount: </b>Ksh. {{ credit_total.total_amount | floatformat:2 | intcomma }}</p>
+<p><b>Total Sales from {{ date_0 }} to {{ date_1 }}</b>:
+    Ksh.{{ credit_total.total_amount|addition:payed_total.total_amount|addition:cash_sale.total_amount |floatformat:2|intcomma }}
+</p>
+</body>
+</html>
