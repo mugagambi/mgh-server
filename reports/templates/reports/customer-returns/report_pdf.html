@@ -1,0 +1,91 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Customer Returns Report From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @page {
+            size: landscape;
+        }
+
+    </style>
+</head>
+<body>
+<h4><u>Customer Returns Report From {{ date_0 }} to {{ date_1 }}</u></h4>
+<table id="customers">
+    <tr>
+        <th rowspan="2" scope="col">Product</th>
+        <th colspan="2" scope="col">Rotten</th>
+        <th colspan="2" scope="col">Unripe</th>
+        <th colspan="2" scope="col">Over ripe</th>
+        <th colspan="2" scope="col">Poor Quality</th>
+        <th colspan="2" scope="col">Excess</th>
+        <th colspan="2" scope="col">Total</th>
+    </tr>
+    <tr>
+        <th scope="col">Qty</th>
+        <th scope="col">Credit note(Ksh)</th>
+        <th scope="col">Qty</th>
+        <th scope="col">Credit note(Ksh)</th>
+        <th scope="col">Qty</th>
+        <th scope="col">Credit note(Ksh)</th>
+        <th scope="col">Qty</th>
+        <th scope="col">Credit note(Ksh)</th>
+        <th scope="col">Qty</th>
+        <th scope="col">Credit note(Ksh)</th>
+        <th scope="col">Qty</th>
+        <th scope="col">Credit note(Ksh)</th>
+    </tr>
+    {% for return in returns %}
+        <tr>
+            <td>
+                {{ return.product }}
+            </td>
+            <td>{{ return.rotten_qty | intcomma }}</td>
+            <td>{{ return.rotten_credit |floatformat:2 | intcomma }}</td>
+            <td>{{ return.unripe_qty | intcomma }}</td>
+            <td>{{ return.unripe_credit |floatformat:2 | intcomma }}</td>
+            <td>{{ return.overripe_qty | intcomma }}</td>
+            <td>{{ return.overripe_credit |floatformat:2 | intcomma }}</td>
+            <td>{{ return.poor_quality_qty | intcomma }}</td>
+            <td>{{ return.poor_quality_credit |floatformat:2 | intcomma }}</td>
+            <td>{{ return.excess_qty | intcomma }}</td>
+            <td>{{ return.excess_credit |floatformat:2 | intcomma }}</td>
+            <td>{{ return.total_qty | intcomma }}</td>
+            <td>{{ return.total_credit |floatformat:2 | intcomma }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td><b>Total Credit Note </b></td>
+        <td><b>-</b></td>
+        <td><b>{{ rotten_credit | floatformat:2 | intcomma }}</b></td>
+        <td><b>-</b></td>
+        <td><b>{{ unripe_credit | floatformat:2 | intcomma }}</b></td>
+        <td><b>-</b></td>
+        <td><b>{{ overripe_credit | floatformat:2 | intcomma }}</b></td>
+        <td><b>-</b></td>
+        <td><b>{{ poor_quality_credit | floatformat:2 | intcomma }}</b></td>
+        <td><b>-</b></td>
+        <td><b>{{ excess_credit | floatformat:2 | intcomma }}</b></td>
+        <td><b>-</b></td>
+        <td><b>{{ total_credit | floatformat:2 | intcomma }}</b></td>
+    </tr>
+</table>
+</body>
+</html>
