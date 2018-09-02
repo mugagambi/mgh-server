@@ -73,6 +73,8 @@
 
 
 
+
+
                                             {{ payed_receipts.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">Previous</span>
@@ -90,6 +92,8 @@
                             {% if payed_receipts.number|add:'-4' > 1 %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?payed_page=
+
+
 
 
 
@@ -165,6 +169,8 @@
 
 
 
+
+
                                             {{ i }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                                     </li>
                                 {% endif %}
@@ -172,6 +178,8 @@
                             {% if payed_receipts.paginator.num_pages > payed_receipts.number|add:'4' %}
                                 <li class="page-item"><a class="page-link"
                                                          href="?payed_page=
+
+
 
 
 
@@ -239,6 +247,8 @@
 
 
 
+
+
                                             {{ payed_receipts.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                        aria-label="Next">
                                         <span aria-hidden="true">Next</span>
@@ -268,6 +278,7 @@
             <table id="customers" class="table table-bordered">
                 <thead class="thead-dark">
                 <tr>
+                    <th scope="col">Date</th>
                     <th scope="col">Invoice Number</th>
                     <th scope="col">Amount</th>
                 </tr>
@@ -275,6 +286,7 @@
                 <tbody>
                 {% for credit_receipt in credit_receipts %}
                     <tr>
+                        <td>{{ credit_receipt.date }}</td>
                         <td>
                             <a href="{% url 'sale-receipt' pk=credit_receipt.number %}"> {{ credit_receipt.number }}</a>
                         </td>
@@ -293,6 +305,8 @@
                             {% if credit_receipts.has_previous %}
                                 <li class="page-item">
                                     <a class="page-link" href="?credit_page=
+
+
 
 
 
@@ -362,6 +376,8 @@
 
 
 
+
+
                                                                  {{ credit_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                          aria-label="Previous">
                                     <span aria-hidden="true">&hellip;</span>
@@ -376,6 +392,8 @@
                                     </li>
                                 {% elif i > credit_receipts.number|add:'-5' and i < credit_receipts.number|add:'5' %}
                                     <li class="page-item"><a class="page-link" href="?credit_page=
+
+
 
 
 
@@ -431,6 +449,8 @@
 
 
 
+
+
                                                                  {{ credit_receipts.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'credit_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                                          aria-label="Previous">
                                     <span aria-hidden="true">&hellip;</span>
@@ -440,6 +460,8 @@
                             {% if credit_receipts.has_next %}
                                 <li class="page-item">
                                     <a class="page-link" href="?credit_page=
+
+
 
 
 
