@@ -9,6 +9,7 @@ from pytz import timezone as pytz_zone
 
 from reports import forms
 from sales import models
+from utils import handle_pdf_export
 
 AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
 
@@ -31,6 +32,8 @@ def period(request):
 
 
 def report(request, date_0, date_1):
+    date_0_str = date_0
+    date_1_str = date_1
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
@@ -47,4 +50,9 @@ def report(request, date_0, date_1):
             'un_salvageable': sum(d['qty__sum'] if d['type'] == 'U' else 0 for d in v),
         })
     cxt = {'returns': final_returns, 'date_0': date_0_datetime, 'date_1': date_1_datetime}
+    download = request.GET.get('download', None)
+    if download:
+        filename = 'market_returns_from_{}_to_{}'.format(date_0_str, date_1_str)
+        return handle_pdf_export(folder='/tmp', filename=filename, context=cxt,
+                                 template='reports/market-returns/report_pdf.html')
     return render(request, 'reports/market-returns/report.html', cxt)
