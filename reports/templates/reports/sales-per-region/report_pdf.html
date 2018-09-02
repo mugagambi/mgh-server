@@ -1,0 +1,50 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Customer Sales per Region Report From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @page {
+            size: landscape;
+        }
+
+    </style>
+</head>
+<body>
+<h4><u>Customer Sales per Region Report From {{ date_0 }} to {{ date_1 }}</u></h4>
+<table id="customers">
+    <tr>
+        <th scope="col">Region</th>
+        <th scope="col">Amount sold(Ksh)</th>
+    </tr>
+    {% for sale in sales %}
+        <tr>
+            <td>
+                {{ sale.receipt__customer__region__name }}
+            </td>
+            <td>{{ sale.total__sum | intcomma }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td><b>Total</b></td>
+        <td><b>Ksh. {{ total.total | intcomma }}</b></td>
+    </tr>
+</table>
+</body>
+</html>
