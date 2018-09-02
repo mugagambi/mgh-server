@@ -8,15 +8,16 @@
     </div>
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'daily_sales_period' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     <hr/>
     <table id="customers" class="table table-bordered">
         <thead class="thead-dark">
         <tr>
             <th scope="col">Product</th>
             <th>Customer Qty</th>
-            <th>Customer Total</th>
+            <th>Customer Sales</th>
             <th>Cash Qty</th>
-            <th>Cash Total</th>
+            <th>Cash Sales</th>
             <th scope="col">Total Qty</th>
             <th scope="col">Total Sold (Ksh.)</th>
         </tr>

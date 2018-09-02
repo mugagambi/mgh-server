@@ -10,6 +10,7 @@ from pytz import timezone as pytz_zone
 
 from reports import forms
 from sales import models
+from utils import handle_pdf_export
 
 AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
 
@@ -31,6 +32,8 @@ def period(request):
 
 
 def report(request, date_0, date_1):
+    date_0_str = date_0
+    date_1_str = date_1
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
@@ -76,4 +79,9 @@ def report(request, date_0, date_1):
     context = {'date_0': date_0_datetime, 'date_1': date_1_datetime, 'sales': final_sales,
                'total_sales_qty': total_sales_qty, 'total_sales_amount': total_sales_amount,
                'total_cash_sales_qty': total_cash_sales_qty, 'total_cash_sales_amount': total_cash_sales_amount}
+    download = request.GET.get('download', None)
+    if download:
+        filename = 'product_sales_from_{}_to_{}'.format(date_0_str, date_1_str)
+        return handle_pdf_export(folder='/tmp', filename=filename, context=context,
+                                 template='reports/product-sales/report_pdf.html')
     return render(request, 'reports/product-sales/report.html', context)
