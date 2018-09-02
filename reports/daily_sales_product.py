@@ -11,6 +11,7 @@ from pytz import timezone as pytz_zone
 
 from reports import forms
 from sales import models
+from utils import handle_pdf_export
 
 AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
 
@@ -33,6 +34,8 @@ def period(request):
 
 
 def report(request, date_0, date_1, product):
+    date_0_str = date_0
+    date_1_str = date_1
     product = get_object_or_404(models.Product, pk=product)
     period = get_date_period_in_range(date_0, date_1)
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
@@ -108,6 +111,9 @@ def report(request, date_0, date_1, product):
         })
     total_sales = sales.aggregate(Sum('total__sum'), Sum('qty__sum'))
     total_cash_sales = cash_sales.aggregate(Sum('total__sum'), Sum('qty__sum'))
+    pdf_context = {'sales': final_sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime,
+                   'total_sales': total_sales,
+                   'total_cash_sales': total_cash_sales, 'product': product}
     page = request.GET.get('payed_page', 1)
 
     paginator = Paginator(final_sales, 10)
@@ -120,6 +126,11 @@ def report(request, date_0, date_1, product):
     context_data = {'sales': sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime,
                     'total_sales': total_sales, 'total_cash_sales': total_cash_sales, 'period': period,
                     'product': product, 'sale_bar_graph': final_sales_graph}
+    download = request.GET.get('download', None)
+    if download:
+        filename = 'daily_sales_per_product_from_{}_to_{}'.format(date_0_str, date_1_str)
+        return handle_pdf_export(folder='/tmp', filename=filename, context=pdf_context,
+                                 template='reports/daily-sales-product/report_pdf.html')
     return render(request, 'reports/daily-sales-product/report.html', context_data)
 
 

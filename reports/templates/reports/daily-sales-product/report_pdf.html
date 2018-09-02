@@ -1,0 +1,65 @@
+{% load humanize %}
+{% load mathfilters %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Daily Sales Report For {{ product.name }} From {{ date_0 }} to {{ date_1 }}</title>
+    <style>
+        #customers td, #customers th {
+            border: 1px solid #ddd;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        #customers {
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        @page {
+            size: landscape;
+        }
+
+    </style>
+</head>
+<body>
+<h4><u>Daily Sales Report For {{ product.name }} From {{ date_0 }} to {{ date_1 }}</u></h4>
+<table id="customers">
+    <tr>
+        <th scope="col">Day</th>
+        <th>Customer Total Qty</th>
+        <th scope="col">Customer Total Sold(Ksh.)</th>
+        <th>Open Air Total Qty</th>
+        <th scope="col">Open Air Total Sold(Ksh.)</th>
+        <th>Total Qty</th>
+        <th scope="col">Total Sold(Ksh.)</th>
+    </tr>
+    {% for sales in sales %}
+        <tr>
+            <td>
+                {{ sales.day }}
+            </td>
+            <td>{{ sales.customer_qty | intcomma }}</td>
+            <td>{{ sales.customer_amount | intcomma }}</td>
+            <td>{{ sales.cash_qty | intcomma }}</td>
+            <td>{{ sales.cash_amount | intcomma }}</td>
+            <td>{{ sales.customer_qty|addition:sales.cash_qty | intcomma }}</td>
+            <td>{{ sales.customer_amount|addition:sales.cash_amount | intcomma }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td><b>Grand Total</b></td>
+        <td><b>{{ total_sales.qty__sum__sum | intcomma }}</b></td>
+        <td><b>{{ total_sales.total__sum__sum | intcomma }}</b></td>
+        <td><b>{{ total_cash_sales.qty__sum__sum | intcomma }}</b></td>
+        <td><b>{{ total_cash_sales.total__sum__sum | intcomma }}</b></td>
+        <td><b>{{ total_sales.qty__sum__sum|addition:total_cash_sales.qty__sum__sum | intcomma }}</b></td>
+        <td><b>{{ total_sales.total__sum__sum|addition:total_cash_sales.total__sum__sum | intcomma }}</b></td>
+    </tr>
+</table>
+</body>
+</html>
