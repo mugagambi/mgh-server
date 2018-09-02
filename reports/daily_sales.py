@@ -13,6 +13,7 @@ from rest_framework.response import Response
 
 from reports import forms
 from sales import models
+from utils import handle_pdf_export
 from .serializers import CustomDailySalesChartSerializer
 
 AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
@@ -32,6 +33,7 @@ def period(request):
                                               'date_1': timezone.datetime.today(), })
     return render(request, 'reports/daily_sales/period.html',
                   {'form': form})
+
 
 @login_required()
 def report(request, date_0, date_1):
@@ -76,8 +78,10 @@ def report(request, date_0, date_1):
         })
     total_sales = sales.aggregate(Sum('total'))
     total_cash_sales = cash_sales.aggregate((Sum('total')))
+    pdf_context = {'sales': final_sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime,
+                   'total_sales': total_sales,
+                   'total_cash_sales': total_cash_sales}
     page = request.GET.get('payed_page', 1)
-
     paginator = Paginator(final_sales, 10)
     try:
         sales = paginator.page(page)
@@ -89,6 +93,11 @@ def report(request, date_0, date_1):
                     'total_sales': total_sales, 'total_cash_sales': total_cash_sales,
                     'date_0_str': date_0_str, 'date_1_str': date_1_str,
                     'period': period}
+    download = request.GET.get('download', None)
+    if download:
+        filename = 'daily_sales_from_{}_to_{}'.format(date_0_str, date_1_str)
+        return handle_pdf_export(folder='/tmp', filename=filename, context=pdf_context,
+                                 template='reports/daily_sales/report_pdf.html')
     return render(request, 'reports/daily_sales/report.html', context_data)
 
 

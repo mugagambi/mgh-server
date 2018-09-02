@@ -8,6 +8,7 @@
     </div>
     <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
     <a href="{% url 'daily_sales_period' %}" class="btn btn-outline-success">Change Period</a>
+    <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
     <hr/>
     <h6 class="text-center">Daily Sales</h6>
     <table id="customers" class="table table-bordered">
@@ -40,6 +41,8 @@
                 {% if sales.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?payed_page=
+
+
 
 
 
@@ -222,6 +225,8 @@
 
 
 
+
+
                                                      {{ sales.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -317,6 +322,8 @@
 
 
 
+
+
                                 {{ i }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
                         </li>
                     {% endif %}
@@ -324,6 +331,8 @@
                 {% if sales.paginator.num_pages > sales.number|add:'4' %}
                     <li class="page-item"><a class="page-link"
                                              href="?payed_page=
+
+
 
 
 
@@ -493,6 +502,8 @@
 
 
 
+
+
                                 {{ sales.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'payed_page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                            aria-label="Next">
                             <span aria-hidden="true">Next</span>
@@ -514,7 +525,7 @@
     <p><b>Totals from {{ date_0 }} to {{ date_1 }}</b></p>
     <p><b>Total Customer sales: </b>{{ total_sales.total__sum | floatformat:2 | intcomma }}</p>
     <p><b>Total Open Air Sales: </b>Ksh. {{ total_cash_sales.total__sum | floatformat:2 | intcomma }}</p>
-    <p><b>Total Sales: </b>{{ total_sales.total__sum|add:total_cash_sales.total__sum|floatformat:2|intcomma }}</p>
+    <p><b>Total Sales: </b>{{ total_sales.total__sum|addition:total_cash_sales.total__sum|floatformat:2|intcomma }}</p>
     <div>
         <canvas id="myChart"></canvas>
     </div>
