@@ -10,6 +10,7 @@ from django.utils import timezone
 
 from reports import forms
 from sales import models
+from utils import handle_pdf_export
 
 
 @login_required()
@@ -45,6 +46,8 @@ def get_date_period_in_range(date_0, date_1):
 # todo add the right permissions
 @login_required()
 def report(request, date_0, date_1, customer):
+    date_0_str = date_0
+    date_1_str = date_1
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0))
@@ -56,8 +59,9 @@ def report(request, date_0, date_1, customer):
         annotate(period=Trunc('receipt__date', 'day', output_field=DateField(), )). \
         values('period').annotate(total=Sum('total')).order_by('period')
     total_sales = sales.aggregate(Sum('total'))
+    pdf_context = {'sales': sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime,
+                   'total_sales': total_sales, 'customer': customer}
     page = request.GET.get('payed_page', 1)
-
     paginator = Paginator(sales, 10)
     try:
         sales = paginator.page(page)
@@ -67,4 +71,9 @@ def report(request, date_0, date_1, customer):
         sales = paginator.page(paginator.num_pages)
     context = {'sales': sales, 'date_0': date_0_datetime, 'date_1': date_1_datetime, 'customer': customer,
                'total_sales': total_sales}
+    download = request.GET.get('download', None)
+    if download:
+        filename = 'customer_sales_from_{}_to_{}'.format(date_0_str, date_1_str)
+        return handle_pdf_export(folder='/tmp', filename=filename, context=pdf_context,
+                                 template='reports/customer-sales/report_pdf.html')
     return render(request, 'reports/customer-sales/report.html', context)
