@@ -51,7 +51,7 @@ def outward_stock_summary_alt__report(request, date_0, date_1):
             'product': sale['product__name'],
             'total_customer_qty': sale['qty'],
             'total_customer_value': sale['total'],
-            'total_customer_price_avg': sale['total' or 0] / sale['qty' or 0],
+            'total_customer_price_avg': sale['total'] if sale['total'] else 0 / sale['qty'] if sale['qty'] else 0,
             'total_cash_qty': 0,
             'total_cash_value': 0,
             'total_cash_price_avg': 0
@@ -64,7 +64,7 @@ def outward_stock_summary_alt__report(request, date_0, date_1):
             'total_customer_price_avg': 0,
             'total_cash_qty': sale['qty'],
             'total_cash_value': sale['total'],
-            'total_cash_price_avg': sale['total' or 0] / sale['qty' or 0]
+            'total_cash_price_avg': sale['total'] if sale['total'] else 0 / sale['qty'] if sale['qty'] else 0
         })
     all_sales.sort(key=lambda x: x['product'])
     outward = []
