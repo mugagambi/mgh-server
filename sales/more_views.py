@@ -1,3 +1,4 @@
+from datetime import timedelta
 from decimal import Decimal
 
 import django_filters
@@ -5,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Sum, F
+from django.db.models import Sum, F, fields, ExpressionWrapper
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -28,8 +29,12 @@ def orderless_dispatch(request):
     :param request:
     :return:
     """
+    tomorrow_expression = ExpressionWrapper(F('date') + timedelta(hours=24),
+                                            output_field=fields.DateField())
     orderless_list = models.OrderlessPackage.objects.select_related('product'). \
-        values('product__name', 'date').annotate(total_qty=Sum('qty'), product_id=F('product__id')).order_by('-date')
+        values('product__name', 'date').annotate(total_qty=Sum('qty'), product_id=F('product__id'),
+                                                 tomorrow=tomorrow_expression).order_by('-date')
+    print(orderless_list)
     orderless_filter = OrderlessFilter(request.GET, queryset=orderless_list)
     orderless_list = orderless_filter.qs
     paginator = Paginator(orderless_list, 50)

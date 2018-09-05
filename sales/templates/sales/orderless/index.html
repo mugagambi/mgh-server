@@ -22,7 +22,8 @@
         <tr>
             <th>Product</th>
             <th>Qty</th>
-            <th>Date</th>
+            <th>Added On</th>
+            <th>Sold On</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -32,6 +33,7 @@
                 <td>{{ order.product__name }}</td>
                 <td>{{ order.total_qty }}</td>
                 <td>{{ order.date }}</td>
+                <td>{{ order.tomorrow | date:"M j, Y"}}</td>
                 <td>
                     {% if perms.sales.change_orderlesspackage %}
                         <a href="{% url 'update_orderless' %}?product_id={{ order.product_id }}&date={{ order.date | date:"Y-m-d" }}&old_qty={{ order.total_qty }}"
@@ -57,6 +59,8 @@
                 {% if orderless.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
@@ -193,6 +197,8 @@
 
 
 
+
+
                                                      {{ orderless.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -207,6 +213,8 @@
                         </li>
                     {% elif i > orderless.number|add:'-5' and i < orderless.number|add:'5' %}
                         <li class="page-item"><a class="page-link" href="?page=
+
+
 
 
 
@@ -329,6 +337,8 @@
 
 
 
+
+
                                                      {{ orderless.number|add:'-5' }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                                              aria-label="Previous">
                         <span aria-hidden="true">&hellip;</span>
@@ -338,6 +348,8 @@
                 {% if orderless.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page=
+
+
 
 
 
