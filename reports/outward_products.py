@@ -155,8 +155,10 @@ def outward_product_summary_alt_report(request, date_0: str, date_1: str):
     packaged = models.PackageProduct.objects. \
         filter(order_product__order__date_delivery__range=(date_0, date_1)). \
         values('order_product__product__name').annotate(total=Sum('qty_weigh'))
+    orderless_date_0 = date_0 - datetime.timedelta(hours=24)
+    orderless_date_1 = date_1 - datetime.timedelta(hours=24)
     orderless = models.OrderlessPackage.objects. \
-        filter(date__range=(date_0, date_1)).values('product__name').annotate(total=Sum('qty'))
+        filter(date__range=(orderless_date_0, orderless_date_1)).values('product__name').annotate(total=Sum('qty'))
     customer = models.ReceiptParticular.objects. \
         filter(receipt__date__range=(date_0_datetime, date_1_datetime)).values('product__name'). \
         annotate(total=Sum('qty'))

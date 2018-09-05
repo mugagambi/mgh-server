@@ -34,7 +34,6 @@ def orderless_dispatch(request):
     orderless_list = models.OrderlessPackage.objects.select_related('product'). \
         values('product__name', 'date').annotate(total_qty=Sum('qty'), product_id=F('product__id'),
                                                  tomorrow=tomorrow_expression).order_by('-date')
-    print(orderless_list)
     orderless_filter = OrderlessFilter(request.GET, queryset=orderless_list)
     orderless_list = orderless_filter.qs
     paginator = Paginator(orderless_list, 50)
