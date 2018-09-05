@@ -47,7 +47,6 @@ def outward_stock_summary_alt__report(request, date_0, date_1):
         values('product__name').annotate(qty=Sum('qty'), total=Sum('total'))
     all_sales = []
     for sale in customer:
-        print(sale['total'] if sale['total'] else 0 / sale['qty'] if sale['qty'] else 0)
         total = sale['total'] if sale['total'] else 0
         qty = sale['qty'] if sale['qty'] else 0
         all_sales.append({

@@ -64,4 +64,5 @@ def _update_database():
 
 
 def _restart_live_server():
+    run('rm -rf /tmp/*')
     sudo('supervisorctl restart mgh')
