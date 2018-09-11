@@ -1,9 +1,6 @@
-import uuid
-
 from django.core.management.base import BaseCommand
 
 from sales.models import ReceiptParticular, CustomerAccount, ReceiptPayment
-from utils import main_generate_unique_id
 
 
 class Command(BaseCommand):
@@ -12,8 +9,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         items = []
         i = 1
+        j = 1
         for instance in ReceiptParticular.objects.all():
-            items.append(CustomerAccount(number=str(uuid.uuid1()),
+            items.append(CustomerAccount(number=str(j),
                                          customer=instance.receipt.customer,
                                          amount=-instance.total,
                                          date=instance.receipt.date,
@@ -24,6 +22,7 @@ class Command(BaseCommand):
                 print(f'writing {instance.id}')
                 i = 0
             i += 1
+            j += 1
         for instance in ReceiptPayment.objects.all():
             if instance.type == 1:
                 type = 'Q'
@@ -51,7 +50,7 @@ class Command(BaseCommand):
                 transaction_id = ''
                 phone_number = ''
             if instance.type != 4:
-                items.append(CustomerAccount(number=str(uuid.uuid1()),
+                items.append(CustomerAccount(number=str(j),
                                              customer=instance.receipt.customer,
                                              amount=instance.amount,
                                              date=instance.receipt.date,
@@ -66,4 +65,5 @@ class Command(BaseCommand):
                     print(f'writing {instance.id}')
                     i = 0
                 i += 1
+                j += 1
         self.stdout.write(self.style.SUCCESS('seeded customer accounts'))
