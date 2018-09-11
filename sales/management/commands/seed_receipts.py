@@ -23,7 +23,7 @@ class Command(BaseCommand):
         users = User.objects.all()
         customers = Customer.objects.all()
         for i in range(0, 10000):
-            number = generate_unique_id(random.randint(0, 20))
+            number = generate_unique_id(random.randint(0, 20))[:10]
             customer = random.choice(customers)
             served_by = random.choice(users)
             bbf_balance = random.randint(0, 10000)

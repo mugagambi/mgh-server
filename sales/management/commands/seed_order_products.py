@@ -18,7 +18,7 @@ class Command(BaseCommand):
         orders = Order.objects.all()
         products = Product.objects.all()
         for i in range(0, 100000):
-            number = generate_unique_id(i)
+            number = generate_unique_id(i)[:10]
             order = random.choice(orders)
             product = random.choice(products)
             qty = random.randint(10, 1000)

@@ -19,7 +19,7 @@ class Command(BaseCommand):
         items = []
         products = Product.objects.all()
         for i in range(0, 1000):
-            number = generate_unique_id(random.randint(0, 20))
+            number = generate_unique_id(random.randint(0, 20))[:10]
             product = random.choice(products)
             qty = random.randint(500, 10000)
             date = fake.date_time_between_dates(datetime_start=timezone.now() - datetime.timedelta(days=365),

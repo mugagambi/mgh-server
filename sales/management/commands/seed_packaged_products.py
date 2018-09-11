@@ -17,7 +17,7 @@ class Command(BaseCommand):
         packages = Package.objects.all()
         order_products = OrderProduct.objects.all()
         for i in range(0, 100000):
-            number = generate_unique_id(i)
+            number = generate_unique_id(i)[:10]
             package = random.choice(packages)
             order_product = random.choice(order_products)
             qty_weigh = order_product.qty + random.randint(-20, 20)

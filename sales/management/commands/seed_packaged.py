@@ -18,7 +18,7 @@ class Command(BaseCommand):
         users = User.objects.all()
         orders = Order.objects.all()
         for i in range(0, 100000):
-            number = generate_unique_id(random.randint(0, 20))
+            number = generate_unique_id(random.randint(0, 20))[:10]
             order = random.choice(orders)
             packaged_by = random.choice(users)
             items.append(Package(
