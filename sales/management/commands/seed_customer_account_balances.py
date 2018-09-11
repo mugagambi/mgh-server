@@ -12,10 +12,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         items = []
-        accounts = CustomerAccount.objects.values('customer__id').annotate(total=Sum('amount'))
+        accounts = CustomerAccount.objects.values('customer__number').annotate(total=Sum('amount'))
         for account in accounts:
             items.append(CustomerAccountBalance(
-                customer_id=account['customer__id'],
+                customer_id=account['customer__number'],
                 amount=account['total']
             ))
         CustomerAccountBalance.objects.bulk_create(items)
