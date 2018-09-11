@@ -69,8 +69,6 @@ def _restart_live_server():
 
 
 # Demo server config
-DEMO_REPO_URL = 'git@github.com:mugagambi/agrisales.git'
-
 
 def demo_deploy():
     site_folder = f'/home/{env.user}/agrisales-demo'
@@ -108,12 +106,11 @@ def _demo_create_or_update_dotenv_live():
     append('.env',
            f'ALLOWED_HOSTS=demo.agrisales.nanoafrika.com')
     append('.env', f'DEMO_DATABASE_URL={config("DEMO_DATABASE_URL_LIVE")}')
-    append('.env', f'PROJECT_NAME = AgriSales')
     append('.env', f'EMAIL_BACKEND = django.core.mail.backends.smtp.EmailBackend')
     append('.env', f'EMAIL_HOST = {config("EMAIL_HOST")}')
     append('.env', f'EMAIL_HOST_USER = {config("EMAIL_HOST_USER")}')
     append('.env', f'EMAIL_HOST_PASSWORD = {config("EMAIL_HOST_PASSWORD")}')
-    append('.env', f'APP_NAME = {config("APP_NAME")}')
+    append('.env', f'APP_NAME = demo')
     append('.env',
            f'SENTRY = {config("SENTRY")}')
     current_contents = run('cat .env')
