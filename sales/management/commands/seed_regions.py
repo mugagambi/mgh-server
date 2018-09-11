@@ -16,6 +16,5 @@ class Command(BaseCommand):
             items.append(Region(
                 name=name,
             ))
-            msg = f'added region {name}'
-            print(msg)
         Region.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded regions'))

@@ -29,6 +29,5 @@ class Command(BaseCommand):
                 qty_weigh=qty_weigh,
                 crate_weight=crate_weight
             ))
-            msg = f'added packaged product{number},{package}, {qty_weigh}, {crate_weight}'
-            print(msg)
         PackageProduct.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded packaged products'))

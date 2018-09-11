@@ -26,6 +26,5 @@ class Command(BaseCommand):
                 order=order,
                 packaged_by=packaged_by,
             ))
-            msg = f'added packaged {number}, {order}, {packaged_by}'
-            print(msg)
         Package.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded packages'))

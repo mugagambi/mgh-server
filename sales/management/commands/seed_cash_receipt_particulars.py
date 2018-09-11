@@ -29,6 +29,5 @@ class Command(BaseCommand):
                     cash_receipt=receipt,
                     total=total
                 ))
-                msg = f'added cash receipt particular {qty}, {product}, {price}, {total}, {receipt}'
-                print(msg)
         CashReceiptParticular.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('cash receipt particulars'))

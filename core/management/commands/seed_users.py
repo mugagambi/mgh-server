@@ -18,5 +18,4 @@ class Command(BaseCommand):
             password = fake.password()
             User.objects.create_user(username=username, email=email, password=password, first_name=first_name,
                                      last_name=last_name)
-            msg = f'added user {username}, {first_name}, {last_name}, {email}, {password}'
-            print(msg)
+        self.stdout.write(self.style.SUCCESS('seeded users'))

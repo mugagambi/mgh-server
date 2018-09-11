@@ -30,6 +30,5 @@ class Command(BaseCommand):
                 qty=qty,
                 date=date
             ))
-            msg = f'added orderless package {number}, {date}, {product}, {qty}'
-            print(msg)
         OrderlessPackage.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded orderless package'))

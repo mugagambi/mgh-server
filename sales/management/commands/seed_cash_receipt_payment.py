@@ -27,7 +27,5 @@ class Command(BaseCommand):
                     cash_receipt=receipt,
                     mobile_number=mobile_number
                 ))
-                msg = f'added cash receipt payment {type}, {amount},' \
-                      f' {transaction_id}, {mobile_number}, {receipt}'
-                print(msg)
         CashReceiptPayment.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded cash receipt payments'))

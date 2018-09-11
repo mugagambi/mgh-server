@@ -129,9 +129,9 @@ def _demo_update_database():
 
 
 def _demo_seed_database():
-    run('./venv/bin/python manage.py seed_users')
-    run('./venv/bin/python manage.py seed_centers')
-    run('./venv/bin/python manage.py seed_products')
+    # run('./venv/bin/python manage.py seed_users')
+    # run('./venv/bin/python manage.py seed_centers')
+    # run('./venv/bin/python manage.py seed_products')
     run('./venv/bin/python manage.py seed_center_products')
     run('./venv/bin/python manage.py seed_regions')
     run('./venv/bin/python manage.py seed_customers')

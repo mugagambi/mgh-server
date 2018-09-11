@@ -31,6 +31,5 @@ class Command(BaseCommand):
                     receipt=receipt,
                     total=total
                 ))
-                msg = f'added receipt particular{type}, {qty}, {product}, {price}, {total}, {receipt}'
-                print(msg)
         ReceiptParticular.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded receipt particulars'))

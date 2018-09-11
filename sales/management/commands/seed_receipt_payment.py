@@ -38,7 +38,5 @@ class Command(BaseCommand):
                     receipt=receipt,
                     mobile_number=mobile_number
                 ))
-                msg = f'added receipt payment{type}, {amount}, {check_number},' \
-                      f' {transaction_id}, {date_to_pay}, {transfer_code}, {mobile_number}, {receipt}'
-                print(msg)
         ReceiptPayment.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded receipt payments'))

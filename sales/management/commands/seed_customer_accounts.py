@@ -16,7 +16,6 @@ class Command(BaseCommand):
                                          date=instance.receipt.date,
                                          type='P',
                                          receipt=instance.receipt))
-            print(f'saved customer account receipt particular id {instance.id}')
         for instance in ReceiptPayment.objects.all():
             if instance.type == 1:
                 type = 'Q'
@@ -54,6 +53,5 @@ class Command(BaseCommand):
                                              cheque_number=cheque_number,
                                              transaction_id=transaction_id,
                                              phone_number=phone_number))
-            print(f'saved customer account payment {instance.id}')
-        print(f'saving accounts')
         CustomerAccount.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded customer accounts'))

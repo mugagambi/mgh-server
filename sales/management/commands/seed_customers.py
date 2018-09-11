@@ -32,6 +32,5 @@ class Command(BaseCommand):
                 added_by=added_by,
                 region=region
             ))
-            msg = f'added customer {number}, {shop_name}, {nick_name}, {location}, {added_by}, {region}'
-            print(msg)
         Customer.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded customers'))

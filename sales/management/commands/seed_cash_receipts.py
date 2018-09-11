@@ -31,6 +31,5 @@ class Command(BaseCommand):
                 served_by=served_by,
                 date=date
             ))
-            msg = f'added cash receipt {number}, {served_by}, {date}'
-            print(msg)
         CashReceipt.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded cash receipts'))

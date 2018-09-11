@@ -25,6 +25,5 @@ class Command(BaseCommand):
                 discount=discount,
                 product=product
             ))
-            msg = f'added discount {customer}, {discount}, {product}'
-            print(msg)
         CustomerDiscount.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded discounts'))

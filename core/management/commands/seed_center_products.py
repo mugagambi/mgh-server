@@ -29,6 +29,5 @@ class Command(BaseCommand):
                 qty=qty,
                 date=date
             ))
-            msg = f'added aggregation center product {aggregation_center}, {product}, {qty}, {date}'
-            print(msg)
         AggregationCenterProduct.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded center products'))

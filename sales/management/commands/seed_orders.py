@@ -31,6 +31,5 @@ class Command(BaseCommand):
                 received_by=received_by,
                 date_delivery=date_delivery
             ))
-            msg = f'added orders {number}, {customer}, {received_by}, {date_delivery}'
-            print(msg)
         Order.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded orders'))

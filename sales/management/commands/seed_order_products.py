@@ -28,6 +28,5 @@ class Command(BaseCommand):
                 product=product,
                 qty=qty
             ))
-            msg = f'added order product {number}, {order}, {product}, {qty}'
-            print(msg)
         OrderProduct.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded order products'))

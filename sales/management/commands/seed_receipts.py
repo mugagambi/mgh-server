@@ -38,6 +38,5 @@ class Command(BaseCommand):
                 bbf_balance=bbf_balance,
                 balance=balance
             ))
-            msg = f'added receipt{number}, {customer}, {served_by}, {date}, {bbf_balance}, {balance}'
-            print(msg)
         Receipt.objects.bulk_create(items)
+        self.stdout.write(self.style.SUCCESS('seeded receipts'))
