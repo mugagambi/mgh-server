@@ -147,7 +147,7 @@ def _demo_seed_database():
     # run('./venv/bin/python manage.py seed_cash_receipts')
     # run('./venv/bin/python manage.py seed_cash_receipt_particulars')
     # run('./venv/bin/python manage.py seed_cash_receipt_payment')
-    run('./venv/bin/python manage.py seed_customer_accounts')
+    # run('./venv/bin/python manage.py seed_customer_accounts')
     run('./venv/bin/python manage.py seed_customer_account_balances')
 
 
