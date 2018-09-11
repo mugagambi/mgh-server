@@ -22,7 +22,7 @@ class Command(BaseCommand):
         items = []
         users = User.objects.all()
         for i in range(0, 10000):
-            number = generate_unique_id(random.randint(0, 20))
+            number = generate_unique_id(i)[:10]
             served_by = random.choice(users)
             date = fake.date_time_between_dates(datetime_start=timezone.now() - datetime.timedelta(days=365),
                                                 datetime_end=timezone.now(), tzinfo=AFRICA_NAIROBI)
