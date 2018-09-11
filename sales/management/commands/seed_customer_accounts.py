@@ -1,3 +1,5 @@
+import uuid
+
 from django.core.management.base import BaseCommand
 
 from sales.models import ReceiptParticular, CustomerAccount, ReceiptPayment
@@ -11,7 +13,7 @@ class Command(BaseCommand):
         items = []
         i = 1
         for instance in ReceiptParticular.objects.all():
-            items.append(CustomerAccount(number=main_generate_unique_id(),
+            items.append(CustomerAccount(number=str(uuid.uuid4()),
                                          customer=instance.receipt.customer,
                                          amount=-instance.total,
                                          date=instance.receipt.date,
@@ -49,7 +51,7 @@ class Command(BaseCommand):
                 transaction_id = ''
                 phone_number = ''
             if instance.type != 4:
-                items.append(CustomerAccount(number=main_generate_unique_id(),
+                items.append(CustomerAccount(number=str(uuid.uuid4()),
                                              customer=instance.receipt.customer,
                                              amount=instance.amount,
                                              date=instance.receipt.date,
