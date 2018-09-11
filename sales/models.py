@@ -264,8 +264,8 @@ class CustomerAccount(models.Model):
     via = models.CharField(max_length=1, choices=VIA, blank=True)
     receipt = models.ForeignKey(Receipt, on_delete=models.SET_NULL, null=True)
     returns = models.ForeignKey('Return', on_delete=models.SET_NULL, null=True)
-    phone_number = models.CharField(max_length=10, blank=True)
-    transaction_id = models.CharField(max_length=10, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    transaction_id = models.CharField(max_length=15, blank=True)
     cheque_number = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
