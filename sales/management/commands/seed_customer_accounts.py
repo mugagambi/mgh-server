@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         items = []
-        i = 0
+        i = 1
         for instance in ReceiptParticular.objects.all():
             items.append(CustomerAccount(number=main_generate_unique_id(),
                                          customer=instance.receipt.customer,
@@ -20,7 +20,7 @@ class Command(BaseCommand):
             if i == 10000:
                 CustomerAccount.objects.bulk_create(items)
                 print(f'writing {instance.id}')
-                i = -1
+                i = 0
             i += 1
         for instance in ReceiptPayment.objects.all():
             if instance.type == 1:
@@ -62,6 +62,6 @@ class Command(BaseCommand):
                 if i == 10000:
                     CustomerAccount.objects.bulk_create(items)
                     print(f'writing {instance.id}')
-                    i = -1
+                    i = 0
                 i += 1
         self.stdout.write(self.style.SUCCESS('seeded customer accounts'))
