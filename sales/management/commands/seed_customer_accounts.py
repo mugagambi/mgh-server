@@ -9,9 +9,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         items = []
         i = 1
-        j = 1
+        j = 0
         for instance in ReceiptParticular.objects.all():
-            items.append(CustomerAccount(number=str(j),
+            items.append(CustomerAccount(number=str(j + 1),
                                          customer=instance.receipt.customer,
                                          amount=-instance.total,
                                          date=instance.receipt.date,
@@ -22,7 +22,6 @@ class Command(BaseCommand):
                 print(f'writing {instance.id}')
                 i = 0
             i += 1
-            j += 1
         for instance in ReceiptPayment.objects.all():
             if instance.type == 1:
                 type = 'Q'
@@ -50,7 +49,7 @@ class Command(BaseCommand):
                 transaction_id = ''
                 phone_number = ''
             if instance.type != 4:
-                items.append(CustomerAccount(number=str(j),
+                items.append(CustomerAccount(number=str(j + 1),
                                              customer=instance.receipt.customer,
                                              amount=instance.amount,
                                              date=instance.receipt.date,
@@ -65,5 +64,4 @@ class Command(BaseCommand):
                     print(f'writing {instance.id}')
                     i = 0
                 i += 1
-                j += 1
         self.stdout.write(self.style.SUCCESS('seeded customer accounts'))
