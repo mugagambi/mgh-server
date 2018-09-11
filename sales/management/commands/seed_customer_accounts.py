@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from django.core.management.base import BaseCommand
 
 from sales.models import ReceiptParticular, CustomerAccount, ReceiptPayment
@@ -53,7 +55,7 @@ class Command(BaseCommand):
             if instance.type != 4:
                 j += 1
                 i += 1
-                items.append(CustomerAccount(number=str(j),
+                items.append(CustomerAccount(number=str(uuid4()),
                                              customer=instance.receipt.customer,
                                              amount=instance.amount,
                                              date=instance.receipt.date,
