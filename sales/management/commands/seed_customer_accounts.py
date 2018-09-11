@@ -9,7 +9,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         items = []
         i = 1
-        j = 0
+        j = 100000
         # for instance in ReceiptParticular.objects.all():
         #     j += 1
         #     i += 1
