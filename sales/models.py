@@ -256,7 +256,7 @@ class CustomerAccount(models.Model):
         ('A', 'Payment'),
         ('B', 'BBF')
     )
-    number = models.CharField(unique=True, max_length=10, primary_key=True)
+    number = models.CharField(unique=True, max_length=53, primary_key=True)
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     date = models.DateTimeField(default=now)
