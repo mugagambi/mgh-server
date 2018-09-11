@@ -12,6 +12,7 @@ class Command(BaseCommand):
         j = 0
         for instance in ReceiptParticular.objects.all():
             j += 1
+            i += 1
             items.append(CustomerAccount(number=str(j),
                                          customer=instance.receipt.customer,
                                          amount=-instance.total,
@@ -22,7 +23,7 @@ class Command(BaseCommand):
                 CustomerAccount.objects.bulk_create(items)
                 print(f'writing {instance.id}')
                 i = 0
-            i += 1
+                items = []
         for instance in ReceiptPayment.objects.all():
             if instance.type == 1:
                 type = 'Q'
@@ -51,6 +52,7 @@ class Command(BaseCommand):
                 phone_number = ''
             if instance.type != 4:
                 j += 1
+                i += 1
                 items.append(CustomerAccount(number=str(j),
                                              customer=instance.receipt.customer,
                                              amount=instance.amount,
@@ -65,5 +67,5 @@ class Command(BaseCommand):
                     CustomerAccount.objects.bulk_create(items)
                     print(f'writing {instance.id}')
                     i = 0
-                i += 1
+                    items = []
         self.stdout.write(self.style.SUCCESS('seeded customer accounts'))
