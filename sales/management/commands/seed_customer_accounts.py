@@ -11,7 +11,7 @@ class Command(BaseCommand):
         i = 1
         j = 0
         for instance in ReceiptParticular.objects.all():
-            items.append(CustomerAccount(number=str(j + 1),
+            items.append(CustomerAccount(number=str(instance.id),
                                          customer=instance.receipt.customer,
                                          amount=-instance.total,
                                          date=instance.receipt.date,
@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 transaction_id = ''
                 phone_number = ''
             if instance.type != 4:
-                items.append(CustomerAccount(number=str(j + 1),
+                items.append(CustomerAccount(number=str(instance.id),
                                              customer=instance.receipt.customer,
                                              amount=instance.amount,
                                              date=instance.receipt.date,
