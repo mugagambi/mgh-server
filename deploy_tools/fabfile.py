@@ -76,7 +76,7 @@ def demo_deploy():
     with cd(site_folder):
         _demo_get_latest_source()
         _demo_update_virtualenv()
-        _demo_create_or_update_dotenv_live()
+        #_demo_create_or_update_dotenv_live()
         _demo_update_static_files()
         _demo_update_database()
         _demo_seed_database()
@@ -102,6 +102,7 @@ def _demo_update_virtualenv():
 
 
 def _demo_create_or_update_dotenv_live():
+    run('rm .env')
     append('.env', f'DEBUG =false')
     append('.env',
            f'ALLOWED_HOSTS=demo.agrisales.nanoafrika.com')
