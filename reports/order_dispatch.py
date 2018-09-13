@@ -43,8 +43,8 @@ def report(request, date_0, date_1):
     customer_dispatch = models.PackageProduct.objects.select_related('order_product__product').filter(
         package__created_at__range=(date_0_datetime, date_1_datetime)).values('order_product__product__name').annotate(
         Sum('qty_weigh'))
-    orderless_date_0 = date_0 + datetime.timedelta(hours=24)
-    orderless_date_1 = date_1 + datetime.timedelta(hours=24)
+    orderless_date_0 = date_0
+    orderless_date_1 = date_1
     orderless_dispatch = models.OrderlessPackage.objects.select_related('product').filter(
         date__range=(orderless_date_0, orderless_date_1)).values('product__name').annotate(Sum('qty'))
     all_data = []

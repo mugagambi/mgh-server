@@ -13,7 +13,7 @@ def live_deploy():
     with cd(site_folder):
         _get_latest_source()
         _update_virtualenv()
-        # _create_or_update_dotenv_live()
+        _create_or_update_dotenv_live()
         _update_static_files()
         _update_database()
         _restart_live_server()
@@ -41,12 +41,13 @@ def _create_or_update_dotenv_live():
     run('rm .env')
     append('.env', f'DEBUG =false')
     append('.env',
-           f'ALLOWED_HOSTS=www.ruarakamethodist.com,ruarakamethodist.com,ruarakamethodist.org,www.ruarakamethodist.org')
+           f'ALLOWED_HOSTS=www.mgh.nanoafrika.com')
     append('.env', f'DATABASE_URL={config("DATABASE_URL_LIVE")}')
     append('.env', f'EMAIL_BACKEND = django.core.mail.backends.smtp.EmailBackend')
     append('.env', f'EMAIL_HOST = {config("EMAIL_HOST")}')
     append('.env', f'EMAIL_HOST_USER = {config("EMAIL_HOST_USER")}')
     append('.env', f'EMAIL_HOST_PASSWORD = {config("EMAIL_HOST_PASSWORD")}')
+    append('.env', f'APP_NAME = mgh')
     append('.env',
            f'SENTRY = {config("SENTRY")}')
     current_contents = run('cat .env')
