@@ -147,7 +147,9 @@ def outward_product_summary_alt_report(request, date_0: str, date_1: str):
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
     date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
     date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
-    available = AggregationCenterProduct.objects.filter(date__range=(date_0, date_1)). \
+    orderless_date_0 = date_0 - datetime.timedelta(days=1)
+    orderless_date_1 = date_1 - datetime.timedelta(days=1)
+    available = AggregationCenterProduct.objects.filter(date__range=(orderless_date_0, orderless_date_1)). \
         values('product__name').annotate(total=Sum('qty'))
     ordered = models.OrderProduct.objects. \
         filter(order__date_delivery__range=(date_0, date_1)). \
@@ -155,8 +157,8 @@ def outward_product_summary_alt_report(request, date_0: str, date_1: str):
     packaged = models.PackageProduct.objects. \
         filter(order_product__order__date_delivery__range=(date_0, date_1)). \
         values('order_product__product__name').annotate(total=Sum('qty_weigh'))
-    orderless_date_0 = date_0 + datetime.timedelta(days=1)
-    orderless_date_1 = date_1 + datetime.timedelta(days=1)
+    orderless_date_0 = date_0 - datetime.timedelta(days=1)
+    orderless_date_1 = date_1 - datetime.timedelta(days=1)
     orderless = models.OrderlessPackage.objects. \
         filter(date__range=(orderless_date_0, orderless_date_1)).values('product__name').annotate(total=Sum('qty'))
     customer = models.ReceiptParticular.objects. \
