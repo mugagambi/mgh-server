@@ -29,11 +29,11 @@ def orderless_dispatch(request):
     :param request:
     :return:
     """
-    tomorrow_expression = ExpressionWrapper(F('date') + timedelta(hours=24),
+    yesterday_expression = ExpressionWrapper(F('date') - timedelta(hours=24),
                                             output_field=fields.DateField())
     orderless_list = models.OrderlessPackage.objects.select_related('product'). \
         values('product__name', 'date').annotate(total_qty=Sum('qty'), product_id=F('product__id'),
-                                                 tomorrow=tomorrow_expression).order_by('-date')
+                                                 yesterday=yesterday_expression).order_by('-date')
     orderless_filter = OrderlessFilter(request.GET, queryset=orderless_list)
     orderless_list = orderless_filter.qs
     paginator = Paginator(orderless_list, 50)

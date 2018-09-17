@@ -13,7 +13,7 @@ def live_deploy():
     with cd(site_folder):
         _get_latest_source()
         _update_virtualenv()
-        _create_or_update_dotenv_live()
+        # _create_or_update_dotenv_live()
         _update_static_files()
         _update_database()
         _restart_live_server()
