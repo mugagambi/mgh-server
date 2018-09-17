@@ -43,3 +43,12 @@ def update_open_air_sale(request, pk):
     else:
         form = CashParticularForm(instance=sale)
     return render(request, 'sales/sales/open_air_update.html', {'form': form, 'sale': sale})
+
+@login_required()
+@permission_required('sales.delete_cashreceiptparticular', raise_exception=True)
+def remove_open_air_sale(request, pk):
+    sale = get_object_or_404(models.CashReceiptParticular, pk=pk)
+    date = sale.cash_receipt.date.strftime("%Y-%m-%d")
+    sale.delete()
+    messages.success(request, 'Open air sale item removed successfully')
+    return redirect('cash-receipt', date=date)

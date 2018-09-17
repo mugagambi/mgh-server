@@ -30,7 +30,10 @@
                         <td>{{ particular.cash_receipt.date }}</td>
                         <td>
                             <a href="{% url 'update_open_air_sale' pk=particular.pk%}"
-                            class="btn btn-success btn-sm">Update</a>
+                            class="btn btn-success btn-sm mb-1">Update</a>
+                            <a onclick="return confirm('Are you sure you want to delete this open air market sales item?')" 
+                            href="{% url 'remove_open_air_sale' pk=particular.pk%}"
+                            class="btn btn-danger btn-sm mb-1">Remove</a>
                         </td>
                     </tr>
                 {% endfor %}
