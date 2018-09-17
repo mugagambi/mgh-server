@@ -31,8 +31,7 @@
             <td>{{ data.customer_qty | intcomma }}</td>
             <td>{{ data.orderless_qty | intcomma }}</td>
             <td>{{ data.total_dispatch| intcomma }}</td>
-            <td data-toggle="tooltip" data-placement="top" title="calculated by formulae (total dispatch - orders)">{{
-                data.variance| intcomma }}</td>
+            <td data-toggle="tooltip" data-placement="top" title="calculated by formulae (total dispatch - orders)">{{data.variance| intcomma }}</td>
         </tr>
         {% endfor %}
     </tbody>
