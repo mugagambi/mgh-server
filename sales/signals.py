@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 from core.models import Product, AggregationCenterProduct, AggregationCenter
 from sales.models import OrderProduct, OrderDistributionPoint, CustomerAccount, CustomerAccountBalance, \
-    ReceiptParticular, BBF, Return, ReceiptPayment, CustomerDeposit
+    ReceiptParticular, BBF, Return, ReceiptPayment, CustomerDeposit, Order
 from system_settings.models import Settings
 from utils import main_generate_unique_id
 from .models import CustomerPrice
@@ -188,3 +188,7 @@ def deposit_account(sender, instance, created, **kwargs):
                                        cheque_number=instance.cheque_number,
                                        transaction_id=instance.transaction_id,
                                        phone_number=instance.phone_number)
+
+@receiver(post_save, sender=Order)
+def check_order_duplicates(sender, instance, created, **kwargs):
+    """Send an email to admins when an order duplicate is detected."""

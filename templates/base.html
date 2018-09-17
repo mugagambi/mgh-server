@@ -122,6 +122,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if 'admins/' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'admin_list' %}">
+                            <span data-feather="user-check"></span>
+                            System Admins
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if 'change-password' in request.path %}
                         active
                         {% endif %}" href="{% url 'change_password' %}">

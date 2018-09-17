@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/dataTables.bootstrap4.min.css' %}">
+{% endblock %}
+{% block breadcrump %}
+<br />
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Admins</li>
+    </ol>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2">Admins</h1>
+    {% if perms.admins.add_admin %}
+    <a class="btn btn-outline-success" href="{% url 'create_banks' %}">
+        <span data-feather="plus"></span>
+        Add Admin
+    </a>
+    {% endif %}
+</div>
+<table id="customers" class="table table-striped table-responsive-sm" style="width:100%">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Added On</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for admin in admin_list %}
+        <tr>
+            <td>{{ bank.email }}</td>
+            <td>{{ bank.added_on }}</td>
+            <td>
+                {% if perms.cash_breakdown.change_bank %}
+                <a class="btn btn-outline-success btn-sm mb-1" href="">Update</a>
+                {% endif %}
+                {% if perms.cash_breakdown.delete_bank %}
+                <a class="btn btn-outline-danger btn-sm mb-1" href="">Delete</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Email</th>
+            <th>Added On</th>
+            <th>Actions</th>
+        </tr>
+    </tfoot>
+</table>
+
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $('#customers').DataTable({
+            'paging': true,
+            'lengthChange': true,
+            'searching': true,
+            'ordering': true,
+            'info': true,
+            'autoWidth': true,
+            "columnDefs": [{
+                "targets": 2,
+                "orderable": false,
+                "searchable": false
+            }]
+        });
+    });
+</script>
+{% endblock %}

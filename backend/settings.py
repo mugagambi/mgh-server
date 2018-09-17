@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     'reports.apps.ReportsConfig',
     'system_settings',
     'tooling',
-    'cash_breakdown.apps.CashBreakdownConfig'
+    'cash_breakdown.apps.CashBreakdownConfig',
+    'admins'
 ]
 
 MIDDLEWARE = [
@@ -252,7 +253,8 @@ if not DEBUG:
         },
         'handlers': {
             'sentry': {
-                'level': 'ERROR',  # To capture more than ERROR, change to WARNING, INFO, etc.
+                # To capture more than ERROR, change to WARNING, INFO, etc.
+                'level': 'ERROR',
                 'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
                 'tags': {'custom-tag': 'x'},
             },

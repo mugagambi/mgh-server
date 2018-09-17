@@ -53,6 +53,7 @@ urlpatterns = [
         name='password_reset_complete',
     ),
     path('core/', include('core.web_urls')),
+    path('admins/', include('admins.urls')),
     path('sales/', include('sales.web_urls')),
     path('system/', include('system_settings.urls')),
     path('resources/sales/', include('sales.resource_urls')),
