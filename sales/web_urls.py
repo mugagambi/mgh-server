@@ -32,6 +32,7 @@ urlpatterns = [
     path('all/cash/', web_views.cash_sales_list, name='cash-sales'),
     path('all/cash/add/<str:date>/', open_air.add_cash_receipt_particulars, name='add_cash_sales'),
     path('all/cash/<str:date>/', extra_views.cash_receipt, name='cash-receipt'),
+    path('all/cash/particular<int:pk>/update/', open_air.update_open_air_sale, name='update_open_air_sale'),
     path('all/debtors/<str:customer>/', extra_views.customer_statement, name='customer_statement'),
     path('all/debtors/<str:customer>/<str:date_0>/<str:date_1>/', extra_views.customer_statement,
          name='customer_statement_export'),

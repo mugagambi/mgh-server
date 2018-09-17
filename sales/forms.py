@@ -105,3 +105,9 @@ class OrderlessDispatchChooseForm(forms.Form):
 
 class OrderlessDispatchUpdateForm(forms.Form):
     new_qty = forms.DecimalField(max_digits=15, decimal_places=2)
+
+
+class CashParticularForm(forms.ModelForm):
+    class Meta:
+        model = models.CashReceiptParticular
+        fields = ('product', 'qty', 'price')

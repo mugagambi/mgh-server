@@ -130,26 +130,7 @@ def _demo_update_database():
 
 
 def _demo_seed_database():
-    # run('./venv/bin/python manage.py seed_users')
-    # run('./venv/bin/python manage.py seed_centers')
-    # run('./venv/bin/python manage.py seed_products')
-    # run('./venv/bin/python manage.py seed_center_products')
-    # run('./venv/bin/python manage.py seed_regions')
-    # run('./venv/bin/python manage.py seed_customers')
-    # run('./venv/bin/python manage.py seed_orders')
-    # run('./venv/bin/python manage.py seed_order_products')
-    # run('./venv/bin/python manage.py seed_discounts')
-    # run('./venv/bin/python manage.py seed_packaged')
-    # run('./venv/bin/python manage.py seed_orderless_package')
-    # run('./venv/bin/python manage.py seed_packaged_products')
-    # run('./venv/bin/python manage.py seed_receipts')
-    # run('./venv/bin/python manage.py seed_receipt_particulars')
-    # run('./venv/bin/python manage.py seed_receipt_payment')
-    # run('./venv/bin/python manage.py seed_cash_receipts')
-    # run('./venv/bin/python manage.py seed_cash_receipt_particulars')
-    # run('./venv/bin/python manage.py seed_cash_receipt_payment')
-    # run('./venv/bin/python manage.py seed_customer_accounts')
-    run('./venv/bin/python manage.py seed_customer_account_balances')
+    pass
 
 
 def _restart_demo_server():
