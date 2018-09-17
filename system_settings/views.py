@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Permission
@@ -51,6 +51,7 @@ class SystemUsersList(LoginRequiredMixin, ListView):
 
 
 @login_required()
+@permission_required('core.add_user', raise_exception=True)
 @transaction.atomic
 def create_user(request):
     if request.method == 'POST':
@@ -79,6 +80,7 @@ def create_user(request):
 
 
 @login_required()
+@permission_required('core.add_user', raise_exception=True)
 @require_http_methods(['POST'])
 def deactivate_user(request):
     username = request.POST.get('username')
@@ -116,6 +118,7 @@ def change_password(request):
 
 
 @login_required()
+@permission_required('core.add_user', raise_exception=True)
 def assign_permissions(request, username):
     user = get_object_or_404(get_user_model(), username=username)
     his_permissions = user.user_permissions.all()
