@@ -36,8 +36,10 @@ def report(request, date_0, date_1):
     str_date_1 = date_1
     date_0 = timezone.datetime.strptime(date_0, '%Y-%m-%d').date()
     date_1 = timezone.datetime.strptime(date_1, '%Y-%m-%d').date()
-    date_0_datetime = timezone.datetime.combine(date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
-    date_1_datetime = timezone.datetime.combine(date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
+    date_0_datetime = timezone.datetime.combine(
+        date_0, datetime.time(0, 0, tzinfo=AFRICA_NAIROBI))
+    date_1_datetime = timezone.datetime.combine(
+        date_1, datetime.time(23, 59, tzinfo=AFRICA_NAIROBI))
     orders = models.OrderProduct.objects.select_related('product').filter(
         order__created_at__range=(date_0_datetime, date_1_datetime)).values('product__name').annotate(Sum('qty'))
     customer_dispatch = models.PackageProduct.objects.select_related('order_product__product').filter(
@@ -86,13 +88,15 @@ def report(request, date_0, date_1):
             'variance': total_dispatch - order_qty
         })
     total_orders = orders.aggregate(Sum('qty__sum'))
-    total_customer_dispatch = customer_dispatch.aggregate(Sum('qty_weigh__sum'))
+    total_customer_dispatch = customer_dispatch.aggregate(
+        Sum('qty_weigh__sum'))
     total_orderless = orderless_dispatch.aggregate(Sum('qty__sum'))
     context = {'data': final_data, 'total_order': total_orders, 'customer_dispatch': total_customer_dispatch,
                'orderless_dispatch': total_orderless, 'date_0': date_0_datetime, 'date_1': date_1_datetime}
     download = request.GET.get('download', None)
     if download:
-        filename = 'orders_vs_dispatch_from_{}_to_{}'.format(str_date_0, str_date_1)
+        filename = 'orders_vs_dispatch_from_{}_to_{}'.format(
+            str_date_0, str_date_1)
         return handle_pdf_export(folder='/tmp', filename=filename, context=context,
                                  template='reports/order-dispatch/report_pdf.html')
     return render(request, 'reports/order-dispatch/report.html', context)

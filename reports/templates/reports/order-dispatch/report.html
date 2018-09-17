@@ -3,15 +3,15 @@
 {% load mathfilters %}
 {% load static %}
 {% block content %}
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2"> Order vs Dispatch Report</h1>
-    </div>
-    <h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
-    <a href="{% url 'order_dispatch_period' %}" class="btn btn-outline-success">Change Period</a>
-    <a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
-    <hr/>
-    <table id="customers" class="table table-bordered">
-        <thead class="thead-dark">
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2"> Orders vs Total Dispatch Report</h1>
+</div>
+<h3>Report from {{ date_0 }} to {{ date_1 }}</h3>
+<a href="{% url 'order_dispatch_period' %}" class="btn btn-outline-success">Change Period</a>
+<a href="{{ request.path }}?download=true" class="btn btn-outline-success text-center">Export as PDF</a>
+<hr />
+<table id="customers" class="table table-bordered">
+    <thead class="thead-dark">
         <tr>
             <th scope="col">Product</th>
             <th scope="col">Orders</th>
@@ -20,87 +20,87 @@
             <th scope="col">Total Dispatch</th>
             <th scope="col">Variance</th>
         </tr>
-        </thead>
-        <tbody>
+    </thead>
+    <tbody>
         {% for data in data %}
-            <tr>
-                <td>
-                    {{ data.product }}
-                </td>
-                <td>{{ data.order_qty | intcomma }}</td>
-                <td>{{ data.customer_qty | intcomma }}</td>
-                <td>{{ data.orderless_qty | intcomma }}</td>
-                <td>{{ data.total_dispatch| intcomma }}</td>
-                <td data-toggle="tooltip" data-placement="top"
-                    title="calculated by formulae (total dispatch - orders)">{{ data.variance| intcomma }}</td>
-            </tr>
+        <tr>
+            <td>
+                {{ data.product }}
+            </td>
+            <td>{{ data.order_qty | intcomma }}</td>
+            <td>{{ data.customer_qty | intcomma }}</td>
+            <td>{{ data.orderless_qty | intcomma }}</td>
+            <td>{{ data.total_dispatch| intcomma }}</td>
+            <td data-toggle="tooltip" data-placement="top" title="calculated by formulae (total dispatch - orders)">{{
+                data.variance| intcomma }}</td>
+        </tr>
         {% endfor %}
-        </tbody>
-    </table>
-    <div>
-        <canvas id="myChart" height="400"></canvas>
-    </div>
+    </tbody>
+</table>
+<div>
+    <canvas id="myChart" height="400"></canvas>
+</div>
 {% endblock %}
 {% block scripts %}
-    <script src="{% static 'js/Chart.min.js' %}"></script>
-    <script>
-        $(document).ready(function () {
-            var orders = [{% for data in data %} {{ data.order_qty  }}, {% endfor %}];
-            var dispatch = [{% for data in data %}{{ data.customer_qty|addition:data.orderless_qty}}, {% endfor %}];
-            var labels = [{% for data in data %} '{{ data.product }}', {% endfor %}];
-            var ctx = document.getElementById("myChart").getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'horizontalBar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Orders',
-                        data: orders,
-                        backgroundColor: 'rgba(10,148,5)',
-                        borderColor: 'rgba(0,0,0)',
-                        borderWidth: 1
-                    }, {
-                        label: 'Dispatch',
-                        data: dispatch,
-                        backgroundColor: 'rgba(181,214,6)',
-                        borderColor: 'rgba(0,0,0)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'orders vs dispatch per product'
-                    },
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                callback: function (value, index, values) {
-                                    if (parseInt(value) >= 1000) {
-                                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                                    } else {
-                                        return value;
-                                    }
-                                }
-                            }
-                        }]
-                    },
-                    tooltips: {
-                        callbacks: {
-                            label: function (tooltipItem, data) {
-                                return Number(tooltipItem.xLabel).toFixed(0).replace(/./g, function (c, i, a) {
-                                    return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
-                                });
+<script src="{% static 'js/Chart.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        var orders = [{% for data in data %} {{ data.order_qty }}, {% endfor %}];
+    var dispatch = [{% for data in data %}{ { data.customer_qty | addition: data.orderless_qty } }, {% endfor %}];
+    var labels = [{% for data in data %} '{{ data.product }}', {% endfor %}];
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Orders',
+                data: orders,
+                backgroundColor: 'rgba(10,148,5)',
+                borderColor: 'rgba(0,0,0)',
+                borderWidth: 1
+            }, {
+                label: 'Dispatch',
+                data: dispatch,
+                backgroundColor: 'rgba(181,214,6)',
+                borderColor: 'rgba(0,0,0)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'orders vs dispatch per product'
+            },
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function (value, index, values) {
+                            if (parseInt(value) >= 1000) {
+                                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                            } else {
+                                return value;
                             }
                         }
                     }
+                }]
+            },
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        return Number(tooltipItem.xLabel).toFixed(0).replace(/./g, function (c, i, a) {
+                            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
+                        });
+                    }
                 }
-            });
+            }
+        }
+    });
         });
-    </script>
+</script>
 {% endblock %}
