@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<h3>The system has detected order duplication for a customer</h3>
+<p>The following orders have been duplicated:</p>
+{% for order in orders %}
+    <table>
+        <tr>
+            <th>Customer</th>
+            <td>{{ order.customer.shop_name }}</td>
+        </tr>
+        <tr>
+            <th>Order Date of Delivery</th>
+            <td>{{ order.date_delivery }}</td>
+        </tr>
+        <tr>
+            <th>Order Created On</th>
+            <td>{{ order.created_at }}</td>
+        </tr>
+        <tr>
+            <th>Order Received By:</th>
+            <td>{{ order.received_by }}</td>
+        </tr>
+    </table>
+    <p><b>The order has the following items</b></p>
+    <table>
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Qty</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in order.orderproduct_set.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.qty }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p><b>Review this order with link, <a href="https://www.mgh.nanoafrika.com{% url 'order_detail' pk=order.pk %}">https://www.mgh.nanoafrika.com{% url 'order_detail' pk=order.pk %}</a>
+        and take the appropriate action</b></p>
+    <hr/>
+{% endfor %}
+</body>
+</html>
