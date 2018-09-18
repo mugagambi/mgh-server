@@ -476,6 +476,16 @@ def update_payment(request, receipt, payment):
                                                       cheque_number=cheque_number,
                                                       transaction_id=transaction_id,
                                                       phone_number=phone_number)
+            if payment.type == 4:
+                models.CustomerAccount.objects.create(number=main_generate_unique_id(),
+                                                      customer=payment.receipt.customer,
+                                                      amount=-old_amount,
+                                                      date=payment.receipt.date,
+                                                      type='A',
+                                                      receipt=payment.receipt,
+                                                      cheque_number=cheque_number,
+                                                      transaction_id=transaction_id,
+                                                      phone_number=phone_number)
             messages.success(request, 'Payment updated and the customer account has been updated updated')
             return redirect('sale-receipt', pk=receipt.number)
     else:
