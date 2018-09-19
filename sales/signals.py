@@ -193,27 +193,27 @@ def deposit_account(sender, instance, created, **kwargs):
                                        phone_number=instance.phone_number)
 
 
-@receiver(post_save, sender=Order)
-def check_order_duplicates(sender, instance, created, **kwargs):
-    """Send an email to admins when an order duplicate is detected."""
-    orders = Order.objects.filter(customer=instance.customer, date_delivery=instance.date_delivery)
-    if orders.exists():
-        """send an alert email to admins"""
-        subject = f'Order duplication for {instance.customer.shop_name}'
-        message = 'You need an email client with html capabilities to read this email'
-        admins = Admin.objects.all()
-        recepients = admins.values_list('email', flat=True)
-        html_message = loader.render_to_string(
-            'sales/orders/order_duplication_alert_email.html',
-            {
-                'orders': orders
-            }
-        )
-        if admins.exists():
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email='mghbot@gmail.com',
-                recipient_list=recepients,
-                html_message=html_message
-            )
+# @receiver(post_save, sender=Order)
+# def check_order_duplicates(sender, instance, created, **kwargs):
+#     """Send an email to admins when an order duplicate is detected."""
+#     orders = Order.objects.filter(customer=instance.customer, date_delivery=instance.date_delivery)
+#     if orders.exists():
+#         """send an alert email to admins"""
+#         subject = f'Order duplication for {instance.customer.shop_name}'
+#         message = 'You need an email client with html capabilities to read this email'
+#         admins = Admin.objects.all()
+#         recepients = admins.values_list('email', flat=True)
+#         html_message = loader.render_to_string(
+#             'sales/orders/order_duplication_alert_email.html',
+#             {
+#                 'orders': orders
+#             }
+#         )
+#         if admins.exists():
+#             send_mail(
+#                 subject=subject,
+#                 message=message,
+#                 from_email='mghbot@gmail.com',
+#                 recipient_list=recepients,
+#                 html_message=html_message
+#             )
