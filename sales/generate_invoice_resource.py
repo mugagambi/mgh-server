@@ -15,7 +15,7 @@ def generate_invoice(request, customer, due_date):
     due_date = timezone.datetime.strptime(due_date, '%Y-%m-%d').date()
     payments = ReceiptPayment.objects.filter(type=4, receipt__customer=customer)
     receipt_ids = [payment.receipt.pk for payment in payments]
-    particulars = ReceiptParticular.objects.filter(receipt__pk__in=receipt_ids)
+    particulars = ReceiptParticular.objects.filter(receipt__pk__in=receipt_ids, receipt__settled=False)
     total_amount = particulars.aggregate(total=Sum('total'))
     receipt_balances = Receipt.objects.filter(pk__in=receipt_ids).aggregate(total=Sum('balance'))
     today = timezone.datetime.today()
