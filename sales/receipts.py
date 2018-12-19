@@ -17,9 +17,9 @@ class DeleteReceipt(LoginRequiredMixin, PermissionRequiredMixin, AccessMixin, De
         payments = self.object.receiptpayment_set.exclude(type=4).aggregate(total=Sum('amount'))
         total_purchases = self.object.receiptparticular_set.aggregate(total=Sum('total'))
         account_balance = models.CustomerAccountBalance.objects.get(customer=self.object.customer)
-        account_balance.amount = account_balance.amount + total_purchases['total'] if total_purchases['total'] else 0
+        account_balance.amount = account_balance.amount + (total_purchases['total'] if total_purchases['total'] else 0)
         account_balance.save()
-        account_balance.amount = account_balance.amount - payments['total'] if payments['total'] else 0
+        account_balance.amount = account_balance.amount - (payments['total'] if payments['total'] else 0)
         account_balance.save()
         models.CustomerAccount.objects.filter(receipt=self.object).delete()
         messages.success(request, 'Receipt removed successfully.Customer accounts statement have been adjusted')
