@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from sales.models import Customer, Order, OrderProduct, Package, PackageProduct
+from sales.models import Customer, Order, OrderProduct, Package, PackageProduct, Receipt, ReceiptParticular, \
+    ReceiptPayment, CashReceipt, CashReceiptParticular, CashReceiptPayment
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -81,10 +82,66 @@ class PackageSerializer(serializers.ModelSerializer):
         return super(PackageSerializer, self).update(instance, validated_data)
 
 
+class ReceiptPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReceiptPayment
+        fields = ('receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number', 'date_to_pay',
+                  'transfer_code', 'created_at', 'updated_at')
+
+
+class ReceiptParticularSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReceiptParticular
+        fields = ('qty', 'product', 'price', 'discount', 'receipt', 'total', 'type')
+        read_only_fields = ('total',)
+
+
+class ReceiptSerializer(serializers.ModelSerializer):
+    served_by = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+    items = ReceiptParticularSerializer(many=True, required=True)
+    payments = ReceiptPaymentSerializer(many=True, required=True)
+
+    class Meta:
+        model = Receipt
+        fields = ('number', 'customer', 'date', 'served_by', 'items', 'payments')
+
+
+class CashReceiptPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CashReceiptPayment
+        fields = (
+            'cash_receipt', 'amount', 'type', 'check_number', 'transaction_id', 'mobile_number',
+            'transfer_code', 'created_at', 'updated_at')
+
+
+class CashReceiptParticularSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CashReceiptParticular
+        fields = ('qty', 'product', 'price', 'cash_receipt')
+
+
+class CashReceiptSerializer(serializers.ModelSerializer):
+    served_by = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+    items = CashReceiptParticularSerializer(many=True, required=True)
+    payments = CashReceiptPaymentSerializer(many=True, required=True)
+
+    class Meta:
+        model = CashReceipt
+        fields = ('number', 'date', 'served_by', 'items', 'payments')
+
+
 class DataSerializer(serializers.Serializer):
     customers = CustomerSerializer(many=True, required=True)
     orders = OrderSerializer(many=True, required=True)
     packages = PackageSerializer(many=True, required=True)
+    customer_receipts = ReceiptSerializer(many=True, required=True)
+    cash_receipts = CashReceiptSerializer(many=True, required=True)
 
     def create(self, validated_data):
         return super(DataSerializer, self).create(validated_data)
