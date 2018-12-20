@@ -60,7 +60,8 @@ INSTALLED_APPS = [
     'system_settings',
     'tooling',
     'cash_breakdown.apps.CashBreakdownConfig',
-    'admins'
+    'admins',
+    'sync'
 ]
 
 MIDDLEWARE = [

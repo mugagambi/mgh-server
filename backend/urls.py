@@ -22,6 +22,7 @@ from rest_framework_swagger.views import get_swagger_view
 from core.admin import custom_admin_site
 from core.views import handler500, handler403
 from sales.views import receipt
+from sync.api.views import sync_data
 
 schema_view = get_swagger_view(title='MGH API')
 handler500 = handler500
@@ -65,7 +66,8 @@ urlpatterns = [
     path('api/auth/', include('djoser.urls.jwt')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('docs/', schema_view),
-    path('select2/', include('django_select2.urls'))
+    path('select2/', include('django_select2.urls')),
+    path('api/sync-data/', sync_data, name='sync-data')
 ]
 
 if settings.DEBUG:
