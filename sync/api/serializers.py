@@ -1,13 +1,18 @@
 from rest_framework import serializers
 
+from sales.models import Customer, Order, OrderProduct
 
-class CustomerSerializer(serializers.Serializer):
-    number = serializers.CharField(max_length=10, required=True)
-    shop_name = serializers.CharField(max_length=100, required=True)
-    nick_name = serializers.CharField(max_length=100, required=False, allow_blank=True)
-    location = serializers.CharField(max_length=100, required=True)
-    phone_number = serializers.CharField(max_length=100, required=False, allow_blank=True)
-    region = serializers.IntegerField(required=True)
+
+class CustomerSerializer(serializers.ModelSerializer):
+    added_by = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Customer
+        fields = ('number', 'email', 'shop_name', 'nick_name', 'location', 'phone_number',
+                  'added_by', 'region')
 
     def create(self, validated_data):
         return super(CustomerSerializer, self).create(validated_data)
@@ -16,10 +21,28 @@ class CustomerSerializer(serializers.Serializer):
         return super(CustomerSerializer, self).update(instance, validated_data)
 
 
-class OrderSerializer(serializers.Serializer):
-    number = serializers.CharField(max_length=10, required=True)
-    customer = serializers.CharField(max_length=10, required=True)
-    date_delivery = serializers.DateField(required=True)
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderProduct
+        fields = ('number', 'product', 'order', 'qty', 'price', 'discount')
+
+    def create(self, validated_data):
+        return super(OrderItemSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        return super(OrderItemSerializer, self).update(instance, validated_data)
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    received_by = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+    items = OrderItemSerializer(many=True, required=True)
+
+    class Meta:
+        model = Order
+        fields = ('customer', 'number', 'received_by', 'items')
 
     def create(self, validated_data):
         return super(OrderSerializer, self).create(validated_data)

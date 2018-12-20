@@ -7,7 +7,7 @@ from .serializers import DataSerializer
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
 def sync_data(request, format=None):
-    serializer = DataSerializer(data=request.data)
+    serializer = DataSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         data = serializer.validated_data
         print(data)
