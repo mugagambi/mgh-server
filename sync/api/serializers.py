@@ -18,6 +18,7 @@ class DataSerializer(serializers.Serializer):
     returns = serializers.ListField(required=True)
     deposits = serializers.ListField(required=True)
     receipt_misc = serializers.ListField(required=True)
+    orderless_packages = serializers.ListField(required=True)
     delivery_date = serializers.DateField(required=True)
     aggregation_center_id = serializers.IntegerField(required=True)
 

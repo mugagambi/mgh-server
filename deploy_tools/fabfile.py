@@ -44,6 +44,7 @@ def _create_or_update_dotenv_live():
            f'ALLOWED_HOSTS=www.mgh.nanoafrika.com')
     append('.env', f'DATABASE_URL={config("DATABASE_URL_LIVE")}')
     append('.env', f'EMAIL_BACKEND = django.core.mail.backends.smtp.EmailBackend')
+    append('.env', f'BACKUP_PATH = /home/nanoafrika')
     append('.env', f'EMAIL_HOST = {config("EMAIL_HOST")}')
     append('.env', f'EMAIL_HOST_USER = {config("EMAIL_HOST_USER")}')
     append('.env', f'EMAIL_HOST_PASSWORD = {config("EMAIL_HOST_PASSWORD")}')

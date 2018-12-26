@@ -9,7 +9,7 @@ from core import serializers as core_serializers
 from sales import serializers
 from sales.models import Customer, Order, OrderProduct, Package, PackageProduct, Receipt, ReceiptParticular, \
     ReceiptPayment, CashReceipt, CashReceiptParticular, CashReceiptPayment, MarketReturn, BBF, Return, CustomerDeposit, \
-    ReceiptMisc, Region, CustomerPrice, OrderDistributionPoint, CustomerAccountBalance
+    ReceiptMisc, Region, CustomerPrice, OrderDistributionPoint, CustomerAccountBalance, OrderlessPackage
 from sync.tasks import backup
 from .serializers import DataSerializer
 
@@ -55,11 +55,6 @@ def entity_objects():
             "entity": 'packages',
             'serializer_class': serializers.PackageSerializer,
             'model_class': Package
-        },
-        {
-            "entity": 'package_products',
-            'serializer_class': serializers.PackageProductSerializer,
-            'model_class': PackageProduct
         },
         {
             "entity": 'package_products',
@@ -120,6 +115,11 @@ def entity_objects():
             "entity": 'receipt_misc',
             'serializer_class': serializers.ReceiptMiscSerializer,
             'model_class': ReceiptMisc
+        },
+        {
+            "entity": 'orderless_packages',
+            'serializer_class': serializers.OrderlessPackageSerializer,
+            'model_class': OrderlessPackage
         }
     ]
 
@@ -216,7 +216,6 @@ def response(delivery_date, aggregation_center_id):
     return json_response
 
 
-# todo add orderless when posting sync
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
 @transaction.atomic
