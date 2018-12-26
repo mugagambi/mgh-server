@@ -37,7 +37,7 @@ class OrderProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.OrderProduct
         fields = ('number', 'order', 'product', 'qty', 'price', 'discount', 'distributing_qty')
-        read_only_fields = ('price', 'discount')
+        read_only_fields = ('price', 'discount', 'distributing_qty')
 
 
 class PackageSerializer(serializers.ModelSerializer):

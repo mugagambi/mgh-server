@@ -13,7 +13,7 @@ def live_deploy():
     with cd(site_folder):
         _get_latest_source()
         _update_virtualenv()
-        # _create_or_update_dotenv_live()
+        _create_or_update_dotenv_live()
         _update_static_files()
         _update_database()
         _restart_live_server()
@@ -47,6 +47,8 @@ def _create_or_update_dotenv_live():
     append('.env', f'EMAIL_HOST = {config("EMAIL_HOST")}')
     append('.env', f'EMAIL_HOST_USER = {config("EMAIL_HOST_USER")}')
     append('.env', f'EMAIL_HOST_PASSWORD = {config("EMAIL_HOST_PASSWORD")}')
+    append('.env', f'AWS_ACCESS_KEY_ID = {config("AWS_ACCESS_KEY_ID")}')
+    append('.env', f'AWS_SECRET_ACCESS_KEY = {config("AWS_SECRET_ACCESS_KEY")}')
     append('.env', f'APP_NAME = mgh')
     append('.env',
            f'SENTRY = {config("SENTRY")}')
