@@ -1,0 +1,24 @@
+#!/bin/bash
+
+NAME="mgh"
+DIR=/home/nanoafrika/mgh-server
+USER=nanoafrika
+GROUP=nanoafrika
+WORKERS=2
+BIND=unix:/home/nanoafrika/run/mgh.sock
+DJANGO_WSGI_MODULE=backend.wsgi
+LOG_LEVEL=error
+
+cd $DIR
+source venv/bin/activate
+
+export PYTHONPATH=$DIR:$PYTHONPATH
+
+exec venv/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
+  --name $NAME \
+  --workers $WORKERS \
+  --user=$USER \
+  --group=$GROUP \
+  --bind=$BIND \
+  --log-level=$LOG_LEVEL \
+  --log-file=-

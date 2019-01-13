@@ -31,10 +31,10 @@ def _get_latest_source():
 
 
 def _update_virtualenv():
-    if not exists('/home/nanoafrika/mgh_venv/bin/pip'):
-        run(f'python3.6 -m venv /home/nanoafrika/mgh_venv/')
-    run('/home/nanoafrika/mgh_venv/bin/pip install --upgrade pip')
-    run('/home/nanoafrika/mgh_venv/bin/pip install -r requirements.txt')
+    if not exists('venv/bin/pip'):
+        run(f'python3.6 -m venv venv')
+    run('./venv/bin/pip install --upgrade pip')
+    run('./venv/bin/pip install -r requirements.txt')
 
 
 def _create_or_update_dotenv_live():
@@ -60,12 +60,31 @@ def _create_or_update_dotenv_live():
 
 
 def _update_static_files():
-    run('/home/nanoafrika/mgh_venv/bin/python manage.py collectstatic --noinput')
+    run('./venv/bin/python manage.py collectstatic --noinput')
 
 
 def _update_database():
-    run('/home/nanoafrika/mgh_venv/bin/python manage.py migrate --noinput')
+    run('./venv/bin/python manage.py migrate --noinput')
 
+def _create_main_server_folders():
+    run(f'mkdir  -p /home/nanoafrika/run/')
+    run(f'mkdir  -p /home/nanoafrika/logs')
+
+
+def _create_main_webserver_files():
+    if not exists('/home/nanoafrika/mgh_supervisior'):
+        run('cp deploy_tools/mgh_supervisior /home/nanoafrika/')
+        run('chmod u+x /home/nanoafrika/mgh_supervisior')
+        run('touch /home/nanoafrika/logs/mgh.log')
+        run('touch /home/nanoafrika/logs/nginx-access.log')
+        run('touch /home/nanoafrika/logs/nginx-error.log')
+        sudo('cp deploy_tools/mgh.conf /etc/supervisor/conf.d/')
+        sudo('sudo supervisorctl reread')
+        sudo('sudo supervisorctl update')
+        sudo('sudo supervisorctl status mgh')
+        sudo('cp deploy_tools/nginx.template.conf /etc/nginx/sites-available/mgh')
+        sudo('ln -s /etc/nginx/sites-available/mgh /etc/nginx/sites-enabled/mgh')
+        sudo('service nginx restart')
 
 def _restart_live_server():
     sudo('rm -rf /tmp/*')
