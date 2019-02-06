@@ -27,13 +27,17 @@
                 <td>{{ center.name }}</td>
                 <td>{{ center.location }}</td>
                 <td>
+                {% if perms.core.view_productavailabilitylist %}
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'product-availability-list' center=center.id %}">Product
                         Availability</a>
+                {% endif %}
                     {% if perms.core.change_aggregationcenter %}
                         <a class="btn btn-outline-success btn-sm" href="{% url 'update-center' pk=center.id %}">Edit</a>
                     {% endif %}
+                    {% if perms.core.delete_aggregationcenter %}
                     <a class="btn btn-outline-danger btn-sm" href="{% url 'delete-center' pk=center.id %}">Remove</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

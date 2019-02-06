@@ -6,10 +6,12 @@
 {% block content %}
     <h4 class="text-center">Products</h4>
     <p>
+        {%  if perms.core.add_product %}
         <a class="btn btn-outline-success" href="{% url 'create-product' %}">
             <span data-feather="plus"></span>
             New Product
         </a>
+        {% endif %}
     </p>
     <table id="products" class="table table-striped" style="width:100%">
         <thead>
@@ -25,8 +27,12 @@
                 <td>{{ product.name }}</td>
                 <td>Ksh. {{ product.common_price }}</td>
                 <td>
+                    {% if perms.core.change_product %}
                     <a class="btn btn-outline-success btn-sm" href="{% url 'update-product' pk=product.id %}">Edit</a>
+                    {% endif %}
+                    {% if perms.core.delete_product %}
                     <a class="btn btn-outline-danger btn-sm" href="{% url 'delete-product' pk=product.id %}">Remove</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
