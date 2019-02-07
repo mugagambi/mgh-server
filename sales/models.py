@@ -17,6 +17,8 @@ class Region(models.Model):
 
     def __str__(self):
         return self.name
+    class Meta:
+        permissions = (("view_regions","can view regions"),)
 
 
 class Customer(models.Model):
@@ -56,7 +58,9 @@ class Customer(models.Model):
         self.nick_name = self.nick_name.title()
         super(Customer, self).save(force_insert=False, force_update=False, using=None,
                                    update_fields=None)
-
+    class Meta:
+        permissions = (("view_customerstatement","can view customer statement"),
+                        ("view_customers","can view customers "),)
 
 class Order(models.Model):
     customer = models.ForeignKey(Customer, to_field='number', on_delete=models.CASCADE,
@@ -69,6 +73,7 @@ class Order(models.Model):
 
     class Meta:
         ordering = ('-date_delivery', '-created_at')
+        permissions = (("view_order","can view order"),)
 
     def __str__(self):
         return 'order no. ' + str(self.number) + ' for ' + str(self.customer.shop_name)
@@ -102,6 +107,7 @@ class CustomerPrice(models.Model):
 
     class Meta:
         unique_together = ('customer', 'product')
+        permissions = (("view_prices","can view prices"),)
 
 
 class CustomerDiscount(models.Model):
@@ -114,6 +120,7 @@ class CustomerDiscount(models.Model):
 
     class Meta:
         unique_together = ('customer', 'product')
+        permissions = (("view_discounts","can view customer discounts"),)
 
     def __str__(self):
         return 'Discount for ' + str(self.product) + ' of ' + str(self.discount) + '%'
@@ -145,6 +152,7 @@ class OrderProduct(models.Model):
     class Meta:
         verbose_name = 'Order Report'
         verbose_name_plural = 'Order Reports'
+        permissions = (("view_orderproducts","can view order products"),)
 
 
 class OrderDistributionPoint(models.Model):
@@ -178,7 +186,8 @@ class OrderlessPackage(models.Model):
 
     def __str__(self):
         return self.number
-
+    class Meta:
+        permissions = (("view_orderlesspackage","can view orderless package"),)
 
 # todo on save re-calculate total qty for each package and reduce aggregation time
 class PackageProduct(models.Model):
@@ -237,6 +246,7 @@ class Receipt(models.Model):
         verbose_name_plural = 'Sales'
         verbose_name = 'Sale'
         ordering = ('-date',)
+        permissions = (("view_receipts","can view receipts"),)
 
     def has_credit(self):
         return self.receiptpayment_set.filter(type=4).exists()
@@ -356,6 +366,7 @@ class CashReceipt(models.Model):
 
     class Meta:
         ordering = ('-date',)
+        permissions = (("view_cashreceipts","can view cash receipts"),)
 
 
 # todo on save aggregate the totals for each cash receipt
@@ -413,6 +424,8 @@ class MarketReturn(models.Model):
 
     def __str__(self):
         return self.number
+    class Meta:
+        permissions = (("view_marketreturn","can view market return "),)
 
 
 # todo review the whole debt settlement process.
@@ -461,6 +474,8 @@ class BBF(models.Model):
 
     def __str__(self):
         return 'balance ' + str(self.receipt)
+    class Meta:
+        permissions = (("view_bbf","can view bbf"),)
 
 
 # todo remove this model. It's not necessary anymore
@@ -502,6 +517,7 @@ class Return(models.Model):
 
     class Meta:
         ordering = ('-date',)
+        permissions = ((  "view_returnedlist","can view returned list"),)
 
 
 # todo review the necessity of this model at this time
@@ -537,6 +553,8 @@ class CustomerAccountBalance(models.Model):
 
     def __str__(self):
         return str(self.pk)
+    class Meta:
+        permissions = (("view_customeraccountbalance","view customer account balance"),)
 
 
 # todo create a customer deposits interface.with all deposits by each customer
@@ -566,6 +584,7 @@ class CustomerDeposit(models.Model):
 
     class Meta:
         ordering = ('-date',)
+        permissions = (("view_deposits","can view deposits"),)
 
 
 class ReceiptMisc(models.Model):

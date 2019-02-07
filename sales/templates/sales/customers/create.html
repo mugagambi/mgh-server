@@ -14,6 +14,7 @@
     </nav>
 
 {% endblock %}
+{% if perms.sales.add_customer %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">Add Customer</h1>
@@ -32,6 +33,7 @@
         </div>
     </div>
 {% endblock %}
+{% endif%}
 {% block scripts %}
     <script src="{% static 'js/jquery.formset.js' %}"></script>
     {{ form.media.js }}
