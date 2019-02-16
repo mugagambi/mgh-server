@@ -179,7 +179,7 @@ def response_items(delivery_date, aggregation_center_id):
         {
             "item": "customer_prices",
             "queryset": CustomerPrice.objects.all(),
-            'serializer_class': serializers.CustomerSerializer
+            'serializer_class': serializers.CustomerPriceSerializer
         },
         {
             "item": "order_products",
@@ -193,8 +193,8 @@ def response_items(delivery_date, aggregation_center_id):
         },
         {
             "item": "package_products",
-            "queryset": PackageProduct.objects.filter(order__date_delivery=delivery_date),
-            'serializer_class': serializers.PackageSerializer
+            "queryset": PackageProduct.objects.filter(order_product__order__date_delivery=delivery_date),
+            'serializer_class': serializers.PackageProductSerializer
         },
         {
             "item": "customer_balances",
@@ -211,8 +211,8 @@ def response(delivery_date, aggregation_center_id):
     """
     json_response = {}
     for item in response_items(delivery_date, aggregation_center_id):
-        json_response[item['entity']] = generate_entity_response(queryset=item['queryset'],
-                                                                 serializer_class=item['serializer_class'])
+        json_response[item['item']] = generate_entity_response(queryset=item['queryset'],
+                                                               serializer_class=item['serializer_class'])
     return json_response
 
 

@@ -25,7 +25,7 @@ class Customer(models.Model):
         ('p', 'Phone')
     )
     email = models.EmailField(null=True, blank=True)
-    number = models.CharField(max_length=10, unique=True, primary_key=True)
+    number = models.CharField(max_length=53, unique=True, primary_key=True)
     shop_name = models.CharField(max_length=100, unique=True,
                                  help_text='The customer can not be deleted once a sale has been recorded or a bbf.')
     nick_name = models.CharField(blank=True, max_length=100)

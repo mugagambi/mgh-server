@@ -1,10 +1,7 @@
-import os
-import sys
 import subprocess
-from optparse import OptionParser
-from datetime import datetime
 
 import boto3
+from celery import shared_task
 from decouple import config
 
 DB_NAME = config("DATABASE_URL")
@@ -19,6 +16,7 @@ AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
 AWS_BUCKET_NAME = 'nanoafrika'
 
 
+@shared_task
 def backup():
     filename = 'sync_backup'
 
