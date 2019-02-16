@@ -17,7 +17,8 @@ from core import forms
 from core import models
 
 
-# TODO add the right permissions
+# TODO check whether we need product availability permissions
+
 class CentersList(LoginRequiredMixin, ListView):
     """
     A list of all the centers
@@ -85,7 +86,7 @@ class DeleteCenter(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('centers-list')
 
 
-# TODO add the right permissions
+# TODO confirm permissions work 
 # TODO add a breadcrump
 class ProductList(LoginRequiredMixin, ListView):
     """
@@ -95,10 +96,11 @@ class ProductList(LoginRequiredMixin, ListView):
     template_name = 'core/products/index.html'
 
 
-# TODO add the right permissions
+# TODO confirm permissions work
 # TODO add a breadcrump
 #  TODO remove create sub name and create name
 @login_required()
+@permission_required('core.add_product')
 def create_product(request):
     """
     Add a product
@@ -119,10 +121,11 @@ def create_product(request):
                                                          'create_sub_name': 'product'})
 
 
-# TODO add the right permissions
+# TODO confirm permissions work
 # TODO add the breadcrump
 class UpdateProduct(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     """Update a certain product"""
+    permission_required = 'core.change_product'
     model = models.Product
     fields = ['name', 'common_price']
     template_name = 'crud/update.html'
@@ -167,6 +170,7 @@ class DeleteProduct(LoginRequiredMixin, PermissionRequiredMixin, AccessMixin, De
 
 # TODO add the right permissions
 @login_required()
+@permission_required('core.view_productavailabilitylist')
 def product_availability_list(request, center):
     """
     A list of available products per center in a given day
@@ -192,8 +196,9 @@ def product_availability_list(request, center):
     })
 
 
-# TODO add the right permissions
+# TODO confirm permissions work
 @login_required()
+@permission_required('core.view_productavailabilitylist')
 def product_availability(request, center, day):
     """
     used to indicate amount of products for sale in a center in a given day
@@ -233,8 +238,9 @@ def product_availability(request, center, day):
                                                         'create_sub_name': 'quantities'})
 
 
-# TODO add the right permissions
+# TODO confirm permissions work
 @login_required()
+@permission_required('core.change_productavailability')
 def update_available_product(request, pk):
     """
     update available products

@@ -16,6 +16,7 @@
         </ol>
     </nav>
 {% endblock %}
+{% if perms.sales.add_customerdiscount %}
 {% block content %}
     <div class="row">
         <div class="col-md-8 offset-md-2">
@@ -31,3 +32,4 @@
         </div>
     </div>
 {% endblock %}
+{% endif %}

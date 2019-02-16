@@ -16,9 +16,10 @@ from .models import MarketReturn
 
 
 class CreateOrderlessDispatch(LoginRequiredMixin, PermissionRequiredMixin, AccessMixin, SuccessMessageMixin,
-                              CreateView):
-    model = MarketReturn
+                              CreateView):                              
+    
     permission_required = 'sales.add_marketreturn'
+    model = MarketReturn
     permission_denied_message = 'You do not have permission to perform this task.'
     fields = ['product', 'qty', 'date', 'type']
     success_url = reverse_lazy('market_returns')

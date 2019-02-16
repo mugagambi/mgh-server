@@ -58,6 +58,7 @@ class AggregationCenterProduct(models.Model):
     class Meta:
         verbose_name = 'Product Availability'
         verbose_name_plural = 'Product Availability'
+        permissions = (("view_productavailabilitylist","view product availability"),)
 
 
 class CrateType(models.Model):
