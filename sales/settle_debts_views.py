@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required,permission_required
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, render, redirect
@@ -11,7 +11,6 @@ from .models import CustomerDeposit, ReceiptPayment, Receipt
 
 
 @login_required()
-@permission_required('sales.add_receiptpayment')
 def settle_debt(request, deposit):
     deposit = get_object_or_404(CustomerDeposit, pk=deposit)
     invoices = ReceiptPayment.objects.filter(receipt__customer=deposit.customer,
@@ -26,7 +25,6 @@ def settle_debt(request, deposit):
 
 
 @login_required()
-@permission_required('sales.change_customerdeposit')
 @require_http_methods(['POST'])
 @transaction.atomic
 def settle_invoice_debt(request):

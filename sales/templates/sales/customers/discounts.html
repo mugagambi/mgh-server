@@ -14,7 +14,6 @@
         </ol>
     </nav>
 {% endblock %}
-{% if perms.sales.view_discounts %}
 {% block content %}
     {% include 'includes/discounts_nav.html' %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
@@ -61,7 +60,6 @@
         </tfoot>
     </table>
 {% endblock %}
-{% endif %}
 {% block scripts %}
     <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>

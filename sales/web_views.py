@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, date
 
 import django_filters
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required,permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, AccessMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -47,7 +47,6 @@ class OrdersFilter(FilterSet):
 
 # todo add the required permissions
 @login_required()
-@permission_required('sales.view_order')
 def order_list(request):
     order_list = models.Order.objects.select_related('customer', 'received_by').values('number', 'customer__shop_name',
                                                                                        'received_by__username',
@@ -69,15 +68,13 @@ def order_list(request):
 
 
 # todo add the right permissions
-class RegionList(LoginRequiredMixin,PermissionRequiredMixin, ListView):
-    permission_required = 'sales.view_regions'
+class RegionList(LoginRequiredMixin, ListView):
     model = models.Region
     template_name = 'sales/regions/index.html'
 
 
 # todo add the right permissions
 @login_required()
-@permission_required('sales.add_region')
 def create_regions(request):
     region_formset = modelformset_factory(models.Region, fields=('name',), max_num=5, min_num=1)
     if request.method == 'POST':
@@ -91,8 +88,7 @@ def create_regions(request):
     return render(request, 'sales/regions/create.html', {'formset': formset})
 
 
-class UpdateRegion(SuccessMessageMixin, LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    permission_required = 'sales.change_region'
+class UpdateRegion(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = models.Region
     fields = ['name']
     template_name = 'sales/regions/update.html'
@@ -101,7 +97,6 @@ class UpdateRegion(SuccessMessageMixin, LoginRequiredMixin, PermissionRequiredMi
 
 
 class DeleteRegion(LoginRequiredMixin, PermissionRequiredMixin, AccessMixin, DeleteView):
-    permission_required = 'delete_region'
     permission_denied_message = 'You don\'t have the permission to perform this action'
     raise_exception = True
     permission_required = 'sales.delete_region'
@@ -127,7 +122,6 @@ class CustomerFilter(FilterSet):
 
 # TODO add the required permissions
 @login_required()
-@permission_required('sales.view_customers')
 def customer_list(request):
     if request.method == 'POST':
         due_date_form = forms.DueDateForm(request.POST)
@@ -164,7 +158,6 @@ class SalesFilterSet(FilterSet):
 
 
 @login_required()
-@permission_required('sales.view_receipts')
 def sales_list(request):
     sale_list = models.Receipt.objects. \
         select_related('customer', 'served_by') \
@@ -187,7 +180,6 @@ def sales_list(request):
 
 # todo add the right permissions
 @login_required()
-@permission_required('sales.view_receipts')
 def receipt_detail(request, pk):
     try:
         receipt = models.Receipt.objects.select_related('customer', 'served_by').get(pk=pk)
@@ -237,7 +229,6 @@ def receipt_detail(request, pk):
 
 
 @login_required()
-@permission_required('sales.view_receipts')
 def invoices_list(request):
     invoice_list = models.Receipt.objects.select_related('customer',
                                                          'served_by').filter(receiptpayment__isnull=False,
@@ -258,7 +249,6 @@ def invoices_list(request):
 
 
 @login_required()
-@permission_required('sales.add_customer')
 @transaction.atomic
 def create_customer(request):
     if request.method == 'POST':
@@ -279,8 +269,8 @@ def create_customer(request):
     return render(request, 'sales/customers/create.html', {'form': form})
 
 
-class DeleteCustomer(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    permission_required = 'sales.delete_customer'
+class DeleteCustomer(LoginRequiredMixin, DeleteView):
+
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.customeraccount_set.exists():
@@ -294,8 +284,7 @@ class DeleteCustomer(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('customers')
 
 
-class UpdateCustomer(SuccessMessageMixin, PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
-    permission_required = 'sales.change_customer'
+class UpdateCustomer(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = models.Customer
     form_class = forms.CustomerForm
     template_name = 'sales/customers/update.html'
@@ -304,7 +293,6 @@ class UpdateCustomer(SuccessMessageMixin, PermissionRequiredMixin, LoginRequired
 
 
 @login_required()
-@permission_required('sales.view_prices')
 def customer_prices(request, pk):
     customer = get_object_or_404(models.Customer, pk=pk)
     prices = models.CustomerPrice.objects.select_related('product').filter(customer=customer)
@@ -312,7 +300,6 @@ def customer_prices(request, pk):
 
 
 @login_required()
-@permission_required('sales.change_customerprice')
 def update_price(request, customer, pk):
     customer = get_object_or_404(models.Customer, pk=customer)
     price = models.CustomerPrice.objects.get(pk=pk)
@@ -332,7 +319,6 @@ def update_price(request, customer, pk):
 
 
 @login_required()
-@permission_required('sales.add_customerdiscount')
 def add_discounts(request, pk):
     discounts_formset = modelformset_factory(models.CustomerDiscount, fields=('product', 'discount'),
                                              widgets={'product': Select2Widget}, extra=10,
@@ -367,7 +353,6 @@ def add_discounts(request, pk):
 # todo add the required permissions
 # todo review the size of this function
 @login_required()
-@permission_required('sales.add_order')
 def place_order(request, pk, date_given):
     date_given = datetime.strptime(date_given, '%Y-%m-%d').date()
     if date_given < date.today():
@@ -443,7 +428,6 @@ def place_order(request, pk, date_given):
 # todo add required permissions
 # todo review the size of this function
 @login_required()
-@permission_required('sales.add_orderreport')
 def add_more_products(request, order):
     order = get_object_or_404(models.Order, pk=order)
     product_ids = [order.product.id for order in order.orderproduct_set.all()]
@@ -503,7 +487,6 @@ def add_more_products(request, order):
 
 # todo add the right permissions
 @login_required()
-@permission_required('sales.change_orderreport')
 def update_particular_item(request, order, pk):
     particular = models.OrderProduct.objects.get(order__pk=order, pk=pk)
     if request.method == 'POST':
@@ -519,7 +502,6 @@ def update_particular_item(request, order, pk):
 # TODO add the right permissions
 # TODO check if it exists before deleting
 @login_required()
-@permission_required('sales.delete_orderreport')
 @require_http_methods(['POST'])
 def remove_order_product(request, order):
     item_id = request.POST['item_id']
@@ -530,8 +512,7 @@ def remove_order_product(request, order):
 
 # todo add the right permissions
 # todo review the policy on deleting items in this system
-class DeleteOrder(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    permission_required = 'sales.delete_orderreport'
+class DeleteOrder(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         messages.success(request, 'Order removed!')
         return super().post(request, *args, **kwargs)
@@ -543,7 +524,6 @@ class DeleteOrder(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
 # todo add the right permissions
 @login_required()
-@permission_required('sales.add_orderreport')
 def order_detail(request, pk):
     order = get_object_or_404(models.Order, pk=pk)
     return render(request, 'sales/orders/order-detail.html', {'order': order, 'today': date.today()})
@@ -560,7 +540,6 @@ class CashSalesFilterSet(FilterSet):
 
 # todo add the right permissions
 @login_required()
-@permission_required('sales.view_viewcashreceipts')
 def cash_sales_list(request):
     if request.method == 'POST':
         form = CashReceiptPreForm(request.POST)
@@ -585,7 +564,6 @@ def cash_sales_list(request):
 
 # todo add the right permissions
 @login_required()
-@permission_required('sales.view_orderproduct')
 def order_distribution_list(request):
     order_products = models.OrderProduct.objects.none()
     form = forms.ProductSelectionForm(request.GET)
@@ -601,7 +579,6 @@ def order_distribution_list(request):
 
 # todo add the required permissions
 @login_required()
-@permission_required('sales.view_orderproduct')
 def distribute_order(request, order_product):
     order_distribution_formset = modelformset_factory(models.OrderDistributionPoint,
                                                       fields=('center', 'qty'),
@@ -627,7 +604,6 @@ def distribute_order(request, order_product):
 
 # todo add the required permissions
 @login_required()
-@permission_required('sales.view_bbf')
 def bbf_accounts(request):
     customer_balances = models.BBF.objects.values('customer__shop_name', 'amount', 'customer__number').annotate(
         max_date=Max('receipt__date')).filter(receipt__date=F('max_date')).order_by('amount')
@@ -644,7 +620,6 @@ def bbf_accounts(request):
 
 # todo add the required permissions
 @login_required()
-@permission_required('sales.add_bbf')
 def add_bbf(request, pk):
     customer = get_object_or_404(models.Customer, pk=pk)
     if request.method == 'POST':
@@ -668,7 +643,6 @@ def add_bbf(request, pk):
 
 # todo add the required permissions
 @login_required()
-@permission_required('sales.view_bbf')
 def customer_bbfs(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
     bbfs = models.BBF.objects.filter(customer=customer)

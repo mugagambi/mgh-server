@@ -14,7 +14,6 @@
         </ol>
     </nav>
 {% endblock %}
-{% if perms.sales.view_customerstatement%}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">Customers</h1>
@@ -23,12 +22,10 @@
             <span data-feather="database"></span>
             Export Data
         </button>
-        {% if perms.sales.add_customer%}
         <a class="btn btn-outline-success" href="{% url 'create-customer' %}">
             <span data-feather="plus"></span>
             New Customer
         </a>
-        {% endif %}
     </div>
     {% include 'includes/filter_by.html' %}
     <table id="customers" class="table table-striped table-responsive-md" style="width:100%">
@@ -51,62 +48,40 @@
                 <td>{{ customer.phone_number }}</td>
                 <td>{{ customer.region }}</td>
                 <td>
-                    {% if perms.sales.view_prices %}
                     <a class="btn btn-outline-success btn-sm mb-1"
                        href="{% url 'customer_prices' pk=customer.number %}">prices</a>
-                    {% endif %}
-                    {% if perms.sales.view_discounts%}
                     <a class="btn btn-outline-success btn-sm mb-1"
                        href="{% url 'customer_total_discounts' customer=customer.number %}">discounts</a>
-                    {% endif %}
-                    {% if perms.sales.add_order %}
                     <button type="button" class="btn btn-outline-success btn-sm mb-1"
                             id="place-order"
                             data-toggle="modal" data-target="#exampleModalCenter"
                             data-customer="{{ customer.number }}">place order
                     </button>
-                    {% endif %}
-                    {% if perms.sales.add_bbf%}
                     <a class="btn btn-outline-success btn-sm mb-1"
                        href="{% url 'add-customer-bff' pk=customer.number %}" data-toggle="tooltip" data-placement="top"
                        title="add {{ customer.shop_name }} existing bbf">Add Bbf</a>
-                    {% endif %}
-                    {% if perms.sales.add_return %}
                     <a class="btn btn-outline-success btn-sm" href="{% url 'record-return' customer=customer.number %}">record
                         return</a>
-                    {% endif %}
-                    {% if perms.sales.view_deposit %}
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'customer_deposits' customer=customer.number %}">
                         deposits</a>
-                    {% endif %}
-                    {% if perms.sales.view_customerstatement %}
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'customer_statement' customer=customer.number %}" data-toggle="tooltip"
                        data-placement="top"
                        title="View  {{ customer.shop_name }}  statement">statement</a>
-                    {% endif %}
-                    {% if perms.sales.view_receipts %}
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'total-sales' %}?customer={{ customer.pk }}">receipts</a>
-                    {% endif %}
                     <button type="button" class="btn btn-outline-success btn-sm mb-1"
                             id="generate_invoice"
                             data-toggle="modal" data-target="#duedate"
                             data-customer="{{ customer.number }}">Generate Invoice
                     </button>
-                    {% if perms.sales.addcustomerdeposit %}
                     <a class="btn btn-outline-success btn-sm"
                        href="{% url 'customer_deposits' customer=customer.number %}?settle=true">settle debts</a>
-                    {% endif %}
-                    {% if perms.sales.change_customer %}
                     <a class="btn btn-outline-success btn-sm mb-1"
                        href="{% url 'update-customer' pk=customer.number %}">edit</a>
-                    {% endif %}
-                    {% if perms.sales.delete_customer %}
                     <a class="btn btn-outline-danger btn-sm mb-1"
                        href="{% url 'delete-customer' pk=customer.number %}">remove</a>
-                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
@@ -195,7 +170,6 @@
     </div>
 
 {% endblock %}
-{% endif %}
 {% block scripts %}
     <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>

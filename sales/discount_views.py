@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required,permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -9,18 +9,16 @@ from sales.forms import TotalDiscountForm, DiscountForm
 from django.contrib import messages
 from django.views.generic import UpdateView, DeleteView
 
-#TODO check permissions work
+
 @login_required()
-@permission_required('sales.view_discount')
 def total_discounts(request, customer):
     customer = get_object_or_404(Customer, pk=customer)
     discount = CustomerTotalDiscount.objects.filter(customer=customer).first()
     return render(request, 'sales/customers/total_discounts.html',
                   {'discount': discount, 'customer': customer})
 
-#TODO check permissions work
+
 @login_required()
-@permission_required('sales.change_customertotaldiscount')
 def add_total_discounts(request, customer):
     customer = get_object_or_404(Customer, pk=customer)
     discount = CustomerTotalDiscount.objects.filter(customer=customer).exists()
@@ -41,8 +39,7 @@ def add_total_discounts(request, customer):
                                                                  'customer': customer})
 
 
-class UpdateDiscountView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
-    permission_required =  "sales.change_customertotaldiscount"
+class UpdateDiscountView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = CustomerTotalDiscount
     template_name = 'sales/customers/add-discount.html'
     fields = ['discount']
@@ -59,15 +56,13 @@ class UpdateDiscountView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMes
 
 
 @login_required()
-@permission_required('sales.view_discounts')
 def customer_discounts(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
     discounts = CustomerDiscount.objects.select_related('product').filter(customer=customer)
     return render(request, 'sales/customers/discounts.html', {'discounts': discounts, 'customer': customer})
 
 
-class UpdateCustomerDiscountView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
-    permission_required = 'sales.change_customerdiscount'
+class UpdateCustomerDiscountView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = CustomerDiscount
     template_name = 'sales/customers/update_discount.html'
     form_class = DiscountForm
@@ -83,8 +78,7 @@ class UpdateCustomerDiscountView(LoginRequiredMixin, PermissionRequiredMixin, Su
         return reverse_lazy('customer_discounts', kwargs={'pk': customer.pk})
 
 
-class DeleteDiscount(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    permission_required = 'sales.delete_customerdiscount'
+class DeleteDiscount(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         messages.success(request, 'Discount removed successfully!')
         return super().post(request, *args, **kwargs)

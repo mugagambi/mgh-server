@@ -2,8 +2,8 @@ from datetime import timedelta
 from decimal import Decimal
 
 import django_filters
-from django.contrib.auth.decorators import login_required,permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Sum, F, fields, ExpressionWrapper
@@ -23,7 +23,6 @@ class OrderlessFilter(django_filters.FilterSet):
 
 # todo add the right permissions
 @login_required()
-@permission_required('sales.view_orderlesspackage')
 def orderless_dispatch(request):
     """
     show all orderless dispatch starting with the latest and add a filter bar
@@ -52,7 +51,6 @@ def orderless_dispatch(request):
 
 # todo add the right permissions
 @login_required()
-@permission_required('sales.view_deposits')
 def customer_deposits(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
     settle = request.GET.get('settle', None)
@@ -74,8 +72,7 @@ def customer_deposits(request, customer):
 
 
 # todo add the right permissions
-class AddDeposit(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, CreateView):
-    permissions = ' sales.add_customerdeposit'
+class AddDeposit(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = models.CustomerDeposit
     fields = ['amount', 'via', 'phone_number', 'transaction_id', 'cheque_number', 'date']
     success_message = 'Deposit added successfully'
@@ -105,7 +102,6 @@ class AddDeposit(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixi
 
 # todo add the right permissions
 @login_required()
-@permission_required('sales.view_marketreturns')
 def market_returns(request):
     returns = models.MarketReturn.objects.select_related('product').values('product__name', 'date', 'type'). \
         order_by('-date').annotate(total_qty=Sum('qty'), product_pk=F('product__id'))

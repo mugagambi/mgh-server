@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.db.models import F, Sum
 from django.db.models import Q
@@ -23,9 +23,8 @@ from utils import generate_unique_id, main_generate_unique_id
 AFRICA_NAIROBI = pytz_zone('Africa/Nairobi')
 
 
-# TODO check permissions work
-class ReturnsList(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-    permission_required = 'sales.view_returnedlist'
+# todo add the right permissions
+class ReturnsList(LoginRequiredMixin, ListView):
     model = models.Return
     template_name = 'sales/returns/returns-list.html'
     context_object_name = 'returns'
@@ -34,9 +33,8 @@ class ReturnsList(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     paginate_by = 50
 
 
-# TODO check permissions work
+# todo add the right permissions
 @login_required()
-@permission_required('sales.change_return',raise_exception = True)
 def record_return(request, customer):
     customer = get_object_or_404(models.Customer, pk=customer)
     if request.method == 'POST':
@@ -53,9 +51,8 @@ def record_return(request, customer):
     return render(request, 'sales/returns/create_returns.html', {'form': form, 'customer': customer})
 
 
-# TODO check permissions work
+# todo add required permissions
 @login_required()
-@permission_required('change_cashreceiptparticular',raise_exception = True)
 def cash_receipt(request, date):
     date = timezone.datetime.strptime(date, '%Y-%m-%d').date()
     date_0 = timezone.datetime.combine(date, datetime.time(0, 0))
@@ -110,9 +107,8 @@ def add_receipt(request):
     return render(request, 'sales/sales/add_receipt.html', {'form': form})
 
 
-# TODO check permissions work 
+# todo add the required permissions
 @login_required()
-@permission_required('sales.view_customeraccountbalance',raise_exception = True)
 def trade_debtors(request):
     debtors = models.CustomerAccountBalance.objects.select_related('customer').filter(~Q(amount=0.0)). \
         order_by('customer__shop_name')
@@ -139,11 +135,9 @@ def trade_debtors(request):
     return render(request, 'sales/sales/customer_accounts.html', context)
 
 
-# TODO confirm permissions work
+# todo add the right permissions
 # todo optimize this function
-
 @login_required()
-@permission_required('sales.view_customerstatement',raise_exception = True)
 def customer_statement(request, customer, date_0=None, date_1=None):
     customer = get_object_or_404(models.Customer, pk=customer)
     context = {'customer': customer, }
@@ -502,9 +496,7 @@ def update_payment(request, receipt, payment):
 
 
 # todo add the required the permissions
-
 @login_required()
-@permission_required('view_returnedlist')
 def return_details(request, pk):
     returns = get_object_or_404(models.Return, pk=pk)
     return render(request, 'sales/returns/return.html', {'return': returns})

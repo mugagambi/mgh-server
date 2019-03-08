@@ -15,7 +15,6 @@
         </ol>
     </nav>
 {% endblock %}
-{% if perms.sales.view_prices %}
 {% block content %}
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">{{ customer.shop_name }} Prices</h1>
@@ -60,7 +59,6 @@
         </tfoot>
     </table>
 {% endblock %}
-{% endif %}
 {% block scripts %}
     <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'js/dataTables.bootstrap4.min.js' %}"></script>

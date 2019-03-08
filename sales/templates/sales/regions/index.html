@@ -23,12 +23,8 @@
             <tr>
                 <td>{{ region.name }}</td>
                 <td>
-                    {% if perms.sales.change_region %}
                     <a class="btn btn-outline-success btn-sm" href="{% url 'update-region' pk=region.id %}">Edit</a>
-                    {% endif %}
-                    {% if perms.sales.delete_region %}
                     <a class="btn btn-outline-danger btn-sm" href="{% url 'delete-region' pk=region.id %}">Remove</a>
-                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
