@@ -22,7 +22,7 @@ def add_cash_receipt_particulars(request, date):
             instances = formset.save(commit=False)
             for instance in instances:
                 instance.cash_receipt = receipt
-                instances.save()
+                instance.save()
                 messages.success(request, 'Cash receipt items added successfully')
                 return redirect('cash-sales')
     else:
