@@ -66,7 +66,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if 'orders' in request.path %}
+                        <a class="nav-link {% if 'orders' in request.path and not '/orderless/' in request.path %}
                         active
                         {% endif %}" href="{% url 'orders' %}">
                             <span data-feather="file"></span>
@@ -74,11 +74,59 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if 'all' in request.path %}
+                        <a class="nav-link {% if '/orderless/' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'orderless_dispatch' %}">
+                            <span data-feather="file"></span>
+                            Orderless Dispatch
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'order_distribute' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'orders-distribute' %}">
+                            <span data-feather="file"></span>
+                            Distribute Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'all' in request.path and not '/cash/' in request.path and not 'all/debtors/' in request.path and not '/all/returns/customers/' in request.path and not '/sales/all/returns/market/' in request.path %}
                         active
                         {% endif %}" href="{% url 'total-sales' %}?date_0={{ date_30_days_ago }}">
                             <span data-feather="shopping-bag"></span>
                             Sales
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/cash/' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'cash-sales' %}">
+                            <span data-feather="shopping-bag"></span>
+                            Open Air Market Sales
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'all/debtors/' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'trade-debtors' %}">
+                            <span data-feather="dollar-sign"></span>
+                            Trade Debtors
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/all/returns/customers/' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'returns' %}">
+                            <span data-feather="shopping-bag"></span>
+                            Customer Returns
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/sales/all/returns/market/' in request.path %}
+                        active
+                        {% endif %}" href="{% url 'market_returns' %}">
+                            <span data-feather="dollar-sign"></span>
+                            Market Returns
                         </a>
                     </li>
                     <li class="nav-item">
